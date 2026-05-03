@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trenddrink/presentation/pages/assistant_page.dart';
 import 'package:trenddrink/presentation/pages/drink_detail_page.dart';
 import 'package:trenddrink/presentation/pages/home_page.dart';
-import 'package:trenddrink/presentation/pages/search_assistant_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -17,11 +17,11 @@ final GoRouter appRouter = GoRouter(
       ),
       routes: [
         GoRoute(
-          path: 'search',
-          name: 'search',
+          path: 'assistant',
+          name: 'assistant',
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const SearchAssistantPage(),
+            child: const AssistantPage(),
             transitionsBuilder: _fadeTransition,
           ),
         ),

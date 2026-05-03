@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trenddrink/core/theme/app_theme.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
 import 'package:trenddrink/presentation/notifiers/theme_notifier.dart';
 import 'package:trenddrink/presentation/widgets/category_chips.dart';
@@ -10,12 +11,14 @@ import 'package:trenddrink/presentation/widgets/theme_switcher.dart';
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-  static const categories = <String>['Hepsi', 'Kahve', 'Kokteyl', 'Frozen'];
+  static const categories = <String>['Hepsi', 'Kahve', 'Kokteyl', 'Frozen', 'Smoothie', 'Soda'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final drinkState = ref.watch(drinkNotifierProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final themeVariant = ref.watch(themeVariantProvider);
+    final themeName = AppTheme.variantNames[themeVariant];
 
     return Scaffold(
       body: CustomScrollView(
@@ -23,7 +26,7 @@ class HomePage extends ConsumerWidget {
         slivers: <Widget>[
           SliverAppBar(
             pinned: true,
-            expandedHeight: 220,
+            expandedHeight: 260,
             backgroundColor: Theme.of(context).colorScheme.surface,
             foregroundColor: Theme.of(context).colorScheme.onSurface,
             flexibleSpace: FlexibleSpaceBar(
@@ -39,15 +42,32 @@ class HomePage extends ConsumerWidget {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                child: const SafeArea(
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                      padding: EdgeInsets.all(24),
-                      child: Text(
-                        'Kafe deneyimini öğren, AI asistanla keşfet.',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          'Windows için premium kafe deneyimi',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                              ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Renkli temalar, derin tarif rehberi ve akıllı asistan ile içecekleri keşfet.',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                        ),
+                        const SizedBox(height: 18),
+                        Chip(
+                          label: Text('Aktif Tema: $themeName'),
+                          backgroundColor: Colors.white24,
+                          labelStyle: const TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -56,13 +76,38 @@ class HomePage extends ConsumerWidget {
             actions: const [ThemeSwitcher()],
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 12),
             sliver: SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const Text(
-                    'Kategorilere göre seç',
+                    'Stil & keşif',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(AppTheme.variantNames.length, (index) {
+                      final label = AppTheme.variantNames[index];
+                      final isSelected = themeVariant == index;
+                      return ChoiceChip(
+                        label: Text(label),
+                        selected: isSelected,
+                        onSelected: (_) => ref.read(themeVariantProvider.notifier).state = index,
+                        selectedColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                        labelStyle: TextStyle(
+                          color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Keşfedilecek kategoriler',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 18),
@@ -74,24 +119,24 @@ class HomePage extends ConsumerWidget {
                       ref.read(drinkNotifierProvider.notifier).filterByCategory(category == 'Hepsi' ? null : category);
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   GestureDetector(
                     onTap: () {
-                      context.push('/search');
+                      context.push('/assistant');
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(18),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
-                        color: Theme.of(context).colorScheme.primary.withAlpha(31),
+                        color: Theme.of(context).colorScheme.primary.withAlpha(40),
                       ),
                       child: Row(
                         children: <Widget>[
-                          const Icon(Icons.search, size: 28),
+                          const Icon(Icons.smart_toy_outlined, size: 28),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
-                              'Asistanımıza yazarak içeceği bul',
+                              'Yapay zeka asistanımızla konuş, yeni tariflere ulaş.',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
@@ -100,9 +145,9 @@ class HomePage extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 26),
+                  const SizedBox(height: 24),
                   const Text(
-                    'Yeni tarifler',
+                    'Popüler tarifler',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                   ),
                 ],
@@ -116,7 +161,7 @@ class HomePage extends ConsumerWidget {
                   hasScrollBody: false,
                   child: Center(
                     child: Text(
-                      'Yeni tarifler yakında eklenecek.',
+                      'Malzemelere göre öneriler hazırlanıyor.',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
@@ -157,8 +202,8 @@ class HomePage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => ref.read(themeModeProvider.notifier).toggleDarkMode(),
-        icon: const Icon(Icons.palette_outlined),
-        label: const Text('Tema'),
+        icon: const Icon(Icons.brightness_6_outlined),
+        label: const Text('Gece/Gündüz'),
       ),
     );
   }

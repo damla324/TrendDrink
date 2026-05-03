@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,7 +24,7 @@ class DrinkDetailPage extends ConsumerWidget {
             category: '',
             preparation: '',
             ingredients: <String>[],
-            imageTag: '',
+            imageUrl: '',
             gradient: const LinearGradient(colors: [Colors.grey, Colors.black]),
           ),
         );
@@ -37,23 +38,44 @@ class DrinkDetailPage extends ConsumerWidget {
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(drink.title),
-                  background: Container(
-                    decoration: BoxDecoration(gradient: drink.gradient),
-                    child: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Text(
-                            drink.category.toUpperCase(),
-                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: drink.imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(color: Colors.black12),
+                        errorWidget: (context, url, error) => Container(color: Colors.black26),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.black.withOpacity(0.45),
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.72),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
                           ),
                         ),
                       ),
-                    ),
+                      SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              drink.category.toUpperCase(),
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

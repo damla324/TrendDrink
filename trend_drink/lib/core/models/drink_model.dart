@@ -7,7 +7,7 @@ class DrinkModel {
   final String category;
   final String preparation;
   final List<String> ingredients;
-  final String imageTag;
+  final String imageUrl;
   final Gradient gradient;
 
   DrinkModel({
@@ -17,7 +17,7 @@ class DrinkModel {
     required this.category,
     required this.preparation,
     required this.ingredients,
-    required this.imageTag,
+    required this.imageUrl,
     required this.gradient,
   });
 
@@ -30,7 +30,7 @@ class DrinkModel {
       category: json['category'] as String,
       preparation: json['preparation'] as String,
       ingredients: ingredientData.cast<String>().toList(),
-      imageTag: json['imageTag'] as String,
+      imageUrl: json['imageUrl'] as String,
       gradient: LinearGradient(
         colors: (json['gradient'] as List<dynamic>)
             .map((color) => Color(color as int))
@@ -50,7 +50,7 @@ class DrinkModel {
       'category': category,
       'preparation': preparation,
       'ingredients': ingredients,
-      'imageTag': imageTag,
+      'imageUrl': imageUrl,
       'gradient': gradient.colors.map((color) => color.toARGB32()).toList(),
     };
   }

@@ -14,12 +14,13 @@ class TrendDrinkApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final themeVariant = ref.watch(themeVariantProvider);
     return MaterialApp.router(
       title: 'TrendDrink',
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      theme: AppTheme.themeData(themeVariant, Brightness.light),
+      darkTheme: AppTheme.themeData(themeVariant, Brightness.dark),
       routeInformationParser: appRouter.routeInformationParser,
       routerDelegate: appRouter.routerDelegate,
       routeInformationProvider: appRouter.routeInformationProvider,
