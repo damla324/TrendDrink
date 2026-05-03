@@ -34,6 +34,7 @@ class DrinkModel {
       gradient: LinearGradient(
         colors: (json['gradient'] as List<dynamic>)
             .map((color) => Color(color as int))
+            .cast<Color>()
             .toList(),
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -50,9 +51,7 @@ class DrinkModel {
       'preparation': preparation,
       'ingredients': ingredients,
       'imageTag': imageTag,
-      'gradient': gradient.colors
-          .map((color) => (color as Color).value)
-          .toList(),
+      'gradient': gradient.colors.map((color) => color.toARGB32()).toList(),
     };
   }
 }

@@ -9,8 +9,7 @@ class AppTheme {
     brightness: Brightness.light,
     primary: const Color(0xFF7C4DFF),
     secondary: const Color(0xFF03DAC6),
-    background: const Color(0xFFF6F1EE),
-    surface: Colors.white,
+    surface: const Color(0xFFF6F1EE),
   );
 
   static final ColorScheme _darkScheme = ColorScheme.fromSeed(
@@ -18,14 +17,13 @@ class AppTheme {
     brightness: Brightness.dark,
     primary: const Color(0xFFBB86FC),
     secondary: const Color(0xFF03DAC6),
-    background: const Color(0xFF121212),
-    surface: const Color(0xFF1E1E1E),
+    surface: const Color(0xFF121212),
   );
 
   static final ThemeData light = ThemeData(
     useMaterial3: true,
     colorScheme: _lightScheme,
-    scaffoldBackgroundColor: _lightScheme.background,
+    scaffoldBackgroundColor: _lightScheme.surface,
     textTheme: GoogleFonts.plusJakartaSansTextTheme(
       Typography.material2021(platform: TargetPlatform.android).black,
     ),
@@ -39,7 +37,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: _lightScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       elevation: 2,
@@ -49,7 +47,7 @@ class AppTheme {
   static final ThemeData dark = ThemeData(
     useMaterial3: true,
     colorScheme: _darkScheme,
-    scaffoldBackgroundColor: _darkScheme.background,
+    scaffoldBackgroundColor: _darkScheme.surface,
     textTheme: GoogleFonts.plusJakartaSansTextTheme(
       Typography.material2021(platform: TargetPlatform.android).white,
     ),
@@ -63,7 +61,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: _darkScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       elevation: 2,

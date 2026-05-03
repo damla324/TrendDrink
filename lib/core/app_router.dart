@@ -5,7 +5,6 @@ import 'package:trenddrink/presentation/pages/home_page.dart';
 import 'package:trenddrink/presentation/pages/search_assistant_page.dart';
 
 final GoRouter appRouter = GoRouter(
-  debugLogDiagnostics: false,
   initialLocation: '/',
   routes: <GoRoute>[
     GoRoute(
@@ -30,7 +29,7 @@ final GoRouter appRouter = GoRouter(
           path: 'drink/:id',
           name: 'drinkDetail',
           pageBuilder: (context, state) {
-            final id = state.params['id'] ?? '';
+            final id = state.pathParameters['id'] ?? '';
             return CustomTransitionPage(
               key: state.pageKey,
               child: DrinkDetailPage(drinkId: id),

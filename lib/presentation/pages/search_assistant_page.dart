@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trenddrink/core/models/drink_model.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
 import 'package:trenddrink/presentation/widgets/drink_card.dart';
 
@@ -35,10 +34,7 @@ class _SearchAssistantPageState extends ConsumerState<SearchAssistantPage> {
 
   Future<void> _recommend() async {
     final ingredients = _queryController.text;
-    final results = await ref.read(drinkNotifierProvider.notifier).recommendByIngredients(ingredients);
-    if (mounted) {
-      ref.read(drinkNotifierProvider.notifier).state = AsyncValue.data(results);
-    }
+    await ref.read(drinkNotifierProvider.notifier).recommendByIngredientsAndSetState(ingredients);
   }
 
   @override

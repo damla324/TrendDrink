@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trenddrink/core/models/drink_model.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
 import 'package:trenddrink/presentation/notifiers/theme_notifier.dart';
 import 'package:trenddrink/presentation/widgets/category_chips.dart';
@@ -84,7 +83,7 @@ class HomePage extends ConsumerWidget {
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                        color: Theme.of(context).colorScheme.primary.withAlpha(31),
                       ),
                       child: Row(
                         children: <Widget>[

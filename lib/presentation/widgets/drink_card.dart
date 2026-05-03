@@ -42,7 +42,7 @@ class DrinkCard extends StatelessWidget {
                 Text(
                   drink.description,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withOpacity(0.88),
+                        color: const Color.fromRGBO(255, 255, 255, 0.88),
                       ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
