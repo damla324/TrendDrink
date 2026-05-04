@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trenddrink/presentation/pages/assistant_page.dart';
+import 'package:trenddrink/presentation/pages/category_page.dart';
 import 'package:trenddrink/presentation/pages/drink_detail_page.dart';
-import 'package:trenddrink/presentation/pages/home_page.dart';
+import 'package:trenddrink/presentation/pages/home_page_v2.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -12,7 +13,7 @@ final GoRouter appRouter = GoRouter(
       name: 'home',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const HomePage(),
+        child: const HomePageV2(),
         transitionsBuilder: _fadeTransition,
       ),
       routes: [
@@ -33,6 +34,18 @@ final GoRouter appRouter = GoRouter(
             return CustomTransitionPage(
               key: state.pageKey,
               child: DrinkDetailPage(drinkId: id),
+              transitionsBuilder: _fadeTransition,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'category/:name',
+          name: 'category',
+          pageBuilder: (context, state) {
+            final categoryName = state.pathParameters['name'] ?? '';
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: CategoryPage(categoryName: categoryName),
               transitionsBuilder: _fadeTransition,
             );
           },
