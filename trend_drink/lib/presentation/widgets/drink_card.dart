@@ -12,8 +12,8 @@ class DrinkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: SizedBox(
-        height: 240,
+      child: AspectRatio(
+        aspectRatio: 1.0,
         child: Stack(
           children: [
             Positioned.fill(

@@ -11,7 +11,7 @@ import 'package:trenddrink/presentation/widgets/theme_switcher.dart';
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-  static const categories = <String>['Hepsi', 'Kahve', 'Kokteyl', 'Frozen', 'Smoothie', 'Soda'];
+  static const categories = <String>['Hepsi', 'Kahve', 'Kokteyl', 'Frozen', 'Smoothie', 'Soda', 'Çay', 'Fit', 'Matcha'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
