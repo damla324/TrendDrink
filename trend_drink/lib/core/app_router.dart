@@ -4,21 +4,25 @@ import 'package:trenddrink/presentation/pages/assistant_page.dart';
 import 'package:trenddrink/presentation/pages/category_page.dart';
 import 'package:trenddrink/presentation/pages/drink_detail_page.dart';
 import 'package:trenddrink/presentation/pages/home_page_v2.dart';
+import 'package:trenddrink/presentation/pages/shell_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
-  routes: <GoRoute>[
-    GoRoute(
-      path: '/',
-      name: 'home',
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const HomePageV2(),
-        transitionsBuilder: _fadeTransition,
-      ),
+  routes: [
+    ShellRoute(
+      builder: (context, state, child) => ShellPage(child: child),
       routes: [
         GoRoute(
-          path: 'assistant',
+          path: '/',
+          name: 'home',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const HomePageV2(),
+            transitionsBuilder: _fadeTransition,
+          ),
+        ),
+        GoRoute(
+          path: '/assistant',
           name: 'assistant',
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
@@ -27,7 +31,7 @@ final GoRouter appRouter = GoRouter(
           ),
         ),
         GoRoute(
-          path: 'drink/:id',
+          path: '/drink/:id',
           name: 'drinkDetail',
           pageBuilder: (context, state) {
             final id = state.pathParameters['id'] ?? '';
@@ -39,7 +43,7 @@ final GoRouter appRouter = GoRouter(
           },
         ),
         GoRoute(
-          path: 'category/:name',
+          path: '/category/:name',
           name: 'category',
           pageBuilder: (context, state) {
             final categoryName = state.pathParameters['name'] ?? '';
