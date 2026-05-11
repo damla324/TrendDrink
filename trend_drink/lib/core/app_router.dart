@@ -6,72 +6,71 @@ import 'package:trenddrink/presentation/pages/drink_detail_page.dart';
 import 'package:trenddrink/presentation/pages/home_page_v2.dart';
 import 'package:trenddrink/presentation/pages/pro_features_page.dart';
 import 'package:trenddrink/presentation/pages/settings_page.dart';
-import 'package:trenddrink/presentation/widgets/desktop_layout.dart';
+import 'package:trenddrink/presentation/pages/shell_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
-  routes: <GoRoute>[
-    GoRoute(
-      path: '/',
-      name: 'home',
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const DesktopLayout(child: HomePageV2()),
-        transitionsBuilder: _fadeTransition,
-      ),
+  routes: [
+    ShellRoute(
+      builder: (context, state, child) => ShellPage(child: child),
       routes: [
         GoRoute(
-          path: 'assistant',
-          name: 'assistant',
+          path: '/',
+          name: 'home',
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const DesktopLayout(child: AssistantPage()),
+            child: const HomePageV2(),
             transitionsBuilder: _fadeTransition,
           ),
         ),
         GoRoute(
-          path: 'drink/:id',
+          path: '/assistant',
+          name: 'assistant',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const AssistantPage(),
+            transitionsBuilder: _fadeTransition,
+          ),
+        ),
+        GoRoute(
+          path: '/drink/:id',
           name: 'drinkDetail',
           pageBuilder: (context, state) {
             final id = state.pathParameters['id'] ?? '';
             return CustomTransitionPage(
               key: state.pageKey,
-              child: DesktopLayout(
-                child: DrinkDetailPage(drinkId: id),
-              ),
+              child: DrinkDetailPage(drinkId: id),
               transitionsBuilder: _fadeTransition,
             );
           },
         ),
         GoRoute(
-          path: 'category/:name',
+          path: '/category/:name',
           name: 'category',
           pageBuilder: (context, state) {
             final categoryName = state.pathParameters['name'] ?? '';
             return CustomTransitionPage(
               key: state.pageKey,
-              child: DesktopLayout(
-                child: CategoryPage(categoryName: categoryName),
-              ),
+              child: CategoryPage(categoryName: categoryName),
               transitionsBuilder: _fadeTransition,
             );
           },
         ),
         GoRoute(
-          path: 'pro',
+          path: '/pro',
           name: 'pro',
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const DesktopLayout(child: ProFeaturesPage()),
+            child: const ProFeaturesPage(),
             transitionsBuilder: _fadeTransition,
           ),
         ),
         GoRoute(
-          path: 'settings',
+          path: '/settings',
           name: 'settings',
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const DesktopLayout(child: SettingsPage()),
+            child: const SettingsPage(),
             transitionsBuilder: _fadeTransition,
           ),
         ),
@@ -88,3 +87,4 @@ Widget _fadeTransition(
 ) {
   return FadeTransition(opacity: animation, child: child);
 }
+

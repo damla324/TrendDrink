@@ -1,97 +1,314 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:trenddrink/core/models/drink_model.dart';
+import 'package:trenddrink/core/theme/app_theme.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
-import 'package:trenddrink/presentation/widgets/drink_card.dart';
 
 class CategoryPage extends ConsumerWidget {
+  const CategoryPage({super.key, required this.categoryName});
   final String categoryName;
-
-  const CategoryPage({
-    Key? key,
-    required this.categoryName,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final drinkList = ref.watch(drinkNotifierProvider);
+    final state = ref.watch(drinkNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(categoryName),
-        elevation: 0,
-        backgroundColor: Theme.of(context).primaryColor,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+      backgroundColor: Colors.transparent,
+      body: state.when(
+        loading: () => const Center(
+            child: CircularProgressIndicator(color: AppTheme.gold)),
+        error: (e, _) => Center(
+          child: Text('Hata: $e',
+              style: TextStyle(color: AppTheme.cream.withAlpha(180))),
         ),
-      ),
-      body: drinkList.when(
         data: (drinks) {
-          // Filter drinks by category
-          final categoryDrinks = drinks
-              .where((drink) => drink.category == categoryName)
-              .toList();
-
-          if (categoryDrinks.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.local_drink_outlined, size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Bu kategoride içecek bulunamadı',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${categoryDrinks.length} içecek',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  itemCount: categoryDrinks.length,
-                  itemBuilder: (context, index) {
-                    final drink = categoryDrinks[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: DrinkCard(
-                        drink: drink,
-                        onTap: () => context.go('/drink/${drink.id}'),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
+          final filtered =
+              drinks.where((d) => d.category == categoryName).toList();
+          return _CategoryContent(
+            categoryName: categoryName,
+            drinks: filtered,
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error: $error'),
+      ),
+      // Mobile: floating back button
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButton: MediaQuery.sizeOf(context).width < 768
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: GestureDetector(
+                  onTap: () => context.go('/'),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E140A).withAlpha(220),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: AppTheme.gold.withAlpha(80), width: 1),
+                    ),
+                    child: Icon(Icons.arrow_back_rounded,
+                        color: AppTheme.cream, size: 18),
+                  ),
+                ),
+              ),
+            )
+          : null,
+    );
+  }
+}
+
+class _CategoryContent extends StatelessWidget {
+  const _CategoryContent({
+    required this.categoryName,
+    required this.drinks,
+  });
+  final String categoryName;
+  final List<DrinkModel> drinks;
+
+  // Representative image per category
+  String get _coverImage {
+    switch (categoryName) {
+      case 'Kahve':
+        return 'https://images.unsplash.com/photo-1542181961-9590d0c79dab?q=80&w=1200&auto=format&fit=crop';
+      case 'Matcha':
+        return 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?q=80&w=1200&auto=format&fit=crop';
+      case 'Frozen':
+        return 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=1200&auto=format&fit=crop';
+      case 'Kokteyl':
+        return 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=1200&auto=format&fit=crop';
+      case 'Smoothie':
+        return 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=1200&auto=format&fit=crop';
+      case 'Çay':
+        return 'https://images.unsplash.com/photo-1576092762740-410023a10526?q=80&w=1200&auto=format&fit=crop';
+      case 'Soda':
+        return 'https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=1200&auto=format&fit=crop';
+      case 'Fit':
+        return 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1200&auto=format&fit=crop';
+      default:
+        return 'https://images.unsplash.com/photo-1517712981146-06dc73adc36d?q=80&w=1200&auto=format&fit=crop';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        // ── Header banner ─────────────────────────────────────────────
+        SliverToBoxAdapter(
+          child: _CategoryHero(
+            name: categoryName,
+            coverImage: _coverImage,
+            drinkCount: drinks.length,
+          ),
         ),
+        // ── Drink grid ────────────────────────────────────────────────
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(
+            MediaQuery.sizeOf(context).width < 768 ? 16 : 40,
+            36,
+            MediaQuery.sizeOf(context).width < 768 ? 16 : 40,
+            48,
+          ),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => _DrinkCircleCard(
+                drink: drinks[index],
+                delayMs: index * 60,
+              ),
+              childCount: drinks.length,
+            ),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 160,
+              mainAxisExtent: 168,
+              mainAxisSpacing: 28,
+              crossAxisSpacing: 24,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Category Hero Banner ──────────────────────────────────────────────────
+class _CategoryHero extends StatelessWidget {
+  const _CategoryHero({
+    required this.name,
+    required this.coverImage,
+    required this.drinkCount,
+  });
+  final String name;
+  final String coverImage;
+  final int drinkCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 220,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Cover image
+          CachedNetworkImage(
+            imageUrl: coverImage,
+            fit: BoxFit.cover,
+            placeholder: (_, __) => Container(color: AppTheme.mocha),
+            errorWidget: (_, __, ___) => Container(color: AppTheme.mocha),
+          ),
+          // Gradient overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppTheme.espresso.withAlpha(100),
+                  AppTheme.espresso.withAlpha(220),
+                ],
+              ),
+            ),
+          ),
+          // Content
+          Positioned(
+            bottom: 28,
+            left: MediaQuery.sizeOf(context).width < 768 ? 20 : 48,
+            right: MediaQuery.sizeOf(context).width < 768 ? 20 : 48,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: MediaQuery.sizeOf(context).width < 768 ? 28 : 40,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.cream,
+                    letterSpacing: -0.3,
+                  ),
+                )
+                    .animate()
+                    .fadeIn(duration: 600.ms)
+                    .slideX(begin: -0.1, end: 0),
+                const SizedBox(height: 6),
+                Text(
+                  '$drinkCount içecek seçeneği sizi bekliyor',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    color: AppTheme.dimCream.withAlpha(200),
+                  ),
+                ).animate().fadeIn(duration: 600.ms, delay: 100.ms),
+              ],
+            ),
+          ),
+        ],
       ),
     );
+  }
+}
+
+// ── Drink Circle Card ────────────────────────────────────────────────────
+class _DrinkCircleCard extends StatefulWidget {
+  const _DrinkCircleCard({required this.drink, required this.delayMs});
+  final DrinkModel drink;
+  final int delayMs;
+
+  @override
+  State<_DrinkCircleCard> createState() => _DrinkCircleCardState();
+}
+
+class _DrinkCircleCardState extends State<_DrinkCircleCard> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () => context.go('/drink/${widget.drink.id}'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Circle
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 110,
+              height: 110,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: _hovered
+                    ? [
+                        BoxShadow(
+                          color: AppTheme.gold.withAlpha(80),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        )
+                      ]
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(70),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        )
+                      ],
+                border: Border.all(
+                  color: _hovered
+                      ? AppTheme.gold.withAlpha(200)
+                      : AppTheme.gold.withAlpha(40),
+                  width: _hovered ? 2.5 : 1.5,
+                ),
+              ),
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: widget.drink.imageUrl,
+                  fit: BoxFit.cover,
+                  width: 110,
+                  height: 110,
+                  placeholder: (_, __) => Container(color: AppTheme.mocha),
+                  errorWidget: (_, __, ___) => Container(color: AppTheme.mocha),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                widget.drink.title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: _hovered ? FontWeight.w600 : FontWeight.w400,
+                  color: _hovered ? AppTheme.cream : AppTheme.dimCream,
+                  height: 1.3,
+                ),
+              ),
+            ),
+            if (_hovered)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  widget.drink.temperature,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 10,
+                    color: AppTheme.gold.withAlpha(200),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    )
+        .animate()
+        .fadeIn(duration: 450.ms, delay: Duration(milliseconds: widget.delayMs))
+        .scale(begin: const Offset(0.88, 0.88), end: const Offset(1, 1));
   }
 }
