@@ -69,9 +69,9 @@ class HomePageV2 extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.75,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 0.9,
                   ),
                   itemCount: categoryData.length,
                   itemBuilder: (context, index) {
@@ -89,8 +89,8 @@ class HomePageV2 extends ConsumerWidget {
                         children: [
                           // Circular category button with emoji
                           Container(
-                            width: 70,
-                            height: 70,
+                            width: 110,
+                            height: 110,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: (cat['color'] as Color).withOpacity(0.15),

@@ -531,5 +531,219 @@ class DrinkLocalSource {
         colors: [Color(0xFF4B0082), Color(0xFF6A5ACD)],
       ),
     ),
+    // Kokteyl Kategorisine Yeni İçecekler
+    DrinkModel(
+      id: 'mojito-cocktail',
+      title: 'Mojito',
+      category: 'Kokteyl',
+      description: 'Klasik nane, lime ve romlu ferah kokteyl.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Nane yaprakları (10-12)\n2. Lime (1/2)\n3. Şeker (2 çay kaşığı)\n4. Rom (45 ml)\n5. Soda suyu (100 ml)\n6. Buz (1 fincan)\n\nYapılış:\n1) Bardağa nane yapraklarını koy\n2) Lime parçalarını ekle\n3) Şeker ile hafif ez\n4) Rom dökerek karıştır\n5) Buzla doldurup soda suyu ekle\n6) Nane dalı ve lime dilimi ile servis et',
+      ingredients: ['nane', 'lime', 'rom', 'şeker', 'soda', 'buz'],
+      imageUrl: 'https://images.unsplash.com/photo-1559181286-d3fee14d55b7?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF228B22), Color(0xFF90EE90)],
+      ),
+    ),
+    DrinkModel(
+      id: 'margarita',
+      title: 'Margarita',
+      category: 'Kokteyl',
+      description: 'Tequila, lime ve turuncu likörün klasik kombinasyonu.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Tequila (45 ml)\n2. Triple sec (20 ml)\n3. Lime suyu (25 ml)\n4. Şeker şurubu (15 ml)\n5. Tuz (kenarı için)\n6. Buz\n\nYapılış:\n1) Shakera tequila, triple sec, lime suyu ve şeker şurubunu ekle\n2) Buz ekle ve kuvvetli şakela\n3) Tuzla kaplanmış margarita bardağına dök\n4) Lime dilimi ile servis et',
+      ingredients: ['tequila', 'triple sec', 'lime', 'şeker', 'tuz'],
+      imageUrl: 'https://images.unsplash.com/photo-1556742212-5b321f3c261d?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF228B22), Color(0xFFFFA500)],
+      ),
+    ),
+    DrinkModel(
+      id: 'cosmopolitan',
+      title: 'Cosmopolitan',
+      category: 'Kokteyl',
+      description: 'Zarif pembe kokteyl, cranberry ve vodka ile.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Vodka (45 ml)\n2. Triple sec (20 ml)\n3. Lime suyu (15 ml)\n4. Cranberry suyu (30 ml)\n5. Buz\n6. Portakal kabuğu (susuz)\n\nYapılış:\n1) Shakera tüm malzemeleri buz ile karıştır\n2) Martini bardağına süz\n3) Portakal kabuğu twist ile servis et',
+      ingredients: ['vodka', 'triple sec', 'lime', 'cranberry', 'portakal'],
+      imageUrl: 'https://images.unsplash.com/photo-1514432324607-2df86e7f718d?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFFE91E63), Color(0xFFFFC0CB)],
+      ),
+    ),
+    DrinkModel(
+      id: 'long-island-iced-tea',
+      title: 'Long Island Iced Tea',
+      category: 'Kokteyl',
+      description: 'Güçlü ve karışık, seven likörün efsanevi maceraları.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Beyaz rom (15 ml)\n2. Vodka (15 ml)\n3. Gin (15 ml)\n4. Tequila (15 ml)\n5. Triple sec (15 ml)\n6. Lime suyu (25 ml)\n7. Şeker şurubu (25 ml)\n8. Kola (30 ml)\n9. Buz\n\nYapılış:\n1) Shakera tüm likörleri, lime suyunu ve şeker şurubunu buz ile karıştır\n2) Buz dolu bardağa dök\n3) Üzerine kola ve daha buz ekle\n4) Lime dilimi ile servis et',
+      ingredients: ['rom', 'vodka', 'gin', 'tequila', 'triple sec', 'lime', 'kola'],
+      imageUrl: 'https://images.unsplash.com/photo-1536042904634-2a19c5e36df9?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF8B4513), Color(0xFF000000)],
+      ),
+    ),
+    // Çay Kategorisine Yeni İçecekler
+    DrinkModel(
+      id: 'chai-latte',
+      title: 'Chai Latte',
+      category: 'Çay',
+      description: 'Hindistan çayı baharat karışımı ile sıcak latte.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Siyah çay (1 poşet)\n2. Chai baharat karışımı (tarçın, karanfil, 1 çay kaşığı)\n3. Sıcak su (250 ml)\n4. Süt (100 ml)\n5. Bal (1 yemek kaşığı)\n\nYapılış:\n1) Çayı baharatla sıcak suyla demlemeye bırak\n2) 5 dakika sonra süt ekle\n3) Bala ekle ve karıştır\n4) Sıcak servis et',
+      ingredients: ['çay', 'tarçın', 'karanfil', 'ingeber', 'bal', 'süt'],
+      imageUrl: 'https://images.unsplash.com/photo-1598318906914-b3efc1dfe9eb?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF8B4513), Color(0xFFA0826D)],
+      ),
+    ),
+    DrinkModel(
+      id: 'teh-tarik',
+      title: 'Teh Tarik',
+      category: 'Çay',
+      description: 'Çekilerek hazırlanan, köpüklü Malezya çayı.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Siyah çay (100 ml)\n2. Yoğun kondense süt (2 yemek kaşığı)\n\nYapılış:\n1) Çayı hazırlayın\n2) İki fincan arasında ileri geri dökerek köpürtün\n3) Bardağa dök ve hemen servis et',
+      ingredients: ['çay', 'kondense süt'],
+      imageUrl: 'https://images.unsplash.com/photo-1605352573261-f2d2f23ae65d?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF8B4513), Color(0xFFFFC0CB)],
+      ),
+    ),
+    DrinkModel(
+      id: 'milk-bubble-tea',
+      title: 'Bubble Tea (Milk)',
+      category: 'Çay',
+      description: 'Çewe ve nişasta toplarıyla eğlenceli Tajvan çayı.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Siyah çay (200 ml)\n2. Tapioka topları (3 yemek kaşığı)\n3. Şeker şurubu (2 yemek kaşığı)\n4. Süt (50 ml)\n5. Buz (1 fincan)\n\nYapılış:\n1) Tapioka toplarını 15 dakika kaynatıp soğut\n2) Bardağın altına tapioka toplarını koy\n3) Buz dolu bardağa buz ekle\n4) Çay ve sütü ekleyerek servis et',
+      ingredients: ['çay', 'tapioka topları', 'şeker', 'süt', 'buz'],
+      imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd64b73?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF8B4513), Color(0xFFFFC0CB)],
+      ),
+    ),
+    // Frozen Kategorisine Yeni İçecekler
+    DrinkModel(
+      id: 'watermelon-slushi',
+      title: 'Watermelon Slushi',
+      category: 'Frozen',
+      description: 'Donmuş karpuz, şeker ve buz ile serinletici slushy.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Karpuz (300 g)\n2. Şeker (2 yemek kaşığı)\n3. Limon suyu (1 yemek kaşıği)\n4. Buz (1 fincan)\n\nYapılış:\n1) Karpuzu blenderda koy\n2) Şeker ve limon suyu ekle\n3) Buzla birlikte pürüzsüz kıvama kadar karıştır\n4) Yoğun bir paste oluşsun\n5) Bardağa dök ve kalın pipet ile servis et',
+      ingredients: ['karpuz', 'şeker', 'limon', 'buz'],
+      imageUrl: 'https://images.unsplash.com/photo-1569003222316-4da3f63a506d?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFFE91E63), Color(0xFF90EE90)],
+      ),
+    ),
+    DrinkModel(
+      id: 'strawberry-ice-granita',
+      title: 'Strawberry Ice Granita',
+      category: 'Frozen',
+      description: 'Çilek ve buz ile İtalyan tarzı granita.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Çilek (250 g)\n2. Şeker (3 yemek kaşığı)\n3. Su (100 ml)\n4. Limon suyu (1 yemek kaşığı)\n\nYapılış:\n1) Çilekleri ezerek mırra ol\n2) Şeker ve su ile karıştır\n3) Buzluk tepsiye dök\n4) Her 30 dakikada karıştırarak dondurmaya bırak\n5) Kristalize olmuş granita bardağa dök',
+      ingredients: ['çilek', 'şeker', 'su', 'limon'],
+      imageUrl: 'https://images.unsplash.com/photo-1541810298000-33eaf8f70f70?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFFE91E63), Color(0xFFFFA500)],
+      ),
+    ),
+    DrinkModel(
+      id: 'mint-lime-slushi',
+      title: 'Mint Lime Slushi',
+      category: 'Frozen',
+      description: 'Nane ve lime ile donmuş serinletici içecek.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Taze nane (20 yaprak)\n2. Lime suyu (50 ml)\n3. Şeker şurubu (30 ml)\n4. Su (100 ml)\n5. Buz (1,5 fincan)\n\nYapılış:\n1) Nane yapraklarını blenderda ezin\n2) Lime suyu, şeker şurubu ve su ekle\n3) Buzla birlikte slushi kıvamına kadar karıştır\n4) Kalın pasta olmuşsa bardağa dök\n5) Nane dalı ile servis et',
+      ingredients: ['nane', 'lime', 'şeker', 'su', 'buz'],
+      imageUrl: 'https://images.unsplash.com/photo-1585897913619-99739e88e19f?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF228B22), Color(0xFF90EE90)],
+      ),
+    ),
+    // Soda Kategorisine Yeni İçecekler
+    DrinkModel(
+      id: 'pomegranate-ginger-soda',
+      title: 'Pomegranate Ginger Soda',
+      category: 'Soda',
+      description: 'Nar ve zencefil ile baharatlı, serinletici soda.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Nar suyu (100 ml)\n2. Zencefil (1 cm parça, rendelenmiş)\n3. Limon suyu (2 çay kaşığı)\n4. Maden suyu (150 ml)\n5. Buz (1 fincan)\n6. Nar taneleri (süsleme)\n\nYapılış:\n1) Nar suyunu zencefil ve limon suyu ile karıştır\n2) Buz dolu bardağa dök\n3) Maden suyu ekle\n4) Hafif karıştır\n5) Nar taneleriyle servis et',
+      ingredients: ['nar suyu', 'zencefil', 'limon', 'maden suyu'],
+      imageUrl: 'https://images.unsplash.com/photo-1544568100-847a948585b0?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFFB31217), Color(0xFFFF6B6B)],
+      ),
+    ),
+    DrinkModel(
+      id: 'passion-fruit-soda',
+      title: 'Passion Fruit Soda',
+      category: 'Soda',
+      description: 'Tutum meyvesi ve maden suyu ile tropik soda.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Tutun meyvesi pulpası (3 yemek kaşığı)\n2. Şeker şurubu (2 yemek kaşıği)\n3. Limon suyu (1 yemek kaşığı)\n4. Maden suyu (150 ml)\n5. Buz (1 fincan)\n\nYapılış:\n1) Bardağa passion fruit pulpasını koy\n2) Şeker şurubu ve limon suyu ekle\n3) Buz dolu bardağa dök\n4) Maden suyu ekle\n5) Hafif karıştırarak servis et',
+      ingredients: ['tutum meyvesi', 'şeker', 'limon', 'maden suyu'],
+      imageUrl: 'https://images.unsplash.com/photo-1556231669979-95d6773ae296?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFFFFA500), Color(0xFFFFD700)],
+      ),
+    ),
+    // Kahve Kategorisine Yeni İçecekler
+    DrinkModel(
+      id: 'irish-coffee',
+      title: 'Irish Coffee',
+      category: 'Kahve',
+      description: 'Sıcak kahve, viski ve krem şantiyle İrlandalı sürpriz.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Sıcak espresso (45 ml)\n2. İrlanda viskisi (45 ml)\n3. Şeker (1 yemek kaşığı)\n4. Krem şanti (30 g)\n\nYapılış:\n1) Bardağa espresso ve viskiyi ekle\n2) Şeker ekle ve karıştır\n3) Üzerine krem şanti örtücü tabaka olarak ekle\n4) Sıcak servis et',
+      ingredients: ['espresso', 'viski', 'şeker', 'krem'],
+      imageUrl: 'https://images.unsplash.com/photo-1541182286-92d11f0efbf7?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF3E2723), Color(0xFF8D6E63)],
+      ),
+    ),
+    DrinkModel(
+      id: 'cortado',
+      title: 'Cortado',
+      category: 'Kahve',
+      description: 'Espresso ve süt eşit oranda, dengeli kahve deneyimi.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Espresso (30 ml)\n2. Steamed süt (30 ml)\n3. Süt köpüğü (5 ml)\n\nYapılış:\n1) Bardağa espresso ekle\n2) Eşit miktarda steamed sütü ekle\n3) Üzerine hafif köpük katı ekle\n4) Sıcak servis et',
+      ingredients: ['espresso', 'süt'],
+      imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF8B6F47), Color(0xFFD2B48C)],
+      ),
+    ),
+    // Smoothie Kategorisine Yeni İçecekler
+    DrinkModel(
+      id: 'kiwi-pineapple-smoothie',
+      title: 'Kiwi Pineapple Smoothie',
+      category: 'Smoothie',
+      description: 'Kivi ve ananas ile tropikal taze smoothie.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Kivi (2 adet)\n2. Ananas (150 g)\n3. Yoğurt (150 g)\n4. Hindistancevizi sütü (100 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış:\n1) Kivi ve ananaları blenderda koy\n2) Yoğurt ve hindistancevizi sütü ekle\n3) Bal ekle ve pürüzsüz olana kadar karıştır\n4) Ananas dilimi ile servis et',
+      ingredients: ['kivi', 'ananas', 'yoğurt', 'hindistancevizi sütü', 'bal'],
+      imageUrl: 'https://images.unsplash.com/photo-1611076857029-d8fb0018d693?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFFFFA500), Color(0xFF90EE90)],
+      ),
+    ),
+    DrinkModel(
+      id: 'avocado-chocolate-smoothie',
+      title: 'Avocado Chocolate Smoothie',
+      category: 'Smoothie',
+      description: 'Avokado ve çikolata ile kremsi, besleyici smoothie.',
+      preparation:
+          'Malzemelerin Sırası:\n1. Avokado (1/2)\n2. Kakao tozu (1 yemek kaşığı)\n3. Çikolata protein tozu (1 ölçek)\n4. Almond sütü (200 ml)\n5. Bal (1 yemek kaşığı)\n\nYapılış:\n1) Avokadoyu blenderda koy\n2) Kakao tozu ve protein tozu ekle\n3) Almond sütü ve bal ekle\n4) Pürüzsüz olana kadar çe\n5) Çikolata serpiştirerek servis et',
+      ingredients: ['avokado', 'kakao tozu', 'protein tozu', 'almond sütü', 'bal'],
+      imageUrl: 'https://images.unsplash.com/photo-1591957840635-bfd9d25b90c7?q=80&w=1974&auto=format&fit=crop',
+      gradient: const LinearGradient(
+        colors: [Color(0xFF8B4513), Color(0xFF6B4C2F)],
+      ),
+    ),
   ];
 }
