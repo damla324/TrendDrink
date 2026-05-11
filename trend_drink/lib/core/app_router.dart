@@ -4,6 +4,9 @@ import 'package:trenddrink/presentation/pages/assistant_page.dart';
 import 'package:trenddrink/presentation/pages/category_page.dart';
 import 'package:trenddrink/presentation/pages/drink_detail_page.dart';
 import 'package:trenddrink/presentation/pages/home_page_v2.dart';
+import 'package:trenddrink/presentation/pages/pro_features_page.dart';
+import 'package:trenddrink/presentation/pages/settings_page.dart';
+import 'package:trenddrink/presentation/widgets/desktop_layout.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -13,7 +16,7 @@ final GoRouter appRouter = GoRouter(
       name: 'home',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const HomePageV2(),
+        child: const DesktopLayout(child: HomePageV2()),
         transitionsBuilder: _fadeTransition,
       ),
       routes: [
@@ -22,7 +25,7 @@ final GoRouter appRouter = GoRouter(
           name: 'assistant',
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const AssistantPage(),
+            child: const DesktopLayout(child: AssistantPage()),
             transitionsBuilder: _fadeTransition,
           ),
         ),
@@ -33,7 +36,9 @@ final GoRouter appRouter = GoRouter(
             final id = state.pathParameters['id'] ?? '';
             return CustomTransitionPage(
               key: state.pageKey,
-              child: DrinkDetailPage(drinkId: id),
+              child: DesktopLayout(
+                child: DrinkDetailPage(drinkId: id),
+              ),
               transitionsBuilder: _fadeTransition,
             );
           },
@@ -45,10 +50,30 @@ final GoRouter appRouter = GoRouter(
             final categoryName = state.pathParameters['name'] ?? '';
             return CustomTransitionPage(
               key: state.pageKey,
-              child: CategoryPage(categoryName: categoryName),
+              child: DesktopLayout(
+                child: CategoryPage(categoryName: categoryName),
+              ),
               transitionsBuilder: _fadeTransition,
             );
           },
+        ),
+        GoRoute(
+          path: 'pro',
+          name: 'pro',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const DesktopLayout(child: ProFeaturesPage()),
+            transitionsBuilder: _fadeTransition,
+          ),
+        ),
+        GoRoute(
+          path: 'settings',
+          name: 'settings',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const DesktopLayout(child: SettingsPage()),
+            transitionsBuilder: _fadeTransition,
+          ),
         ),
       ],
     ),

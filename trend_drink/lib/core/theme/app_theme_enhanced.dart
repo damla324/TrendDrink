@@ -1,13 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+enum ThemeVariant {
+  // Free themes
+  sunrise,
+  noir,
+  forest,
+  // Pro premium themes
+  oceanWave,
+  purpleGradient,
+  goldLux,
+  darkCrimson,
+  matrixGreen,
+}
+
 class AppTheme {
   AppTheme._();
 
-  static const List<String> variantNames = ['Sunrise', 'Noir', 'Forest'];
+  static const Map<ThemeVariant, String> variantNames = {
+    ThemeVariant.sunrise: 'Sunrise',
+    ThemeVariant.noir: 'Noir',
+    ThemeVariant.forest: 'Forest',
+    ThemeVariant.oceanWave: 'Ocean Wave',
+    ThemeVariant.purpleGradient: 'Purple Gradient',
+    ThemeVariant.goldLux: 'Gold Lux',
+    ThemeVariant.darkCrimson: 'Dark Crimson',
+    ThemeVariant.matrixGreen: 'Matrix Green',
+  };
 
-  static ThemeData themeData(int index, Brightness brightness) {
-    final variant = index.clamp(0, variantNames.length - 1);
+  static const List<ThemeVariant> freeVariants = [
+    ThemeVariant.sunrise,
+    ThemeVariant.noir,
+    ThemeVariant.forest,
+  ];
+
+  static const List<ThemeVariant> proVariants = [
+    ThemeVariant.oceanWave,
+    ThemeVariant.purpleGradient,
+    ThemeVariant.goldLux,
+    ThemeVariant.darkCrimson,
+    ThemeVariant.matrixGreen,
+  ];
+
+  static ThemeData themeData(ThemeVariant variant, Brightness brightness) {
     final colorSeed = _seedColorForVariant(variant);
     final scheme = ColorScheme.fromSeed(
       seedColor: colorSeed,
@@ -34,7 +69,9 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
         ),
       ),
       bottomAppBarTheme: BottomAppBarThemeData(
@@ -60,14 +97,32 @@ class AppTheme {
     );
   }
 
-  static Color _seedColorForVariant(int variantIndex) {
-    switch (variantIndex) {
-      case 1:
-        return const Color(0xFF120136);
-      case 2:
-        return const Color(0xFF0B3B2E);
-      default:
+  static Color _seedColorForVariant(ThemeVariant variant) {
+    switch (variant) {
+      case ThemeVariant.sunrise:
         return const Color(0xFF8E44AD);
+      case ThemeVariant.noir:
+        return const Color(0xFF120136);
+      case ThemeVariant.forest:
+        return const Color(0xFF0B3B2E);
+      case ThemeVariant.oceanWave:
+        return const Color(0xFF0099FF);
+      case ThemeVariant.purpleGradient:
+        return const Color(0xFF9D4EDD);
+      case ThemeVariant.goldLux:
+        return const Color(0xFFFFD700);
+      case ThemeVariant.darkCrimson:
+        return const Color(0xFFDC143C);
+      case ThemeVariant.matrixGreen:
+        return const Color(0xFF00FF41);
     }
+  }
+
+  static bool isProVariant(ThemeVariant variant) {
+    return proVariants.contains(variant);
+  }
+
+  static String getVariantName(ThemeVariant variant) {
+    return variantNames[variant] ?? 'Unknown';
   }
 }
