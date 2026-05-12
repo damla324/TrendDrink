@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trenddrink/core/theme/app_theme.dart';
+import 'package:trenddrink/presentation/notifiers/membership_notifier.dart';
 
 // ── Sidebar Category Model ─────────────────────────────────────────────────
 class _SidebarSection {
@@ -28,14 +30,14 @@ class _SidebarChild {
 }
 
 // ── Sidebar Widget ─────────────────────────────────────────────────────────
-class LeftSidebar extends StatefulWidget {
+class LeftSidebar extends ConsumerStatefulWidget {
   const LeftSidebar({super.key});
 
   @override
-  State<LeftSidebar> createState() => _LeftSidebarState();
+  ConsumerState<LeftSidebar> createState() => _LeftSidebarState();
 }
 
-class _LeftSidebarState extends State<LeftSidebar>
+class _LeftSidebarState extends ConsumerState<LeftSidebar>
     with SingleTickerProviderStateMixin {
   late AnimationController _ledController;
   int? _expandedIndex;
@@ -383,15 +385,157 @@ class _LeftSidebarState extends State<LeftSidebar>
   }
 
   Widget _buildBottomInfo() {
+    final membership = ref.watch(membershipProvider);
+    
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-      child: Text(
-        'v1.0 · Coffee Edition',
-        style: GoogleFonts.plusJakartaSans(
-          fontSize: 10,
-          color: AppTheme.dimCream.withAlpha(80),
-          letterSpacing: 0.8,
-        ),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
+      child: Column(
+        children: [
+          // Pro Status Card
+          Container(
+            decoration: BoxDecoration(
+              gradient: membership.isPro
+                  ? LinearGradient(
+                      colors: [
+                        AppTheme.gold.withAlpha(180),
+                        AppTheme.gold.withAlpha(120),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : LinearGradient(
+                      colors: [
+                        AppTheme.mutedBrown.withAlpha(120),
+                        AppTheme.mutedBrown.withAlpha(80),
+                      ],
+                    ),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: membership.isPro
+                    ? AppTheme.gold.withAlpha(100)
+                    : AppTheme.gold.withAlpha(40),
+              ),
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            membership.isPro ? Icons.star_rounded : Icons.star_outline,
+                            size: 14,
+                            color: membership.isPro ? Colors.white : AppTheme.caramel,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            membership.isPro ? 'PRO' : 'FREE',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              color: membership.isPro ? Colors.white : AppTheme.caramel,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        membership.isPro ? 'Unlimited AI' : 'Limited AI',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 8,
+                          color: membership.isPro
+                              ? Colors.white70
+                              : AppTheme.caramel.withAlpha(180),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!membership.isPro)
+                  GestureDetector(
+                    onTap: () => context.go('/pro'),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.gold.withAlpha(200),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'Upgrade',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.espresso,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Icon(
+                    Icons.verified_rounded,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          
+          // Settings & Help
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => context.go('/settings'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppTheme.mutedBrown.withAlpha(80),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.settings_rounded,
+                          size: 12,
+                          color: AppTheme.caramel,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Settings',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.caramel,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 12),
+          Text(
+            'v1.0 · Premium Edition',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 9,
+              color: AppTheme.dimCream.withAlpha(80),
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
       ),
     );
   }

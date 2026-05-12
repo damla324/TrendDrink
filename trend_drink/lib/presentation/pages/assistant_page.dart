@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
 import 'package:trenddrink/core/theme/app_theme.dart';
 import 'package:trenddrink/presentation/notifiers/assistant_notifier.dart';
+import 'package:trenddrink/presentation/notifiers/membership_notifier.dart';
 
 class AssistantPage extends ConsumerStatefulWidget {
   const AssistantPage({super.key});
@@ -50,15 +51,109 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
   Future<void> _send(String text) async {
     final msg = text.trim();
     if (msg.isEmpty || _sending) return;
+    final membership = ref.read(membershipProvider);
+    
+    // Check if user can send AI requests
+    if (!membership.isPro && membership.aiRequestsRemaining <= 0) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Daily AI requests limit reached. Upgrade to Pro for unlimited access!',
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            action: SnackBarAction(
+              label: 'Upgrade',
+              onPressed: () => context.go('/pro'),
+            ),
+          ),
+        );
+      }
+      return;
+    }
+    
     _controller.clear();
     setState(() => _sending = true);
     await ref.read(assistantProvider.notifier).sendMessage(msg);
+    
+    // Consume AI request if not pro
+    if (!membership.isPro) {
+      ref.read(membershipProvider.notifier).consumeAIRequest();
+    }
+    
     setState(() => _sending = false);
     _scrollToBottom();
   }
 
   @override
   Widget build(BuildContext context) {
+    final membership = ref.watch(membershipProvider);
+    final colors = Theme.of(context).colorScheme;
+    
+    // Gate AI feature for non-pro members with no requests
+    if (!membership.isPro && membership.aiRequestsRemaining <= 0) {
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(40),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.lock_outline,
+                    size: 80,
+                    color: colors.primary,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'AI Assistant Locked',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'You have used all your daily AI requests.',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Upgrade to Pro for unlimited AI assistance!',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
+                  FilledButton.icon(
+                    onPressed: () => context.go('/pro'),
+                    icon: const Icon(Icons.star),
+                    label: const Text('Upgrade to Pro Now'),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Get unlimited AI requests, premium themes, and more!',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: colors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Show remaining requests banner for free users
     final messages = ref.watch(assistantProvider);
     _scrollToBottom();
 
@@ -66,6 +161,30 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
       backgroundColor: Colors.transparent,
       body: Column(
         children: [
+          if (!membership.isPro)
+            Container(
+              color: colors.primaryContainer,
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  Icon(Icons.info, color: colors.primary, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'AI Requests: ${membership.aiRequestsRemaining}/${membership.maxDailyAIRequests} remaining',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go('/pro'),
+                    child: Text(
+                      'Upgrade',
+                      style: TextStyle(color: colors.primary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           _buildHeader(),
           Expanded(
             child: messages.isEmpty
