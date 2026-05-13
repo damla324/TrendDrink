@@ -54,8 +54,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final titleMatch = _findByTitle(drinks, lower);
     if (titleMatch != null) {
       return _msg(
-        '**${titleMatch.title}** için detaylı tarifi görmek ister misin? '
-        'Tarih, faydaları ve yapılışı seni bekliyor. 👇',
+        'Oh, **${titleMatch.title}** mi istiyorsun! 😋 Çok güzel bir seçim! '
+        'Detayını görmek için bağlantıya tıkla, tarif ve püf noktaları seni bekliyor! 👇',
         drinkId: titleMatch.id,
       );
     }
@@ -64,22 +64,25 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final tokens = _tokenize(lower);
     final byIngredient = _findByIngredients(drinks, tokens);
     if (byIngredient.isNotEmpty) {
-      final names = byIngredient.take(3).map((d) => d.title).join(', ');
-      final ids = byIngredient.take(1).map((d) => d.id).firstOrNull;
+      final suggestions = byIngredient.take(3).toList();
+      final names = suggestions.map((d) => d.title).join(', ');
+      final mainId = suggestions.first.id;
       return _msg(
-        'Elindeki malzemelerle yapabileceğin içecekler: **$names**. '
-        'Birini tıklayarak detayına gidebilirsin.',
-        drinkId: ids,
+        'Elindeki malzemelerle bu leziz içecekleri yapabilirsin! ✨\n\n**$names**\n\n'
+        'Detaylarını görmek için herhangi birine tıkla, hepsi eşi benzeri yok! 🍹',
+        drinkId: mainId,
       );
     }
 
     // ── 3. Category keyword ─────────────────────────────────────────────
     final categoryMatch = _findByCategory(drinks, lower);
     if (categoryMatch.isNotEmpty) {
-      final names = categoryMatch.take(3).map((d) => d.title).join(', ');
+      final suggestions = categoryMatch.take(3).toList();
+      final names = suggestions.map((d) => d.title).join(', ');
       return _msg(
-        'Bu kategoriden önerilerim: **$names**. Hangisi ilgini çekiyor?',
-        drinkId: categoryMatch.first.id,
+        'Bu kategoride bende harika seçenekler var! 🎯\n\n**$names**\n\n'
+        'Hangisin hoşuna gitti? Tıkla, detayını keşfet! 😊',
+        drinkId: suggestions.first.id,
       );
     }
 
@@ -93,9 +96,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         lower.contains('ılık')) {
       final hot = drinks.where((d) => d.temperature == 'Sıcak').toList();
       if (hot.isNotEmpty) {
-        final names = hot.take(3).map((d) => d.title).join(', ');
-        return _msg('Sıcak içecek önerilerim: **$names**.',
-            drinkId: hot.first.id);
+        final suggestions = hot.take(3).toList();
+        final names = suggestions.map((d) => d.title).join(', ');
+        return _msg(
+          'Sıcak bir şey mi istiyorsun? Buraya bak! ☕\n\n**$names**\n\n'
+          'Hangisinin tadını merak ediyorsun?',
+          drinkId: suggestions.first.id,
+        );
       }
     }
     if (lower.contains('soğuk') ||
@@ -103,17 +110,23 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         lower.contains('buzlu')) {
       final cold = drinks.where((d) => d.temperature == 'Soğuk').toList();
       if (cold.isNotEmpty) {
-        final names = cold.take(3).map((d) => d.title).join(', ');
-        return _msg('Soğuk içecek önerilerim: **$names**.',
-            drinkId: cold.first.id);
+        final suggestions = cold.take(3).toList();
+        final names = suggestions.map((d) => d.title).join(', ');
+        return _msg(
+          'Soğuk bir serinlik mi lazım? Tam zamanında! 🧊\n\n**$names**\n\n'
+          'Biri hoşuna gitti mi? Detayını görmek için tıkla!',
+          drinkId: suggestions.first.id,
+        );
       }
     }
 
     // ── 6. Fallback ─────────────────────────────────────────────────────
-    final topNames = drinks.take(3).map((d) => d.title).join(', ');
+    final topDrinks = drinks.take(3).toList();
+    final topNames = topDrinks.map((d) => d.title).join(', ');
     return _msg(
-      'Tam olarak anlayamadım 😅 Ama şu an popüler olanlar: **$topNames**. '
-      'Bir malzeme ya da kategori adı yazarsan daha iyi yönlendiririm!',
+      'Hmm, tam anlayamadım ama yapacağım! 😄 Şimdi çok popüler olan içecekler:\n\n**$topNames**\n\n'
+      'Eğer bir malzeme, kategori (kahve, çay, smoothie vs) ya da ruh halin hakkında yazarsan, '
+      'sana daha doğru şeyler önerebilirim! 💪',
     );
   }
 
@@ -159,77 +172,110 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
             drinks.where((d) => !d.allergens.contains(allergen)).toList();
 
         if (compatible.isNotEmpty) {
-          final names = compatible.take(3).map((d) => d.title).join(', ');
-          final drinkId = compatible.first.id;
+          final suggestions = compatible.take(3).toList();
+          final names = suggestions.map((d) => d.title).join(', ');
+          final drinkId = suggestions.first.id;
 
           String message;
+          String emoji;
+          
           switch (allergen) {
             case 'kafein':
+              emoji = '✨';
               message =
-                  '✨ Kafeinsiz seçenekler seni bekliyor! **$names**. Hangisini denemek ister misin?';
+                  '$emoji Kafeinsiz mi istiyorsun? Rahatlığını düşündüğün için çok hoşuma gitti! '
+                  'İşte tam seçeceğin şeyler:\n\n**$names**\n\n'
+                  'Birine tıkla, tadını çık! ☕🚫';
               break;
             case 'şeker':
+              emoji = '🍯';
               message =
-                  '🍯 Düşük şeker veya şekersiz içecekler: **$names**. Sağlıklı seçim! 💪';
+                  '$emoji Şeker kontrolü yapıyorsun, harika! 💪 Sana özel seçenekler:\n\n**$names**\n\n'
+                  'Sağlıklı tercih ettiğin için tebrik ederim! 🎉';
               break;
             case 'süt':
+              emoji = '🥛';
               message =
-                  '🥛 Sütü olmayan seçenekler: **$names**. Veya vegan alternatif bulabilirim!';
+                  '$emoji Sütü istemiyorsun, anladım! Benim burada harika vegan dostu içecekler var:\n\n**$names**\n\n'
+                  'Hepsi de leziz ve doyurucu! 😋';
               break;
             case 'vegan':
+              emoji = '🌱';
               message =
-                  '🌱 Tamamen vegan seçenekler: **$names**. Doğaya saygılı tercih! 🌍';
+                  '$emoji Veganlık çok gurur verici! 🌍 İşte tamamen vegan içecekler:\n\n**$names**\n\n'
+                  'Hepsi 100% animal-free, birine tıkla! 💚';
               break;
             case 'gluten':
+              emoji = '🌾';
               message =
-                  '🌾 Glutensiz içecekler: **$names**. Rahatça içebilirsin! ✅';
+                  '$emoji Glutenden uzak mı durmak istiyorsun? Tamam, anladım! ✅\n\n**$names**\n\n'
+                  'Hepsi güvenli, rahatça içebilirsin! 😊';
               break;
             case 'alerji':
+              emoji = '⚠️';
               message =
-                  '⚠️ Yaygın alerjenlerden uzak içecekler: **$names**. Güvenli tercih!';
+                  '$emoji Aman diye! Yaygın alerjenlerden uzak, güvenli seçenekler:\n\n**$names**\n\n'
+                  'Rahatlıkla deneyebilirsin! 💚';
               break;
             case 'çikolata':
+              emoji = '🍫';
               message =
-                  '🍫 Çikolatasız alternatifler: **$names**. Farklı bir deneyim için!';
+                  '$emoji Çikolatadan kaçıyorsun, tamam! Başka tatların da çok güzel olur:\n\n**$names**\n\n'
+                  'Hangisine kafa attın? 😄';
               break;
             case 'fındık':
+              emoji = '🥜';
               message =
-                  '🥜 Fındıksız seçenekler: **$names**. Diğer tatlar seni bekliyor!';
+                  '$emoji Fındıktan uzak mı durmak istiyorsun? Sorun değil! '
+                  'Başka muhteşem seçenekler:\n\n**$names**\n\n'
+                  'Hepsi başka şekilde leziz! 😊';
               break;
             default:
+              emoji = '✨';
               message =
-                  '✨ **$allergen** içermeyen seçenekler: **$names**. Hangisini tercih edersin?';
+                  '$emoji **$allergen** endişesi var mı? Benim burada güzel seçenekler var:\n\n**$names**\n\n'
+                  'Birine tıkla, detaylarını gör!';
           }
 
-          // ── Suggest alternatives from first drink ──────────────────────
-          if (compatible.first.alternatives.isNotEmpty) {
-            final firstDrink = compatible.first;
-            final alternativeTexts = firstDrink.alternatives.entries
-                .map((e) => '${e.key} → ${e.value}')
-                .join(', ');
+          // ── Enhanced alternatives display ────────────────────────────
+          if (suggestions.isNotEmpty && suggestions.first.alternatives.isNotEmpty) {
+            final firstDrink = suggestions.first;
+            final altList = firstDrink.alternatives.entries
+                .map((e) => '  • ${e.key} → ${e.value}')
+                .join('\n');
             message +=
-                '\n\nℹ️ **${firstDrink.title}** için alternatifler: $alternativeTexts';
+                '\n\n💡 **${firstDrink.title}** için alternatifler:\n$altList';
           }
 
           return _msg(message, drinkId: drinkId);
         } else {
           String noOptionMessage;
+          String emoji;
+          
           switch (allergen) {
             case 'kafein':
+              emoji = '😅';
               noOptionMessage =
-                  '😅 Üzgünüm, şu anda kafeinsiz seçenek sınırlı. Başka bir tercih yapmak ister misin?';
+                  '$emoji Üzgünüm, şu anda kafeinsiz seçenek çok sınırlı. '
+                  'Ama merak etme, yakında daha çok eklerim! Başka bir tercih yapmak ister misin? 🍹';
               break;
             case 'şeker':
+              emoji = '😅';
               noOptionMessage =
-                  '😅 Şekersiz seçenekler kısıtlı ama başka bir içecek önerebilirim!';
+                  '$emoji Şekersiz seçenekler kısıtlı ama merak etme, başka leziz şeyler önerebilirim! '
+                  'Başka bir kategori ister misin? ☕';
               break;
             case 'vegan':
+              emoji = '😅';
               noOptionMessage =
-                  '😅 Tamamen vegan seçenekler şu anda sınırlı. Başka bir kategori ister misin?';
+                  '$emoji Tamamen vegan seçenekler şu anda sınırlı ama geliştiriliyorum! '
+                  'Başka bir tercih yapmak ister misin? 🌱';
               break;
             default:
+              emoji = '😅';
               noOptionMessage =
-                  '😅 Maalesef, bu kriter için uygun içecek bulamadım. Başka bir tercih yapmak ister misin?';
+                  '$emoji Bu kriter için henüz uygun içecek bulamadım ama arayışımda devam! '
+                  'Başka bir tercih yapmak ister misin? 💪';
           }
           return _msg(noOptionMessage);
         }
@@ -305,34 +351,49 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           .toList();
       if (e.isNotEmpty) {
         return _msg(
-          'Enerji için kahve veya matcha kombinasyonu harika! '
-          'Dene: **${e.map((d) => d.title).join(", ")}**.',
+          '💪 Enerji lazım, biliyorum! Kahve veya matcha combo seni ayağa kaldırır!\n\n**${e.map((d) => d.title).join(", ")}**\n\n'
+          'Hangisi sana daha hoş gelir? Tıkla, yapılışını öğren! ⚡',
           drinkId: e.first.id,
         );
       }
     }
     if (lower.contains('diyet') ||
         lower.contains('fit') ||
-        lower.contains('saglik')) {
+        lower.contains('saglik') ||
+        lower.contains('sağlık')) {
       final f = drinks
           .where((d) => d.category == 'Fit' || d.category == 'Smoothie')
           .take(3)
           .toList();
       if (f.isNotEmpty) {
         return _msg(
-          'Sağlıklı seçenekler için: **${f.map((d) => d.title).join(", ")}**.',
+          '💪 Sağlıkla ilgileniyorsun, çok hoş! Benim burada harika seçenekler var:\n\n**${f.map((d) => d.title).join(", ")}**\n\n'
+          'Hangisi seni heyecanlandırdı? Birine tıkla! 🌱',
           drinkId: f.first.id,
         );
       }
     }
     if (lower.contains('parti') ||
         lower.contains('eglence') ||
-        lower.contains('aksam')) {
+        lower.contains('eğlence') ||
+        lower.contains('aksam') ||
+        lower.contains('akşam')) {
       final p = drinks.where((d) => d.category == 'Kokteyl').take(3).toList();
       if (p.isNotEmpty) {
         return _msg(
-          'Akşam partisi için: **${p.map((d) => d.title).join(", ")}**! 🎉',
+          '🎉 Eğlenceye mi kalkıyorsun? Mükemmel! İşte akşam favoritileri:\n\n**${p.map((d) => d.title).join(", ")}**\n\n'
+          'Hangisiyle başlamak ister misin? Tıkla, tarifi görmek için! 🍹',
           drinkId: p.first.id,
+        );
+      }
+    }
+    if (lower.contains('klasik') || lower.contains('favorim') || lower.contains('sevdiğim') || lower.contains('sevdigim')) {
+      final classics = drinks.take(4).toList();
+      if (classics.isNotEmpty) {
+        return _msg(
+          '😊 Klasik seçenekler mi istiyorsun? Çok iyi! İşte en populer içecekler:\n\n**${classics.map((d) => d.title).join(", ")}**\n\n'
+          'Bunlardan hangisi seni en çok etkiledi? 🌟',
+          drinkId: classics.first.id,
         );
       }
     }
