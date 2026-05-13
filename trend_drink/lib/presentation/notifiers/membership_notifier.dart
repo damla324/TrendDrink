@@ -7,34 +7,34 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async 
   return SharedPreferences.getInstance();
 });
 
-final membershipPreferencesProvider = FutureProvider<MembershipPreferences?>((ref) async {
-  try {
-    final prefs = await ref.watch(sharedPreferencesProvider.future);
-    return MembershipPreferences(prefs);
-  } catch (_) {
-    return null;
-  }
+final membershipPreferencesProvider = FutureProvider<MembershipPreferences>((ref) async {
+  final prefs = await ref.watch(sharedPreferencesProvider.future);
+  return MembershipPreferences(prefs);
 });
 
-class MembershipController extends StateNotifier<MembershipModel> {
-  final MembershipPreferences? _prefs;
+final membershipProvider = NotifierProvider<MembershipNotifier, MembershipModel>(
+  MembershipNotifier.new,
+);
 
-  MembershipController(this._prefs) : super(MembershipModel.free()) {
-    _initialize();
-  }
-
-  void _initialize() {
-    final saved = _prefs?.getMembership();
-    state = saved ?? MembershipModel.free();
+class MembershipNotifier extends Notifier<MembershipModel> {
+  @override
+  MembershipModel build() {
+    final prefsAsync = ref.watch(membershipPreferencesProvider);
+    return prefsAsync.whenData((prefs) {
+      final saved = prefs.getMembership();
+      return saved ?? MembershipModel.free();
+    }).value ?? MembershipModel.free();
   }
 
   Future<void> upgradeToPro() async {
-    await _prefs?.upgradeToPro();
+    final prefs = await ref.read(membershipPreferencesProvider.future);
+    await prefs.upgradeToPro();
     state = MembershipModel.pro();
   }
 
   Future<void> resetToFree() async {
-    await _prefs?.resetToFree();
+    final prefs = await ref.read(membershipPreferencesProvider.future);
+    await prefs.resetToFree();
     state = MembershipModel.free();
   }
 
@@ -43,7 +43,9 @@ class MembershipController extends StateNotifier<MembershipModel> {
       final newState = state.copyWith(
         aiRequestsRemaining: state.aiRequestsRemaining - 1,
       );
-      _prefs?.saveMembership(newState);
+      ref.read(membershipPreferencesProvider.future).then((prefs) {
+        prefs.saveMembership(newState);
+      });
       state = newState;
     }
   }
@@ -53,18 +55,10 @@ class MembershipController extends StateNotifier<MembershipModel> {
       final newState = state.copyWith(
         aiRequestsRemaining: state.maxDailyAIRequests,
       );
-      _prefs?.saveMembership(newState);
+      ref.read(membershipPreferencesProvider.future).then((prefs) {
+        prefs.saveMembership(newState);
+      });
       state = newState;
     }
   }
 }
-
-final membershipProvider = StateNotifierProvider<MembershipController, MembershipModel>((ref) {
-  final prefsAsync = ref.watch(membershipPreferencesProvider);
-  
-  return prefsAsync.when(
-    data: (prefs) => MembershipController(prefs),
-    loading: () => MembershipController(null),
-    error: (_, __) => MembershipController(null),
-  );
-});

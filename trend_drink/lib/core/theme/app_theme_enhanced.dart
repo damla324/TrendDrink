@@ -17,6 +17,18 @@ enum ThemeVariant {
 class AppTheme {
   AppTheme._();
 
+  // ─── Static Color Constants ────────────────────────────────────────────
+  static const Color gold = Color(0xFFFFD700);
+  static const Color ledCyan = Color(0xFF00FFFF);
+  static const Color cream = Color(0xFFF5E6D3);
+  static const Color dimCream = Color(0xFFE8D7C3);
+  static const Color mocha = Color(0xFF8B4513);
+  static const Color espresso = Color(0xFF3E2723);
+  static const Color darkMocha = Color(0xFF5D4037);
+  static const Color caramel = Color(0xFFD2691E);
+  static const Color mutedBrown = Color(0xFF8D6E63);
+  static const double sidebarWidth = 280.0;
+
   static const Map<ThemeVariant, String> variantNames = {
     ThemeVariant.sunrise: 'Sunrise',
     ThemeVariant.noir: 'Noir',

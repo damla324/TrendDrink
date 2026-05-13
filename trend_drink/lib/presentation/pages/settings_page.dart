@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trenddrink/core/theme/app_theme_enhanced.dart';
+import 'package:trenddrink/domain/models/membership_model.dart';
 import 'package:trenddrink/presentation/notifiers/membership_notifier.dart';
 import 'package:trenddrink/presentation/notifiers/theme_notifier_v2.dart';
 
@@ -12,7 +13,6 @@ class SettingsPage extends ConsumerWidget {
     final membership = ref.watch(membershipProvider);
     final currentTheme = ref.watch(themeVariantProvider);
     final themeMode = ref.watch(currentThemeModeProvider);
-    final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -33,7 +33,7 @@ class SettingsPage extends ConsumerWidget {
               Text(
                 'Customize your TrendDrink experience',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: colors.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 48),
@@ -128,7 +128,6 @@ class _SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -143,16 +142,16 @@ class _SettingsSection extends StatelessWidget {
           Text(
             description!,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colors.onSurfaceVariant,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
-            color: colors.surfaceContainerHighest,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: colors.outline.withOpacity(0.1)),
+            border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.1)),
           ),
           padding: const EdgeInsets.all(24),
           child: Column(children: children),
@@ -173,8 +172,6 @@ class _ThemeModeSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -242,21 +239,19 @@ class _ModeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.primary
-              : colors.surfaceContainer,
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
-                ? colors.primary
-                : colors.outline.withOpacity(0.2),
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outline.withOpacity(0.2),
           ),
         ),
         child: Column(
@@ -264,7 +259,7 @@ class _ModeButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? colors.onPrimary : colors.onSurface,
+              color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -272,7 +267,7 @@ class _ModeButton extends StatelessWidget {
               label,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color:
-                    isSelected ? colors.onPrimary : colors.onSurfaceVariant,
+                    isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -295,7 +290,6 @@ class _ThemeVariantSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).colorScheme;
     final availableThemes = membership.isPro
         ? [...AppTheme.freeVariants, ...AppTheme.proVariants]
         : AppTheme.freeVariants;
@@ -315,13 +309,13 @@ class _ThemeVariantSelector extends ConsumerWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: colors.primary,
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   'Pro Only',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: colors.onPrimary,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -352,7 +346,7 @@ class _ThemeVariantSelector extends ConsumerWidget {
                     SnackBar(
                       content: const Text(
                           '🔒 This theme is available for Pro members only'),
-                      backgroundColor: colors.error,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                     ),
                   );
                   return;
@@ -486,8 +480,6 @@ class _MembershipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return Container(
       decoration: BoxDecoration(
         gradient: membership.isPro
@@ -495,23 +487,23 @@ class _MembershipCard extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  colors.primary,
-                  colors.primary.withOpacity(0.7),
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withOpacity(0.7),
                 ],
               )
             : LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  colors.surfaceContainerHighest,
-                  colors.surfaceContainer,
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
+                  Theme.of(context).colorScheme.surfaceContainer,
                 ],
               ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: membership.isPro
-              ? colors.primary
-              : colors.outline.withOpacity(0.2),
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.outline.withOpacity(0.2),
         ),
       ),
       padding: const EdgeInsets.all(32),
@@ -529,7 +521,7 @@ class _MembershipCard extends StatelessWidget {
                       children: [
                         Icon(
                           membership.isPro ? Icons.star_rounded : Icons.star_outline,
-                          color: membership.isPro ? Colors.yellow : colors.onSurfaceVariant,
+                          color: membership.isPro ? Colors.yellow : Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 32,
                         ),
                         const SizedBox(width: 16),
@@ -539,7 +531,7 @@ class _MembershipCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: membership.isPro
                                 ? Colors.white
-                                : colors.onSurface,
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -553,7 +545,7 @@ class _MembershipCard extends StatelessWidget {
                           Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: membership.isPro
                             ? Colors.white70
-                            : colors.onSurfaceVariant,
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -595,15 +587,13 @@ class _SettingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return InkWell(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            Icon(icon, color: colors.primary, size: 24),
+            Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -617,14 +607,14 @@ class _SettingItem extends StatelessWidget {
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: colors.onSurfaceVariant,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
             Icon(Icons.arrow_forward_ios_rounded,
-                color: colors.onSurfaceVariant, size: 16),
+                color: Theme.of(context).colorScheme.onSurfaceVariant, size: 16),
           ],
         ),
       ),
@@ -632,25 +622,4 @@ class _SettingItem extends StatelessWidget {
   }
 }
 
-class _getSeedColor {
-  static Color call(ThemeVariant variant) {
-    switch (variant) {
-      case ThemeVariant.sunrise:
-        return const Color(0xFF8E44AD);
-      case ThemeVariant.noir:
-        return const Color(0xFF120136);
-      case ThemeVariant.forest:
-        return const Color(0xFF0B3B2E);
-      case ThemeVariant.oceanWave:
-        return const Color(0xFF0099FF);
-      case ThemeVariant.purpleGradient:
-        return const Color(0xFF9D4EDD);
-      case ThemeVariant.goldLux:
-        return const Color(0xFFFFD700);
-      case ThemeVariant.darkCrimson:
-        return const Color(0xFFDC143C);
-      case ThemeVariant.matrixGreen:
-        return const Color(0xFF00FF41);
-    }
-  }
-}
+

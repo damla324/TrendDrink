@@ -10,36 +10,32 @@ final sharedPrefsProvider = FutureProvider<SharedPreferences>((ref) async {
 
 // ─── Theme Mode Provider ────────────────────────────────────────────────────
 final currentThemeModeProvider =
-    StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
-  final prefsAsync = ref.watch(sharedPrefsProvider);
-  return prefsAsync.when(
-    data: (prefs) => ThemeModeNotifier(prefs),
-    loading: () => ThemeModeNotifier(null),
-    error: (_, __) => ThemeModeNotifier(null),
-  );
-});
+    NotifierProvider<ThemeModeNotifier, ThemeMode>(
+  ThemeModeNotifier.new,
+);
 
-class ThemeModeNotifier extends StateNotifier<ThemeMode> {
-  final SharedPreferences? _prefs;
+class ThemeModeNotifier extends Notifier<ThemeMode> {
   static const String _key = 'app_theme_mode';
 
-  ThemeModeNotifier(this._prefs) : super(ThemeMode.dark) {
-    _initialize();
-  }
-
-  void _initialize() {
-    final savedMode = _prefs?.getString(_key);
-    if (savedMode != null) {
-      state = ThemeMode.values.firstWhere(
-        (e) => e.toString() == 'ThemeMode.$savedMode',
-        orElse: () => ThemeMode.dark,
-      );
-    }
+  @override
+  ThemeMode build() {
+    final prefsAsync = ref.watch(sharedPrefsProvider);
+    return prefsAsync.whenData((prefs) {
+      final savedMode = prefs.getString(_key);
+      if (savedMode != null) {
+        return ThemeMode.values.firstWhere(
+          (e) => e.toString() == 'ThemeMode.$savedMode',
+          orElse: () => ThemeMode.dark,
+        );
+      }
+      return ThemeMode.dark;
+    }).value ?? ThemeMode.dark;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
+    final prefs = await ref.read(sharedPrefsProvider.future);
     state = mode;
-    await _prefs?.setString(_key, mode.name);
+    await prefs.setString(_key, mode.name);
   }
 
   Future<void> toggleDarkMode() async {
@@ -55,38 +51,33 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
 
 // ─── Theme Variant Provider ────────────────────────────────────────────────
 final themeVariantProvider =
-    StateNotifierProvider<ThemeVariantNotifier, ThemeVariant>((ref) {
-  final prefsAsync = ref.watch(sharedPrefsProvider);
-  return prefsAsync.when(
-    data: (prefs) => ThemeVariantNotifier(prefs),
-    loading: () => ThemeVariantNotifier(null),
-    error: (_, __) => ThemeVariantNotifier(null),
-  );
-});
+    NotifierProvider<ThemeVariantNotifier, ThemeVariant>(
+  ThemeVariantNotifier.new,
+);
 
-class ThemeVariantNotifier extends StateNotifier<ThemeVariant> {
-  final SharedPreferences? _prefs;
+class ThemeVariantNotifier extends Notifier<ThemeVariant> {
   static const String _key = 'app_theme_variant';
 
-  ThemeVariantNotifier(this._prefs) : super(ThemeVariant.noir) {
-    _initialize();
-  }
-
-  void _initialize() {
-    final savedTheme = _prefs?.getString(_key);
-    if (savedTheme != null) {
-      try {
-        state = ThemeVariant.values
-            .firstWhere((e) => e.name == savedTheme);
-      } catch (_) {
-        state = ThemeVariant.noir;
+  @override
+  ThemeVariant build() {
+    final prefsAsync = ref.watch(sharedPrefsProvider);
+    return prefsAsync.whenData((prefs) {
+      final savedTheme = prefs.getString(_key);
+      if (savedTheme != null) {
+        try {
+          return ThemeVariant.values.firstWhere((e) => e.name == savedTheme);
+        } catch (_) {
+          return ThemeVariant.noir;
+        }
       }
-    }
+      return ThemeVariant.noir;
+    }).value ?? ThemeVariant.noir;
   }
 
   Future<void> setTheme(ThemeVariant variant) async {
+    final prefs = await ref.read(sharedPrefsProvider.future);
     state = variant;
-    await _prefs?.setString(_key, variant.name);
+    await prefs.setString(_key, variant.name);
   }
 
   Future<void> nextTheme(bool isPro) async {
