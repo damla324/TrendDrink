@@ -15,6 +15,9 @@ class DrinkModel {
   final List<String> pros;
   final List<String> cons;
   final String tip;
+  // ── Allergen & Alternative fields ─────────────────────────────────────
+  final List<String> allergens; // Common sensitivities (e.g., 'kafein', 'şeker', 'süt')
+  final Map<String, String> alternatives; // e.g., {'süt': 'vegan süt', 'şeker': 'stevia'}
 
   const DrinkModel({
     required this.id,
@@ -30,5 +33,7 @@ class DrinkModel {
     this.pros = const [],
     this.cons = const [],
     this.tip = '',
+    this.allergens = const [],
+    this.alternatives = const {},
   });
 }

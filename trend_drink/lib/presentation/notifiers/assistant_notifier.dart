@@ -46,6 +46,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final drinks = await _repository.fetchAllDrinks();
     final lower = _normalize(query);
 
+    // ── 0. Sensitivity/Allergen matching ────────────────────────────────
+    final sensitivityResp = _matchSensitivity(drinks, lower);
+    if (sensitivityResp != null) return sensitivityResp;
+
     // ── 1. Exact/partial drink title match ─────────────────────────────
     final titleMatch = _findByTitle(drinks, lower);
     if (titleMatch != null) {
@@ -111,6 +115,127 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       'Tam olarak anlayamadım 😅 Ama şu an popüler olanlar: **$topNames**. '
       'Bir malzeme ya da kategori adı yazarsan daha iyi yönlendiririm!',
     );
+  }
+
+  ChatMessage? _matchSensitivity(List<DrinkModel> drinks, String lower) {
+    // ── Sensitivity/allergen keywords ──────────────────────────────────
+    const sensitivityMap = {
+      'kafein': 'kafein',
+      'kafeinsiz': 'kafein',
+      'cafeinated': 'kafein',
+      'decaf': 'kafein',
+      'şeker': 'şeker',
+      'seker': 'şeker',
+      'şekersiz': 'şeker',
+      'diyabet': 'şeker',
+      'sugar': 'şeker',
+      'sugarfree': 'şeker',
+      'süt': 'süt',
+      'sut': 'süt',
+      'laktoz': 'süt',
+      'dairy': 'süt',
+      'vegan': 'vegan',
+      'vejetaryen': 'vegan',
+      'gluten': 'gluten',
+      'glutenfree': 'gluten',
+      'alerji': 'alerji',
+      'alerjik': 'alerji',
+      'allergen': 'alerji',
+      'kolin': 'kolin',
+      'çikolata': 'çikolata',
+      'cikola': 'çikolata',
+      'chocolate': 'çikolata',
+      'nut': 'fındık',
+      'fındık': 'fındık',
+      'findik': 'fındık',
+      'almond': 'almond',
+      'kaju': 'kaju',
+    };
+
+    for (final entry in sensitivityMap.entries) {
+      if (lower.contains(entry.key)) {
+        final allergen = entry.value;
+        final compatible =
+            drinks.where((d) => !d.allergens.contains(allergen)).toList();
+
+        if (compatible.isNotEmpty) {
+          final names = compatible.take(3).map((d) => d.title).join(', ');
+          final drinkId = compatible.first.id;
+
+          String message;
+          switch (allergen) {
+            case 'kafein':
+              message =
+                  '✨ Kafeinsiz seçenekler seni bekliyor! **$names**. Hangisini denemek ister misin?';
+              break;
+            case 'şeker':
+              message =
+                  '🍯 Düşük şeker veya şekersiz içecekler: **$names**. Sağlıklı seçim! 💪';
+              break;
+            case 'süt':
+              message =
+                  '🥛 Sütü olmayan seçenekler: **$names**. Veya vegan alternatif bulabilirim!';
+              break;
+            case 'vegan':
+              message =
+                  '🌱 Tamamen vegan seçenekler: **$names**. Doğaya saygılı tercih! 🌍';
+              break;
+            case 'gluten':
+              message =
+                  '🌾 Glutensiz içecekler: **$names**. Rahatça içebilirsin! ✅';
+              break;
+            case 'alerji':
+              message =
+                  '⚠️ Yaygın alerjenlerden uzak içecekler: **$names**. Güvenli tercih!';
+              break;
+            case 'çikolata':
+              message =
+                  '🍫 Çikolatasız alternatifler: **$names**. Farklı bir deneyim için!';
+              break;
+            case 'fındık':
+              message =
+                  '🥜 Fındıksız seçenekler: **$names**. Diğer tatlar seni bekliyor!';
+              break;
+            default:
+              message =
+                  '✨ **$allergen** içermeyen seçenekler: **$names**. Hangisini tercih edersin?';
+          }
+
+          // ── Suggest alternatives from first drink ──────────────────────
+          if (compatible.first.alternatives.isNotEmpty) {
+            final firstDrink = compatible.first;
+            final alternativeTexts = firstDrink.alternatives.entries
+                .map((e) => '${e.key} → ${e.value}')
+                .join(', ');
+            message +=
+                '\n\nℹ️ **${firstDrink.title}** için alternatifler: $alternativeTexts';
+          }
+
+          return _msg(message, drinkId: drinkId);
+        } else {
+          String noOptionMessage;
+          switch (allergen) {
+            case 'kafein':
+              noOptionMessage =
+                  '😅 Üzgünüm, şu anda kafeinsiz seçenek sınırlı. Başka bir tercih yapmak ister misin?';
+              break;
+            case 'şeker':
+              noOptionMessage =
+                  '😅 Şekersiz seçenekler kısıtlı ama başka bir içecek önerebilirim!';
+              break;
+            case 'vegan':
+              noOptionMessage =
+                  '😅 Tamamen vegan seçenekler şu anda sınırlı. Başka bir kategori ister misin?';
+              break;
+            default:
+              noOptionMessage =
+                  '😅 Maalesef, bu kriter için uygun içecek bulamadım. Başka bir tercih yapmak ister misin?';
+          }
+          return _msg(noOptionMessage);
+        }
+      }
+    }
+    return null;
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────
