@@ -965,7 +965,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Nane yaprakları (10-12)\n2. Lime (1/2)\n3. Şeker (2 çay kaşığı)\n4. Rom (45 ml)\n5. Soda suyu (100 ml)\n6. Buz (1 fincan)\n\nYapılış:\n1) Bardağa nane yapraklarını koy\n2) Lime parçalarını ekle\n3) Şeker ile hafif ez\n4) Rom dökerek karıştır\n5) Buzla doldurup soda suyu ekle\n6) Nane dalı ve lime dilimi ile servis et',
       ingredients: ['nane', 'lime', 'rom', 'şeker', 'soda', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1559181286-d3fee14d55b7?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF228B22), Color(0xFF90EE90)],
       ),
     ),
@@ -978,7 +978,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Tequila (45 ml)\n2. Triple sec (20 ml)\n3. Lime suyu (25 ml)\n4. Şeker şurubu (15 ml)\n5. Tuz (kenarı için)\n6. Buz\n\nYapılış:\n1) Shakera tequila, triple sec, lime suyu ve şeker şurubunu ekle\n2) Buz ekle ve kuvvetli şakela\n3) Tuzla kaplanmış margarita bardağına dök\n4) Lime dilimi ile servis et',
       ingredients: ['tequila', 'triple sec', 'lime', 'şeker', 'tuz'],
       imageUrl: 'https://images.unsplash.com/photo-1556742212-5b321f3c261d?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF228B22), Color(0xFFFFA500)],
       ),
     ),
@@ -991,7 +991,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Vodka (45 ml)\n2. Triple sec (20 ml)\n3. Lime suyu (15 ml)\n4. Cranberry suyu (30 ml)\n5. Buz\n6. Portakal kabuğu (susuz)\n\nYapılış:\n1) Shakera tüm malzemeleri buz ile karıştır\n2) Martini bardağına süz\n3) Portakal kabuğu twist ile servis et',
       ingredients: ['vodka', 'triple sec', 'lime', 'cranberry', 'portakal'],
       imageUrl: 'https://images.unsplash.com/photo-1514432324607-2df86e7f718d?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFFE91E63), Color(0xFFFFC0CB)],
       ),
     ),
@@ -1004,7 +1004,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Beyaz rom (15 ml)\n2. Vodka (15 ml)\n3. Gin (15 ml)\n4. Tequila (15 ml)\n5. Triple sec (15 ml)\n6. Lime suyu (25 ml)\n7. Şeker şurubu (25 ml)\n8. Kola (30 ml)\n9. Buz\n\nYapılış:\n1) Shakera tüm likörleri, lime suyunu ve şeker şurubunu buz ile karıştır\n2) Buz dolu bardağa dök\n3) Üzerine kola ve daha buz ekle\n4) Lime dilimi ile servis et',
       ingredients: ['rom', 'vodka', 'gin', 'tequila', 'triple sec', 'lime', 'kola'],
       imageUrl: 'https://images.unsplash.com/photo-1536042904634-2a19c5e36df9?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFF000000)],
       ),
     ),
@@ -1018,7 +1018,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Siyah çay (1 poşet)\n2. Chai baharat karışımı (tarçın, karanfil, 1 çay kaşığı)\n3. Sıcak su (250 ml)\n4. Süt (100 ml)\n5. Bal (1 yemek kaşığı)\n\nYapılış:\n1) Çayı baharatla sıcak suyla demlemeye bırak\n2) 5 dakika sonra süt ekle\n3) Bala ekle ve karıştır\n4) Sıcak servis et',
       ingredients: ['çay', 'tarçın', 'karanfil', 'ingeber', 'bal', 'süt'],
       imageUrl: 'https://images.unsplash.com/photo-1598318906914-b3efc1dfe9eb?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFFA0826D)],
       ),
     ),
@@ -1031,7 +1031,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Siyah çay (100 ml)\n2. Yoğun kondense süt (2 yemek kaşığı)\n\nYapılış:\n1) Çayı hazırlayın\n2) İki fincan arasında ileri geri dökerek köpürtün\n3) Bardağa dök ve hemen servis et',
       ingredients: ['çay', 'kondense süt'],
       imageUrl: 'https://images.unsplash.com/photo-1605352573261-f2d2f23ae65d?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFFFFC0CB)],
       ),
     ),
@@ -1044,7 +1044,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Siyah çay (200 ml)\n2. Tapioka topları (3 yemek kaşığı)\n3. Şeker şurubu (2 yemek kaşığı)\n4. Süt (50 ml)\n5. Buz (1 fincan)\n\nYapılış:\n1) Tapioka toplarını 15 dakika kaynatıp soğut\n2) Bardağın altına tapioka toplarını koy\n3) Buz dolu bardağa buz ekle\n4) Çay ve sütü ekleyerek servis et',
       ingredients: ['çay', 'tapioka topları', 'şeker', 'süt', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd64b73?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFFFFC0CB)],
       ),
     ),
@@ -1058,7 +1058,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Karpuz (300 g)\n2. Şeker (2 yemek kaşığı)\n3. Limon suyu (1 yemek kaşıği)\n4. Buz (1 fincan)\n\nYapılış:\n1) Karpuzu blenderda koy\n2) Şeker ve limon suyu ekle\n3) Buzla birlikte pürüzsüz kıvama kadar karıştır\n4) Yoğun bir paste oluşsun\n5) Bardağa dök ve kalın pipet ile servis et',
       ingredients: ['karpuz', 'şeker', 'limon', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1569003222316-4da3f63a506d?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFFE91E63), Color(0xFF90EE90)],
       ),
     ),
@@ -1071,7 +1071,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Çilek (250 g)\n2. Şeker (3 yemek kaşığı)\n3. Su (100 ml)\n4. Limon suyu (1 yemek kaşığı)\n\nYapılış:\n1) Çilekleri ezerek mırra ol\n2) Şeker ve su ile karıştır\n3) Buzluk tepsiye dök\n4) Her 30 dakikada karıştırarak dondurmaya bırak\n5) Kristalize olmuş granita bardağa dök',
       ingredients: ['çilek', 'şeker', 'su', 'limon'],
       imageUrl: 'https://images.unsplash.com/photo-1541810298000-33eaf8f70f70?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFFE91E63), Color(0xFFFFA500)],
       ),
     ),
@@ -1084,7 +1084,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Taze nane (20 yaprak)\n2. Lime suyu (50 ml)\n3. Şeker şurubu (30 ml)\n4. Su (100 ml)\n5. Buz (1,5 fincan)\n\nYapılış:\n1) Nane yapraklarını blenderda ezin\n2) Lime suyu, şeker şurubu ve su ekle\n3) Buzla birlikte slushi kıvamına kadar karıştır\n4) Kalın pasta olmuşsa bardağa dök\n5) Nane dalı ile servis et',
       ingredients: ['nane', 'lime', 'şeker', 'su', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1585897913619-99739e88e19f?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF228B22), Color(0xFF90EE90)],
       ),
     ),
@@ -1098,7 +1098,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Nar suyu (100 ml)\n2. Zencefil (1 cm parça, rendelenmiş)\n3. Limon suyu (2 çay kaşığı)\n4. Maden suyu (150 ml)\n5. Buz (1 fincan)\n6. Nar taneleri (süsleme)\n\nYapılış:\n1) Nar suyunu zencefil ve limon suyu ile karıştır\n2) Buz dolu bardağa dök\n3) Maden suyu ekle\n4) Hafif karıştır\n5) Nar taneleriyle servis et',
       ingredients: ['nar suyu', 'zencefil', 'limon', 'maden suyu'],
       imageUrl: 'https://images.unsplash.com/photo-1544568100-847a948585b0?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFFB31217), Color(0xFFFF6B6B)],
       ),
     ),
@@ -1111,7 +1111,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Tutun meyvesi pulpası (3 yemek kaşığı)\n2. Şeker şurubu (2 yemek kaşıği)\n3. Limon suyu (1 yemek kaşığı)\n4. Maden suyu (150 ml)\n5. Buz (1 fincan)\n\nYapılış:\n1) Bardağa passion fruit pulpasını koy\n2) Şeker şurubu ve limon suyu ekle\n3) Buz dolu bardağa dök\n4) Maden suyu ekle\n5) Hafif karıştırarak servis et',
       ingredients: ['tutum meyvesi', 'şeker', 'limon', 'maden suyu'],
       imageUrl: 'https://images.unsplash.com/photo-1556231669979-95d6773ae296?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFFFFA500), Color(0xFFFFD700)],
       ),
     ),
@@ -1125,7 +1125,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Sıcak espresso (45 ml)\n2. İrlanda viskisi (45 ml)\n3. Şeker (1 yemek kaşığı)\n4. Krem şanti (30 g)\n\nYapılış:\n1) Bardağa espresso ve viskiyi ekle\n2) Şeker ekle ve karıştır\n3) Üzerine krem şanti örtücü tabaka olarak ekle\n4) Sıcak servis et',
       ingredients: ['espresso', 'viski', 'şeker', 'krem'],
       imageUrl: 'https://images.unsplash.com/photo-1541182286-92d11f0efbf7?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF3E2723), Color(0xFF8D6E63)],
       ),
     ),
@@ -1138,7 +1138,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Espresso (30 ml)\n2. Steamed süt (30 ml)\n3. Süt köpüğü (5 ml)\n\nYapılış:\n1) Bardağa espresso ekle\n2) Eşit miktarda steamed sütü ekle\n3) Üzerine hafif köpük katı ekle\n4) Sıcak servis et',
       ingredients: ['espresso', 'süt'],
       imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF8B6F47), Color(0xFFD2B48C)],
       ),
     ),
@@ -1152,7 +1152,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Kivi (2 adet)\n2. Ananas (150 g)\n3. Yoğurt (150 g)\n4. Hindistancevizi sütü (100 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış:\n1) Kivi ve ananaları blenderda koy\n2) Yoğurt ve hindistancevizi sütü ekle\n3) Bal ekle ve pürüzsüz olana kadar karıştır\n4) Ananas dilimi ile servis et',
       ingredients: ['kivi', 'ananas', 'yoğurt', 'hindistancevizi sütü', 'bal'],
       imageUrl: 'https://images.unsplash.com/photo-1611076857029-d8fb0018d693?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFFFFA500), Color(0xFF90EE90)],
       ),
     ),
@@ -1165,7 +1165,7 @@ class DrinkLocalSource {
           'Malzemelerin Sırası:\n1. Avokado (1/2)\n2. Kakao tozu (1 yemek kaşığı)\n3. Çikolata protein tozu (1 ölçek)\n4. Almond sütü (200 ml)\n5. Bal (1 yemek kaşığı)\n\nYapılış:\n1) Avokadoyu blenderda koy\n2) Kakao tozu ve protein tozu ekle\n3) Almond sütü ve bal ekle\n4) Pürüzsüz olana kadar çe\n5) Çikolata serpiştirerek servis et',
       ingredients: ['avokado', 'kakao tozu', 'protein tozu', 'almond sütü', 'bal'],
       imageUrl: 'https://images.unsplash.com/photo-1591957840635-bfd9d25b90c7?q=80&w=1974&auto=format&fit=crop',
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFF6B4C2F)],
       ),
     ),
@@ -1183,7 +1183,7 @@ class DrinkLocalSource {
       preparation: '1. Kahve (1 çay kaşığı)\n2. Su (1 fincan)\n3. Şeker (istediğiniz)\n\nYapılış: Cezveye su ve kahve ekleyip 3 kez kaynatın.',
       ingredients: ['kahve', 'su', 'şeker'],
       imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF2C1810), Color(0xFF3E2723)]),
+      gradient: LinearGradient(colors: [Color(0xFF2C1810), Color(0xFF3E2723)]),
       allergens: ['kafein'],
       alternatives: {'şeker': 'honey', 'su': 'sütlü su'},
     ),
@@ -1200,7 +1200,7 @@ class DrinkLocalSource {
       preparation: '1. Espresso (1 shot, 30 ml)\n2. Sıcak süt (30 ml)\n\nYapılış: Espresso yapın, eşit miktarda sütü dökin.',
       ingredients: ['espresso', 'süt'],
       imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFA0522D)]),
+      gradient: LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFA0522D)]),
       allergens: ['kafein', 'süt'],
       alternatives: {'süt': 'vegan süt', 'espresso': 'decaf espresso'},
     ),
@@ -1210,14 +1210,13 @@ class DrinkLocalSource {
       category: 'Kahve',
       description: 'Vanilla dondurmasının üzerine sıcak espresso dökülerek hazırlanan tatlı içecek.',
       history: 'İtalya\'dan gelen bu tatlı kahve çeşidi, dondurma ve kahvenin mükemmel kombinasyonudur.',
-      temperature: 'Her İkisi',
       pros: ['Tatlı ve enerji verici', 'Hızlı ve kolay', 'Özel bir tadı var'],
       cons: ['Yüksek kalori', 'Şeker açısından zengin'],
       tip: 'Dondurma soğuk, espresso çok sıcak olmalı kontrast için.',
       preparation: '1. Vanilla dondurması (2 top)\n2. Espresso (60 ml, sıcak)\n\nYapılış: Fincana dondurma koyup sıcak espresso dökin.',
       ingredients: ['dondurma', 'espresso'],
       imageUrl: 'https://images.unsplash.com/photo-1517701550927-30cf4ba20d4d?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFF5DEB3), Color(0xFF8B4513)]),
+      gradient: LinearGradient(colors: [Color(0xFFF5DEB3), Color(0xFF8B4513)]),
       allergens: ['kafein', 'süt', 'şeker'],
       alternatives: {'dondurma': 'vegan dondurma', 'şeker': 'stevia'},
     ),
@@ -1235,8 +1234,7 @@ class DrinkLocalSource {
       preparation: '1. Elma (1 adet, dilimlenmiş)\n2. Tarçın çubuğu (1)\n3. Sıcak su (200 ml)\n4. Bal (1 çay kaşığı)\n\nYapılış: Suyu kaynatın, elma ve tarçın ekleyin, 5 dk demleyin.',
       ingredients: ['elma', 'tarçın', 'su', 'bal'],
       imageUrl: 'https://images.unsplash.com/photo-1597318619738-1176f58e8c53?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFDC143C), Color(0xFFA52A2A)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFDC143C), Color(0xFFA52A2A)]),
       alternatives: {'bal': 'şeker', 'tarçın': 'zencefil'},
     ),
     DrinkModel(
@@ -1252,8 +1250,7 @@ class DrinkLocalSource {
       preparation: '1. Hibiskus çiçekleri (2 çay kaşığı)\n2. Soğuk su (250 ml)\n3. Limon (1/2)\n4. Şeker/bal (isteğe bağlı)\n\nYapılış: Çiçekleri suya koyun, 15 dk bekletin, süzün, limon ekleyin.',
       ingredients: ['hibiskus', 'su', 'limon'],
       imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFE91E63), Color(0xFF9C27B0)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFE91E63), Color(0xFF9C27B0)]),
       alternatives: {'şeker': 'stevia', 'limon': 'lime'},
     ),
     // ── YENİ SMOOTHIE'LER ─────────────────────────────────────────────────
@@ -1270,7 +1267,7 @@ class DrinkLocalSource {
       preparation: '1. Karışık meyveler (1 fincan: çilek, böğürtlen, mirtil)\n2. Protein tozu (1 ölçek)\n3. Yunani yoğurdu (150 g)\n4. Almond sütü (200 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış: Tüm malzemeleri blenderda çekin.',
       ingredients: ['çilek', 'böğürtlen', 'mirtil', 'protein tozu', 'yoğurt', 'almond sütü'],
       imageUrl: 'https://images.unsplash.com/photo-1579954614171-828bda8d0978?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF8B008B), Color(0xFFFF1493)]),
+      gradient: LinearGradient(colors: [Color(0xFF8B008B), Color(0xFFFF1493)]),
       allergens: ['laktoz (yoğurt)', 'gluten (protein tozu içerebilir)'],
       alternatives: {'yoğurt': 'coconut yogurt', 'almond sütü': 'oat milk'},
     ),
@@ -1287,8 +1284,7 @@ class DrinkLocalSource {
       preparation: '1. Ispanak (1 kasa)\n2. Yaşıl elma (1)\n3. Kıvırcık salata (1/2 kasa)\n4. Limon (1/2)\n5. Zencefil (1 parmak)\n6. Coconut sütü (200 ml)\n7. Su (100 ml)\n\nYapılış: Yaprakları koyun, meyveler ekleyin, sıvı döküp çekin.',
       ingredients: ['ispanak', 'yeşil elma', 'kıvırcık salata', 'limon', 'zencefil', 'coconut sütü'],
       imageUrl: 'https://images.unsplash.com/photo-1568270693211-0d3e2dde7217?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF228B22), Color(0xFF90EE90)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF228B22), Color(0xFF90EE90)]),
       alternatives: {'coconut sütü': 'almond milk', 'limon': 'lime'},
     ),
     // ── YENİ FİT DRINKS ──────────────────────────────────────────────────
@@ -1305,8 +1301,7 @@ class DrinkLocalSource {
       preparation: '1. Hindistancevizi suyu (250 ml)\n2. Elektrolit tozu (1 paket)\n3. Limon (1/4)\n4. Buz (1 fincan)\n\nYapılış: Hindistancevizi suyunu buz ile dökerek elektrolit tozu ve limon ekleyin.',
       ingredients: ['hindistancevizi suyu', 'elektrolit tozu', 'limon', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1590954206171-04511e14c0e1?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFA0826D)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFA0826D)]),
       alternatives: {'hindistancevizi suyu': 'spor içeceği'},
     ),
     DrinkModel(
@@ -1322,8 +1317,7 @@ class DrinkLocalSource {
       preparation: '1. Su (250 ml)\n2. Limon (1/2)\n3. Chia tohumları (1 çay kaşığı)\n4. Stevia/şeker (isteğe bağlı)\n5. Mint (isteğe bağlı)\n\nYapılış: Chia tohumlarını suya koyup 5 dk beklet, limon ve şeker ekle.',
       ingredients: ['su', 'limon', 'chia tohumları', 'stevia'],
       imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd63c69?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF32CD32), Color(0xFF90EE90)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF32CD32), Color(0xFF90EE90)]),
       alternatives: {'stevia': 'bal', 'chia': 'flax tohumu'},
     ),
     // ── YENİ SODAxyz ──────────────────────────────────────────────────────
@@ -1340,8 +1334,7 @@ class DrinkLocalSource {
       preparation: '1. Taze zencefil (100 g, rendelenmesi)\n2. Limon (2)\n3. Şeker (2 çay kaşığı)\n4. Su (500 ml)\n5. Soda suyu (250 ml)\n\nYapılış: Zencefili suya koyup kaynatın, soğutun, limon ekleyin, soda suyu dökin.',
       ingredients: ['zencefil', 'limon', 'şeker', 'su', 'soda suyu'],
       imageUrl: 'https://images.unsplash.com/photo-1554680629-6b8b3dddb4d0?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
       alternatives: {'şeker': 'stevia', 'zencefil': 'limon'},
     ),
     // ── YENİ KOKTEYL ──────────────────────────────────────────────────────
@@ -1358,8 +1351,7 @@ class DrinkLocalSource {
       preparation: '1. Mint yaprakları (8-10)\n2. Lime (1/2)\n3. Şeker (1 çay kaşığı)\n4. Soda suyu (200 ml)\n5. Buz (1 fincan)\n\nYapılış: Bardağa mint koyup hafif bastır, lime sık, şeker ekle, buz dök, soda suyu döküp karıştır.',
       ingredients: ['mint', 'lime', 'şeker', 'soda suyu', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1572902918926-04ec494cd259?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF228B22), Color(0xFF00CED1)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF228B22), Color(0xFF00CED1)]),
       alternatives: {'şeker': 'stevia', 'soda suyu': 'ginger ale'},
     ),
     DrinkModel(
@@ -1375,8 +1367,7 @@ class DrinkLocalSource {
       preparation: '1. Çilek (1 fincan, dilimlenmiş)\n2. Passion fruit (4 adet, suyu)\n3. Oran suyu (1 fincan)\n4. Şurup (2 çay kaşığı)\n5. Buz\n6. Mint (garnish)\n\nYapılış: Çilekleri pureleyin, passion fruit suyu ekleyin, oran suyu ve şurup döküp buz ekleyin.',
       ingredients: ['çilek', 'passion fruit', 'oran suyu', 'şurup'],
       imageUrl: 'https://images.unsplash.com/photo-1597507784725-e572b0e23cb3?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFF69B4), Color(0xFFFFA500)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFFF69B4), Color(0xFFFFA500)]),
       alternatives: {'passion fruit': 'mango', 'çilek': 'karpuz'},
     ),
     // ── YENİ MATCHA ───────────────────────────────────────────────────────
@@ -1393,8 +1384,7 @@ class DrinkLocalSource {
       preparation: '1. Matcha tozu (1-2 çay kaşığı)\n2. Sıcak su (50 ml)\n3. Vegan süt (150 ml, ısıtılmış)\n4. Bal (isteğe bağlı)\n\nYapılış: Matcha tozunu sıcak su ile (çorbacı taş öpüştürecek) karıştır, vegan sütü ekle ve ısıt.',
       ingredients: ['matcha tozu', 'su', 'vegan süt', 'bal'],
       imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF7CFC00), Color(0xFF32CD32)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF7CFC00), Color(0xFF32CD32)]),
       alternatives: {'oat milk': 'almond milk', 'bal': 'stevia'},
     ),
     DrinkModel(
@@ -1410,8 +1400,7 @@ class DrinkLocalSource {
       preparation: '1. Matcha tozu (1 çay kaşığı)\n2. Sıcak su (50 ml)\n3. Limon suyu (sıkılmış, 50 ml)\n4. Şeker şurubu (2 çay kaşığı)\n5. Buz (1 fincan)\n6. Su (100 ml)\n\nYapılış: Matcha\'yı sıcak su ile çekin, soğut, limon ve şurup ekle, buz dökerek sun.',
       ingredients: ['matcha tozu', 'su', 'limon', 'şeker şurubu'],
       imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd63c69?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF7CFC00), Color(0xFFFFD700)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF7CFC00), Color(0xFFFFD700)]),
       alternatives: {'şeker şurubu': 'stevia', 'limon': 'lime'},
     ),
     // ── YENİ FROZEN ──────────────────────────────────────────────────────
@@ -1428,8 +1417,7 @@ class DrinkLocalSource {
       preparation: '1. Mango (2 adet, dilimlenmiş)\n2. Şeker (3 çay kaşığı)\n3. Limon (1/2)\n4. Buz\n\nYapılış: Mangolar, şeker ve limonu blenderda dön, buzlu slushi elde et.',
       ingredients: ['mango', 'şeker', 'limon', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1590508831066-41095ee5e1ca?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFA500), Color(0xFFFF6347)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFFFA500), Color(0xFFFF6347)]),
       alternatives: {'mango': 'ananas', 'şeker': 'stevia'},
     ),
     DrinkModel(
@@ -1445,8 +1433,7 @@ class DrinkLocalSource {
       preparation: '1. Karpuz (3 fincan, küplü)\n2. Mint yaprakları (10)\n3. Limon (1/4)\n4. Şeker (1 çay kaşığı, isteğe bağlı)\n5. Buz\n\nYapılış: Karpuz ve mint\'i blenderda dön, limon ekle, buz dökerek servis et.',
       ingredients: ['karpuz', 'mint', 'limon', 'şeker'],
       imageUrl: 'https://images.unsplash.com/photo-1545232822-87f7d564b1eb?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF228B22), Color(0xFFFF6347)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF228B22), Color(0xFFFF6347)]),
       alternatives: {'karpuz': 'ananas', 'mint': 'dill'},
     ),
     // ── EKLENEN POPÜLER İÇECEKLER ──────────────────────────────────────
@@ -1463,8 +1450,7 @@ class DrinkLocalSource {
       preparation: '1. Hibiskus (3 çiçek)\n2. Limon (2)\n3. Su (500 ml)\n4. Şeker (2 çay kaşığı)\n5. Buz\n\nYapılış: Hibiskusu sıcak suya koyup 10 dk beklet, soğut, limon ekle.',
       ingredients: ['hibiskus', 'limon', 'su', 'şeker'],
       imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFE91E63), Color(0xFFFF6F00)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFE91E63), Color(0xFFFF6F00)]),
       alternatives: {'şeker': 'stevia'},
     ),
     DrinkModel(
@@ -1480,8 +1466,7 @@ class DrinkLocalSource {
       preparation: '1. Zerdeçal (1/2 çay kaşığı)\n2. Coconut sütü (150 ml)\n3. Bal (1 çay kaşığı)\n4. Siyah biber (birkaç tane)\n5. Buz\n\nYapılış: Zerdeçal ve sıcak biraz suyu karıştır, coconut sütü ve buz ekle.',
       ingredients: ['zerdeçal', 'coconut sütü', 'bal', 'siyah biber'],
       imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd63c69?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFFFA500)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFFFA500)]),
       alternatives: {'coconut sütü': 'almond milk', 'bal': 'stevia'},
     ),
     DrinkModel(
@@ -1497,8 +1482,7 @@ class DrinkLocalSource {
       preparation: '1. Şeftali (2 adet, dilimlenmiş)\n2. Siyah çay (1 çanta)\n3. Sıcak su (300 ml)\n4. Limon (1/4)\n5. Buz\n\nYapılış: Çayı demlendikten sonra şeftaliyi koyun, soğutun, limon ve buz ekleyin.',
       ingredients: ['şeftali', 'çay', 'su', 'limon'],
       imageUrl: 'https://images.unsplash.com/photo-1597318619738-1176f58e8c53?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFDAB9), Color(0xFFFFA07A)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFFFDAB9), Color(0xFFFFA07A)]),
       alternatives: {'şeftali': 'nektarin', 'limon': 'lime'},
     ),
     DrinkModel(
@@ -1514,7 +1498,7 @@ class DrinkLocalSource {
       preparation: '1. Mango (1 fincan, dilimlenmiş)\n2. Yunani yoğurdu (150 g)\n3. Su (100 ml)\n4. Bal (1 çay kaşığı)\n5. Kardamom (birkaç tane)\n\nYapılış: Tüm malzemeleri blenderda çekin, buz ekleyerek servis edin.',
       ingredients: ['mango', 'yoğurt', 'su', 'bal', 'kardamom'],
       imageUrl: 'https://images.unsplash.com/photo-1553530666-ba2a8e36cd12?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
+      gradient: LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
       allergens: ['laktoz'],
       alternatives: {'yoğurt': 'coconut yogurt'},
     ),
@@ -1531,8 +1515,7 @@ class DrinkLocalSource {
       preparation: '1. Kurutulmuş lavanta (1 çay kaşığı)\n2. Limon (2)\n3. Su (500 ml)\n4. Şeker (2 çay kaşığı)\n5. Buz\n\nYapılış: Lavantayı sıcak suya koyup 10 dk beklet, limon ve şeker ekle, soğut.',
       ingredients: ['lavanta', 'limon', 'su', 'şeker'],
       imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFE6E6FA), Color(0xFFDDA0DD)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFE6E6FA), Color(0xFFDDA0DD)]),
       alternatives: {'şeker': 'honey'},
     ),
     DrinkModel(
@@ -1548,8 +1531,7 @@ class DrinkLocalSource {
       preparation: '1. Ananas (2 fincan, dilimlenmiş)\n2. Mint (15 yaprak)\n3. Lime (2)\n4. Şeker şurubu (3 çay kaşığı)\n5. Su (300 ml)\n6. Buz\n\nYapılış: Ananaları blenderda kısa çekin, mint hafif bastır, diğer malzemeleri ekle.',
       ingredients: ['ananas', 'mint', 'lime', 'şeker'],
       imageUrl: 'https://images.unsplash.com/photo-1506361197048-46a149213204?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFD700), Color(0xFF228B22)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFFFD700), Color(0xFF228B22)]),
       alternatives: {'ananas': 'mango', 'mint': 'basil'},
     ),
     DrinkModel(
@@ -1565,8 +1547,7 @@ class DrinkLocalSource {
       preparation: '1. Gül suyu (3 çay kaşığı)\n2. Limon (1)\n3. Su (500 ml)\n4. Şeker (1 çay kaşığı)\n5. Buz\n\nYapılış: Gül suyunu suya koyun, limon ekle, şeker ve buz dökerek karıştırın.',
       ingredients: ['gül suyu', 'limon', 'su', 'şeker'],
       imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFB6C1), Color(0xFFDDA0DD)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFFFB6C1), Color(0xFFDDA0DD)]),
       alternatives: {'şeker': 'stevia'},
     ),
     DrinkModel(
@@ -1582,8 +1563,7 @@ class DrinkLocalSource {
       preparation: '1. Acai (1 paket, dondurulmuş)\n2. Karışık meyveler (1 fincan)\n3. Granola (3 çay kaşığı)\n4. Coconut sütü (150 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış: Acai ve meyveler blenderda kısa çekin, granola üzerine serp.',
       ingredients: ['acai', 'meyveler', 'granola', 'coconut sütü', 'bal'],
       imageUrl: 'https://images.unsplash.com/photo-1590080876-9ff1e1c9bc1d?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF8B008B), Color(0xFF4169E1)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF8B008B), Color(0xFF4169E1)]),
       alternatives: {'coconut sütü': 'almond milk'},
     ),
     DrinkModel(
@@ -1599,7 +1579,7 @@ class DrinkLocalSource {
       preparation: '1. Portakal (3 adet, sıkılmış)\n2. Vanilya yoğurdu (150 g)\n3. Buz (1/2 fincan)\n4. Bal (1 çay kaşığı)\n\nYapılış: Portakal suyunu yoğurt ile karıştır, buz ekleyip çekin.',
       ingredients: ['portakal', 'yoğurt', 'buz', 'bal'],
       imageUrl: 'https://images.unsplash.com/photo-1579954614171-828bda8d0978?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFA500), Color(0xFFFFE4B5)]),
+      gradient: LinearGradient(colors: [Color(0xFFFFA500), Color(0xFFFFE4B5)]),
       allergens: ['laktoz'],
       alternatives: {'yoğurt': 'coconut cream'},
     ),
@@ -1616,8 +1596,7 @@ class DrinkLocalSource {
       preparation: '1. Yeşil çay (1 çanta)\n2. Nar (1 fincan suyu)\n3. Mirtil (1/2 fincan)\n4. Su (250 ml)\n5. Limon (1/4)\n\nYapılış: Çayı demlendikten sonra nar suyu ve mirtil ekle, soğut.',
       ingredients: ['çay', 'nar', 'mirtil', 'su', 'limon'],
       imageUrl: 'https://images.unsplash.com/photo-1597318619738-1176f58e8c53?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFDC143C), Color(0xFF4B0082)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFDC143C), Color(0xFF4B0082)]),
       alternatives: {'mirtil': 'çilek'},
     ),
     // ── YENİ EKLENEN POPÜLER İÇECEKLER ──────────────────────────────────
@@ -1634,7 +1613,7 @@ class DrinkLocalSource {
       preparation: '1. Koyu çikolata (50 g, kıyılmış)\n2. Tam yağlı süt (200 ml)\n3. Marshmallow (20 g)\n4. Vanilya (birkaç damla)\n5. Tatlı biber (çimdik)\n\nYapılış: Sütü ısıtın, çikolatayı ekleyin, pürüzsüz olana kadar karıştırın, marshmallow üstüne koyun.',
       ingredients: ['çikolata', 'süt', 'marshmallow', 'vanilya'],
       imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF5C4033), Color(0xFF8B6F47)]),
+      gradient: LinearGradient(colors: [Color(0xFF5C4033), Color(0xFF8B6F47)]),
       allergens: ['laktoz', 'gluten (marshmallow)'],
       alternatives: {'marshmallow': 'whipped cream'},
     ),
@@ -1651,8 +1630,7 @@ class DrinkLocalSource {
       preparation: '1. Kivi (4 adet, dilimlenmiş)\n2. Limon (1/2)\n3. Çiçek pekmezi (1 çay kaşığı)\n4. Barley rumba (100 ml)\n5. Buz (1/2 fincan)\n\nYapılış: Tüm malzemeleri blenderda pürüzsüz olana kadar çekin.',
       ingredients: ['kivi', 'limon', 'pekmez', 'barley rumba', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1607623814075-e51df1095968?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF32CD32), Color(0xFFFFD700)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF32CD32), Color(0xFFFFD700)]),
       alternatives: {'barley rumba': 'almond milk'},
     ),
     DrinkModel(
@@ -1668,8 +1646,7 @@ class DrinkLocalSource {
       preparation: '1. Rooibos çayı (1 çanta)\n2. Sıcak su (250 ml)\n3. Bal (1 yemek kaşığı)\n4. Limoncu cilantro (isteğe bağlı)\n\nYapılış: Çayı 5-7 dk demlendikten sonra balı ekleyip karıştırın.',
       ingredients: ['rooibos', 'su', 'bal', 'limon'],
       imageUrl: 'https://images.unsplash.com/photo-1576092762740-410023a10526?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFCD5C5C), Color(0xFFBDB76B)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFCD5C5C), Color(0xFFBDB76B)]),
       alternatives: {'bal': 'stevia'},
     ),
     DrinkModel(
@@ -1685,8 +1662,7 @@ class DrinkLocalSource {
       preparation: '1. Kavun (3 fincan, küplü)\n2. Limon (1)\n3. Nane (5 yaprak)\n4. Su (150 ml)\n5. Buz\n\nYapılış: Kavun, limon ve mintı blenderda dön, buz ekleyip servis et.',
       ingredients: ['kavun', 'limon', 'nane', 'su', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1570537254185-ac00b89f2241?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFD700), Color(0xFF90EE90)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFFFFD700), Color(0xFF90EE90)]),
       alternatives: {'kavun': 'mango'},
     ),
     DrinkModel(
@@ -1702,7 +1678,7 @@ class DrinkLocalSource {
       preparation: '1. Espresso (60 ml)\n2. Hindistancevizi kremi (30 ml)\n3. Sıcak süt (100 ml)\n4. Şeker (1 çay kaşığı)\n\nYapılış: Bardağa hindistancevizi kremini koyun, sıcak espresso ekleyin, üstten sütü yavaşça döküp karıştırın.',
       ingredients: ['espresso', 'hindistancevizi kremi', 'süt', 'şeker'],
       imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFFFE4B5)]),
+      gradient: LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFFFE4B5)]),
       allergens: ['kafein'],
       alternatives: {'hindistancevizi kremi': 'oat cream'},
     ),
@@ -1719,8 +1695,7 @@ class DrinkLocalSource {
       preparation: '1. Açaı paket (100 g)\n2. Ejder meyvesi (1 adet, dilimlenmiş)\n3. Elma (1/2)\n4. Coconut sütü (150 ml)\n5. Granola (3 çay kaşığı)\n\nYapılış: Açaı, ejder meyvesi ve elmayı blenderda dön, coconut sütü ekle, granola ile servis et.',
       ingredients: ['açaı', 'ejder meyvesi', 'elma', 'coconut sütü', 'granola'],
       imageUrl: 'https://images.unsplash.com/photo-1590080876-1b91c7c62ba5?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF8B008B), Color(0xFF1E90FF)]),
-      allergens: [],
+      gradient: LinearGradient(colors: [Color(0xFF8B008B), Color(0xFF1E90FF)]),
       alternatives: {'coconut sütü': 'almond milk'},
     ),
     DrinkModel(
@@ -1736,7 +1711,7 @@ class DrinkLocalSource {
       preparation: '1. Kahverengi şeker (2 çay kaşığı)\n2. Sıcak su (1 çay kaşığı)\n3. Espresso (30 ml)\n4. Soğuk süt (150 ml)\n5. Buz (1 fincan)\n\nYapılış: Kahverengi şekeri suyla özelleştir, bardağa koy, espresso ve soğuk sütü ekle, buz dök.',
       ingredients: ['kahverengi şeker', 'espresso', 'süt', 'buz'],
       imageUrl: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFA0826D), Color(0xFFD2B48C)]),
+      gradient: LinearGradient(colors: [Color(0xFFA0826D), Color(0xFFD2B48C)]),
       allergens: ['kafein', 'laktoz'],
       alternatives: {'süt': 'vegan milk'},
     ),
@@ -1753,9 +1728,7 @@ class DrinkLocalSource {
       preparation: '1. Taze zencefil (2 cm)\n2. Zerdeçal (1 çay kaşığı)\n3. Siyah biber (çimdik)\n4. Limon (1/4)\n5. Sıcak su (50 ml)\n\nYapılış: Zencefili rendele, zerdeçal ve biber ekle, sıcak suyla ısıt, limon sık, tek yudumda iç.',
       ingredients: ['zencefil', 'zerdeçal', 'siyah biber', 'limon'],
       imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd63c69?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFFF6347)]),
-      allergens: [],
-      alternatives: {},
+      gradient: LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFFF6347)]),
     ),
     DrinkModel(
       id: 'elderflower-spritzer',
@@ -1773,7 +1746,7 @@ class DrinkLocalSource {
       ingredients: ['elderflower şurubu', 'soda suyu', 'limon', 'buz'],
       imageUrl:
           'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFE8EAF6), Color(0xFFB3E5FC)]),
+      gradient: LinearGradient(colors: [Color(0xFFE8EAF6), Color(0xFFB3E5FC)]),
     ),
     DrinkModel(
       id: 'black-sesame-latte',
@@ -1791,7 +1764,7 @@ class DrinkLocalSource {
       ingredients: ['siyah susam', 'süt', 'şeker'],
       imageUrl:
           'https://images.unsplash.com/photo-1562440499-64b3605ee1b4?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF4E342E), Color(0xFFBCAAA4)]),
+      gradient: LinearGradient(colors: [Color(0xFF4E342E), Color(0xFFBCAAA4)]),
     ),
     DrinkModel(
       id: 'mango-green-tea',
@@ -1809,7 +1782,7 @@ class DrinkLocalSource {
       ingredients: ['yeşil çay', 'mango suyu', 'buz'],
       imageUrl:
           'https://images.unsplash.com/photo-1524594168175-8c5834d9178f?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF7CB342), Color(0xFFFFEB3B)]),
+      gradient: LinearGradient(colors: [Color(0xFF7CB342), Color(0xFFFFEB3B)]),
     ),
     DrinkModel(
       id: 'greek-yogurt-berry-smoothie',
@@ -1827,7 +1800,7 @@ class DrinkLocalSource {
       ingredients: ['yoğurt', 'çilek', 'böğürtlen', 'bal', 'buz'],
       imageUrl:
           'https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFBA68C8), Color(0xFFFFCDD2)]),
+      gradient: LinearGradient(colors: [Color(0xFFBA68C8), Color(0xFFFFCDD2)]),
     ),
     DrinkModel(
       id: 'spiced-apple-cider',
@@ -1845,7 +1818,7 @@ class DrinkLocalSource {
       ingredients: ['elma suyu', 'tarçın', 'karanfil', 'portakal kabuğu'],
       imageUrl:
           'https://images.unsplash.com/photo-1514361892638-1c1a9ad0c532?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFD84315)]),
+      gradient: LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFD84315)]),
     ),
     DrinkModel(
       id: 'cucumber-mint-water',
@@ -1863,7 +1836,7 @@ class DrinkLocalSource {
       ingredients: ['salatalık', 'nane', 'su', 'limon'],
       imageUrl:
           'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF81C784), Color(0xFFB2FF59)]),
+      gradient: LinearGradient(colors: [Color(0xFF81C784), Color(0xFFB2FF59)]),
     ),
     DrinkModel(
       id: 'blue-lagoon-mocktail',
@@ -1881,7 +1854,7 @@ class DrinkLocalSource {
       ingredients: ['ananas suyu', 'lime', 'mavi şurup', 'soda suyu', 'buz'],
       imageUrl:
           'https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFF03A9F4), Color(0xFF81D4FA)]),
+      gradient: LinearGradient(colors: [Color(0xFF03A9F4), Color(0xFF81D4FA)]),
     ),
     DrinkModel(
       id: 'pumpkin-spice-latte',
@@ -1899,7 +1872,7 @@ class DrinkLocalSource {
       ingredients: ['espresso', 'balkabağı püresi', 'süt', 'tarçın', 'vanilya'],
       imageUrl:
           'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
-      gradient: const LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFEF6C00)]),
+      gradient: LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFEF6C00)]),
     ),
   ];
 }

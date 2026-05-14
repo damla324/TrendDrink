@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
 
 class HomePageV2 extends ConsumerWidget {
-  const HomePageV2({Key? key}) : super(key: key);
+  const HomePageV2({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -12,14 +12,14 @@ class HomePageV2 extends ConsumerWidget {
     
     // Category metadata with emojis and colors
     final categoryData = {
-      'Kahve': {'emoji': '☕', 'color': Color(0xFF8B4513)},
-      'Kokteyl': {'emoji': '🍹', 'color': Color(0xFFE91E63)},
-      'Frozen': {'emoji': '🧊', 'color': Color(0xFF00BCD4)},
-      'Smoothie': {'emoji': '🥤', 'color': Color(0xFF8BC34A)},
-      'Soda': {'emoji': '🥃', 'color': Color(0xFFFFC107)},
-      'Çay': {'emoji': '🫖', 'color': Color(0xFF9C27B0)},
-      'Fit': {'emoji': '💪', 'color': Color(0xFF4CAF50)},
-      'Matcha': {'emoji': '🍵', 'color': Color(0xFF558B2F)},
+      'Kahve': {'emoji': '☕', 'color': const Color(0xFF8B4513)},
+      'Kokteyl': {'emoji': '🍹', 'color': const Color(0xFFE91E63)},
+      'Frozen': {'emoji': '🧊', 'color': const Color(0xFF00BCD4)},
+      'Smoothie': {'emoji': '🥤', 'color': const Color(0xFF8BC34A)},
+      'Soda': {'emoji': '🥃', 'color': const Color(0xFFFFC107)},
+      'Çay': {'emoji': '🫖', 'color': const Color(0xFF9C27B0)},
+      'Fit': {'emoji': '💪', 'color': const Color(0xFF4CAF50)},
+      'Matcha': {'emoji': '🍵', 'color': const Color(0xFF558B2F)},
     };
 
     return Scaffold(

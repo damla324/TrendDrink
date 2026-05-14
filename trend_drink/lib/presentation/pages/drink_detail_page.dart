@@ -173,17 +173,17 @@ class _BodyContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // History card
-        _SectionHeader(label: 'Tarih & Kültür'),
+        const _SectionHeader(label: 'Tarih & Kültür'),
         const SizedBox(height: 14),
         _HistoryCard(history: drink.history),
         const SizedBox(height: 36),
         // Pros & Cons
-        _SectionHeader(label: 'Artıları ve Eksileri'),
+        const _SectionHeader(label: 'Artıları ve Eksileri'),
         const SizedBox(height: 14),
         _ProsConsRow(pros: drink.pros, cons: drink.cons),
         const SizedBox(height: 36),
         // Preparation
-        _SectionHeader(label: 'Hazırlanışı'),
+        const _SectionHeader(label: 'Hazırlanışı'),
         const SizedBox(height: 14),
         _PreparationCard(preparation: drink.preparation),
         const SizedBox(height: 28),
@@ -237,7 +237,7 @@ class _HistoryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.mocha.withAlpha(160),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.gold.withAlpha(30), width: 1),
+        border: Border.all(color: AppTheme.gold.withAlpha(30)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +293,7 @@ class _ProsCard extends StatelessWidget {
         color: const Color(0xFF0D2818).withAlpha(200),
         borderRadius: BorderRadius.circular(14),
         border:
-            Border.all(color: const Color(0xFF2ECC71).withAlpha(60), width: 1),
+            Border.all(color: const Color(0xFF2ECC71).withAlpha(60)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,7 +362,7 @@ class _ConsCard extends StatelessWidget {
         color: const Color(0xFF1A0A0A).withAlpha(200),
         borderRadius: BorderRadius.circular(14),
         border:
-            Border.all(color: const Color(0xFFE74C3C).withAlpha(60), width: 1),
+            Border.all(color: const Color(0xFFE74C3C).withAlpha(60)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -433,7 +433,7 @@ class _PreparationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.darkMocha.withAlpha(200),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.gold.withAlpha(25), width: 1),
+        border: Border.all(color: AppTheme.gold.withAlpha(25)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,12 +476,12 @@ class _TipCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.gold.withAlpha(15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.gold.withAlpha(50), width: 1),
+        border: Border.all(color: AppTheme.gold.withAlpha(50)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lightbulb_rounded, color: AppTheme.gold, size: 18),
+          const Icon(Icons.lightbulb_rounded, color: AppTheme.gold, size: 18),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -515,7 +515,6 @@ class _TemperatureBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isHot ? Colors.orange : Colors.lightBlue).withAlpha(120),
-          width: 1,
         ),
       ),
       child: Row(
@@ -552,7 +551,7 @@ class _CategoryBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.gold.withAlpha(25),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.gold.withAlpha(80), width: 1),
+        border: Border.all(color: AppTheme.gold.withAlpha(80)),
       ),
       child: Text(
         category,
@@ -584,7 +583,7 @@ class _BackButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.black.withAlpha(100),
           shape: BoxShape.circle,
-          border: Border.all(color: AppTheme.gold.withAlpha(60), width: 1),
+          border: Border.all(color: AppTheme.gold.withAlpha(60)),
         ),
         child: const Icon(
           Icons.arrow_back_rounded,
@@ -628,7 +627,6 @@ class _AiButtonState extends State<_AiButton> {
               color: _hovered
                   ? AppTheme.ledCyan.withAlpha(180)
                   : AppTheme.ledCyan.withAlpha(80),
-              width: 1,
             ),
             boxShadow: _hovered
                 ? [
@@ -642,7 +640,7 @@ class _AiButtonState extends State<_AiButton> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_awesome_rounded,
                 color: AppTheme.ledCyan,
                 size: 14,

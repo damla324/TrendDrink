@@ -99,7 +99,7 @@ class _MobileNavBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1E140A).withAlpha(230),
         border: Border(
-          top: BorderSide(color: AppTheme.gold.withAlpha(40), width: 1),
+          top: BorderSide(color: AppTheme.gold.withAlpha(40)),
         ),
         boxShadow: [
           BoxShadow(
@@ -206,7 +206,7 @@ class _CategoriesSheet extends StatelessWidget {
         color: const Color(0xFF1E140A),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(
-          top: BorderSide(color: AppTheme.gold.withAlpha(50), width: 1),
+          top: BorderSide(color: AppTheme.gold.withAlpha(50)),
         ),
       ),
       child: Column(

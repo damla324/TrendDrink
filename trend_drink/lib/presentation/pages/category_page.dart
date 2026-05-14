@@ -49,9 +49,9 @@ class CategoryPage extends ConsumerWidget {
                       color: const Color(0xFF1E140A).withAlpha(220),
                       shape: BoxShape.circle,
                       border: Border.all(
-                          color: AppTheme.gold.withAlpha(80), width: 1),
+                          color: AppTheme.gold.withAlpha(80)),
                     ),
-                    child: Icon(Icons.arrow_back_rounded,
+                    child: const Icon(Icons.arrow_back_rounded,
                         color: AppTheme.cream, size: 18),
                   ),
                 ),

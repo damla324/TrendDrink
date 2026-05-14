@@ -9,7 +9,7 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUser = message.author == ChatAuthor.user;
-    final color = isUser ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceVariant;
+    final color = isUser ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerHighest;
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: ConstrainedBox(

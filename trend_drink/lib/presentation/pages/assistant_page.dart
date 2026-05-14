@@ -100,7 +100,6 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
               padding: const EdgeInsets.all(40),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.lock_outline,
@@ -206,7 +205,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
           hPad, isMobile ? 16 : 28, hPad, isMobile ? 14 : 20),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: AppTheme.gold.withAlpha(25), width: 1),
+          bottom: BorderSide(color: AppTheme.gold.withAlpha(25)),
         ),
       ),
       child: Row(
@@ -341,7 +340,6 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: AppTheme.gold.withAlpha(50),
-                  width: 1,
                 ),
               ),
               child: TextField(
@@ -476,7 +474,6 @@ class _MessageBubble extends StatelessWidget {
                       color: isUser
                           ? AppTheme.gold.withAlpha(60)
                           : AppTheme.gold.withAlpha(20),
-                      width: 1,
                     ),
                   ),
                   child: _RichText(text: message.text, isUser: isUser),
@@ -561,12 +558,12 @@ class _DrinkLinkChipState extends State<_DrinkLinkChip> {
                 ? AppTheme.gold.withAlpha(30)
                 : AppTheme.gold.withAlpha(15),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppTheme.gold.withAlpha(80), width: 1),
+            border: Border.all(color: AppTheme.gold.withAlpha(80)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.open_in_new_rounded, size: 13, color: AppTheme.gold),
+              const Icon(Icons.open_in_new_rounded, size: 13, color: AppTheme.gold),
               const SizedBox(width: 6),
               Text(
                 'Detayı Gör',
@@ -607,7 +604,7 @@ class _QuickChipState extends State<_QuickChip> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
             color: _hovered
                 ? AppTheme.mocha.withAlpha(220)
@@ -617,7 +614,6 @@ class _QuickChipState extends State<_QuickChip> {
               color: _hovered
                   ? AppTheme.gold.withAlpha(80)
                   : AppTheme.gold.withAlpha(30),
-              width: 1,
             ),
           ),
           child: Center(
@@ -691,7 +687,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
                 bottomRight: Radius.circular(14),
                 bottomLeft: Radius.circular(4),
               ),
-              border: Border.all(color: AppTheme.gold.withAlpha(20), width: 1),
+              border: Border.all(color: AppTheme.gold.withAlpha(20)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -731,7 +727,7 @@ class _AssistantAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: AppTheme.ledCyan.withAlpha(25),
-        border: Border.all(color: AppTheme.ledCyan.withAlpha(80), width: 1),
+        border: Border.all(color: AppTheme.ledCyan.withAlpha(80)),
       ),
       child: const Center(
         child: Text('✨', style: TextStyle(fontSize: 14)),

@@ -328,7 +328,6 @@ class _ThemeVariantSelector extends ConsumerWidget {
             crossAxisCount: 3,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 1,
           ),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -388,7 +387,7 @@ class _ThemeVariantSelector extends ConsumerWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.palette_rounded,
                           color: Colors.white,
                           size: 28,
@@ -426,7 +425,7 @@ class _ThemeVariantSelector extends ConsumerWidget {
                         child: Container(
                           width: 24,
                           height: 24,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
                           ),

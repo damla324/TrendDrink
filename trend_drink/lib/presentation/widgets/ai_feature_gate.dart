@@ -26,7 +26,6 @@ class AIFeatureGate extends ConsumerWidget {
               padding: const EdgeInsets.all(40),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.lock_outline,

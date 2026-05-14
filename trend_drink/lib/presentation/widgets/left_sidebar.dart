@@ -122,7 +122,6 @@ class _LeftSidebarState extends ConsumerState<LeftSidebar>
               border: Border(
                 right: BorderSide(
                   color: AppTheme.gold.withAlpha(30),
-                  width: 1,
                 ),
               ),
             ),
@@ -169,7 +168,7 @@ class _LeftSidebarState extends ConsumerState<LeftSidebar>
             decoration: BoxDecoration(
               color: AppTheme.gold.withAlpha(20),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppTheme.gold.withAlpha(60), width: 1),
+              border: Border.all(color: AppTheme.gold.withAlpha(60)),
             ),
             child: const Center(
               child: Text('☕', style: TextStyle(fontSize: 18)),
@@ -322,22 +321,17 @@ class _LeftSidebarState extends ConsumerState<LeftSidebar>
                                 .withAlpha((15 + (glow * 25)).round()),
                             Colors.transparent,
                           ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: AppTheme.ledCyan
                           .withAlpha((40 + (glow * 60)).round()),
                       blurRadius: 12 + glow * 8,
-                      spreadRadius: 0,
-                      offset: const Offset(0, 0),
                     ),
                   ],
                   border: Border.all(
                     color:
                         AppTheme.ledCyan.withAlpha((60 + (glow * 80)).round()),
-                    width: 1,
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -479,7 +473,7 @@ class _LeftSidebarState extends ConsumerState<LeftSidebar>
                     ),
                   )
                 else
-                  Icon(
+                  const Icon(
                     Icons.verified_rounded,
                     size: 16,
                     color: Colors.white,
@@ -504,7 +498,7 @@ class _LeftSidebarState extends ConsumerState<LeftSidebar>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.settings_rounded,
                           size: 12,
                           color: AppTheme.caramel,
@@ -586,7 +580,6 @@ class _SidebarTileState extends State<_SidebarTile> {
               border: widget.isActive
                   ? Border.all(
                       color: AppTheme.gold.withAlpha(50),
-                      width: 1,
                     )
                   : null,
             ),

@@ -173,7 +173,7 @@ class ProFeaturesPage extends ConsumerWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.palette,
                                   color: Colors.white,
                                   size: 32,
@@ -292,7 +292,6 @@ class _ProFeatureCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Icon(
               icon,
