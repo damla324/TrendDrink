@@ -71,11 +71,19 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       final names = suggestions.map((d) => d.title).join(', ');
       final mainId = suggestions.first.id;
       return _msg(
-        'Elindeki malzemeler harika, hemen bunlarla güzel bir içecek çıkarabilirsin! ✨\n\n'
+        'Elindeki malzemelere en uygun içecekleri buldum! ✨\n\n'
         'Sana en uygun üç seçenek: **$names**.\n\n'
         'Aşağıdaki düğmeye tıklayarak seçtiğim tarifin detaylı tarifine ulaşabilirsin. '
         'Şimdi bana da söyle: bu tariflerden hangisini daha çok denemek istersin ya da hangi malzemeyi kesinlikle kullanmak istersin? 🍹',
         drinkId: mainId,
+      );
+    }
+
+    final looksLikeIngredientQuery = tokens.length > 1 || lower.contains(',') || lower.contains(' var');
+    if (looksLikeIngredientQuery) {
+      return _msg(
+        'Bu malzemelere tam olarak uyan bir içecek bulamadım. '
+        'Elindeki malzemeleri biraz değiştirerek ya da farklı birleştirerek tekrar sorabilirsin. 😊',
       );
     }
 
@@ -154,35 +162,38 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   ChatMessage? _matchSensitivity(List<DrinkModel> drinks, String lower) {
     // ── Sensitivity/allergen keywords ──────────────────────────────────
     const sensitivityMap = {
-      'kafein': 'kafein',
       'kafeinsiz': 'kafein',
-      'cafeinated': 'kafein',
+      'cafeinsiz': 'kafein',
       'decaf': 'kafein',
-      'şeker': 'şeker',
-      'seker': 'şeker',
+      'kafein istemiyorum': 'kafein',
       'şekersiz': 'şeker',
+      'şeker istemiyorum': 'şeker',
+      'şeker yok': 'şeker',
       'diyabet': 'şeker',
-      'sugar': 'şeker',
       'sugarfree': 'şeker',
-      'süt': 'süt',
-      'sut': 'süt',
-      'laktoz': 'süt',
-      'dairy': 'süt',
+      'sugar free': 'şeker',
+      'sütsüz': 'süt',
+      'sut istemiyorum': 'süt',
+      'süt istemiyorum': 'süt',
+      'laktozsuz': 'süt',
+      'dairy free': 'süt',
       'vegan': 'vegan',
       'vejetaryen': 'vegan',
-      'gluten': 'gluten',
+      'glutensiz': 'gluten',
+      'gluten free': 'gluten',
       'glutenfree': 'gluten',
+      'alerjim var': 'alerji',
       'alerji': 'alerji',
       'alerjik': 'alerji',
       'allergen': 'alerji',
-      'kolin': 'kolin',
-      'çikolata': 'çikolata',
-      'cikola': 'çikolata',
-      'chocolate': 'çikolata',
-      'nut': 'fındık',
+      'çikolatadan': 'çikolata',
+      'çikolata istemiyorum': 'çikolata',
+      'fındık istemiyorum': 'fındık',
+      'findik istemiyorum': 'fındık',
+      'badem istemiyorum': 'kaju',
       'fındık': 'fındık',
       'findik': 'fındık',
-      'almond': 'almond',
+      'almond': 'kaju',
       'kaju': 'kaju',
     };
 
@@ -354,62 +365,66 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     if (normalizedTokens.isEmpty) return [];
 
-    final matches = <_IngredientMatch>[];
+    final exactMatches = <_IngredientMatch>[];
+    final partialMatches = <_IngredientMatch>[];
 
     for (final drink in drinks) {
-      var matchCount = 0;
+      final matchedTokenIndices = <int>{};
       var exactCount = 0;
 
-      for (final token in normalizedTokens) {
+      for (var tokenIndex = 0;
+          tokenIndex < normalizedTokens.length;
+          tokenIndex++) {
+        final token = normalizedTokens[tokenIndex];
         for (final ingredient in drink.ingredients) {
           final normalizedIngredient = _normalize(ingredient);
           if (normalizedIngredient == token) {
-            matchCount++;
+            matchedTokenIndices.add(tokenIndex);
             exactCount += 2;
             break;
           }
           if (normalizedIngredient.contains(token) ||
               token.contains(normalizedIngredient)) {
-            matchCount++;
+            matchedTokenIndices.add(tokenIndex);
             exactCount += 1;
             break;
           }
         }
       }
 
-      if (matchCount > 0) {
-        final score = matchCount * 100 +
-            exactCount * 10 -
-            (drink.ingredients.length - matchCount);
-        matches.add(_IngredientMatch(drink, matchCount, score));
+      if (matchedTokenIndices.isEmpty) continue;
+
+      final matchCount = matchedTokenIndices.length;
+      final score = matchCount * 100 + exactCount * 10 -
+          (drink.ingredients.length - matchCount);
+      final match = _IngredientMatch(drink, matchCount, score);
+
+      if (matchCount == normalizedTokens.length) {
+        exactMatches.add(match);
+      } else {
+        partialMatches.add(match);
       }
     }
 
-    if (matches.isEmpty) return [];
+    if (exactMatches.isNotEmpty) {
+      exactMatches.sort((a, b) {
+        if (b.score != a.score) return b.score.compareTo(a.score);
+        if (b.matchCount != a.matchCount) return b.matchCount.compareTo(a.matchCount);
+        return a.drink.title.compareTo(b.drink.title);
+      });
+      return exactMatches.map((match) => match.drink).toList();
+    }
 
-    matches.sort((a, b) {
-      if (b.score != a.score) {
-        return b.score.compareTo(a.score);
-      }
-      if (b.matchCount != a.matchCount) {
-        return b.matchCount.compareTo(a.matchCount);
-      }
-      return a.drink.title.compareTo(b.drink.title);
-    });
+    if (partialMatches.isNotEmpty && normalizedTokens.length == 1) {
+      partialMatches.sort((a, b) {
+        if (b.score != a.score) return b.score.compareTo(a.score);
+        if (b.matchCount != a.matchCount) return b.matchCount.compareTo(a.matchCount);
+        return a.drink.title.compareTo(b.drink.title);
+      });
+      return partialMatches.map((match) => match.drink).toList();
+    }
 
-    final perfectMatches = matches
-        .where((match) => match.matchCount == normalizedTokens.length)
-        .map((match) => match.drink)
-        .toList();
-    if (perfectMatches.isNotEmpty) return perfectMatches;
-
-    final strongMatches = matches
-        .where((match) => match.matchCount >= normalizedTokens.length - 1)
-        .map((match) => match.drink)
-        .toList();
-    if (strongMatches.isNotEmpty) return strongMatches;
-
-    return matches.map((match) => match.drink).toList();
+    return [];
   }
 
   List<DrinkModel> _findByCategory(List<DrinkModel> drinks, String lower) {

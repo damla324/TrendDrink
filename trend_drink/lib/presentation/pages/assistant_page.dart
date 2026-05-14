@@ -59,9 +59,9 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text(
-              'Daily AI requests limit reached. Upgrade to Pro for unlimited access!',
+              'AI isteği kotan bitti. Yine de bu isteği yanıtlayacağım, ancak bana daha sonra yeniden denemeni öneririm.',
             ),
-            backgroundColor: Theme.of(context).colorScheme.error,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
             action: SnackBarAction(
               label: 'Upgrade',
               onPressed: () => context.go('/pro'),
@@ -69,7 +69,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
           ),
         );
       }
-      return;
+      // Allow the user to continue using the chat even when the quota is 0.
     }
     
     _controller.clear();
@@ -89,70 +89,6 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
   Widget build(BuildContext context) {
     final membership = ref.watch(membershipProvider);
     final colors = Theme.of(context).colorScheme;
-    
-    // Gate AI feature for non-pro members with no requests
-    if (!membership.isPro && membership.aiRequestsRemaining <= 0) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(40),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.lock_outline,
-                    size: 80,
-                    color: colors.primary,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'AI Assistant Locked',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'You have used all your daily AI requests.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: colors.onSurfaceVariant,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Upgrade to Pro for unlimited AI assistance!',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: colors.onSurfaceVariant,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  FilledButton.icon(
-                    onPressed: () => context.go('/pro'),
-                    icon: const Icon(Icons.star),
-                    label: const Text('Upgrade to Pro Now'),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Get unlimited AI requests, premium themes, and more!',
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: colors.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    // Show remaining requests banner for free users
     final messages = ref.watch(assistantProvider);
     _scrollToBottom();
 
@@ -162,25 +98,45 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
         children: [
           if (!membership.isPro)
             Container(
-              color: colors.primaryContainer,
+              color: membership.aiRequestsRemaining <= 0
+                  ? colors.errorContainer
+                  : colors.primaryContainer,
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  Icon(Icons.info, color: colors.primary, size: 16),
+                  Icon(
+                    membership.aiRequestsRemaining <= 0
+                        ? Icons.error_outline
+                        : Icons.info,
+                    color: membership.aiRequestsRemaining <= 0
+                        ? colors.onErrorContainer
+                        : colors.primary,
+                    size: 16,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'AI Requests: ${membership.aiRequestsRemaining}/${membership.maxDailyAIRequests} remaining',
-                      style: Theme.of(context).textTheme.bodySmall,
+                      membership.aiRequestsRemaining <= 0
+                          ? 'Bugünlük AI kotan doldu, ama sohbete devam edebilirsin. Yarın tekrar dene veya Pro’ya yükselt.'
+                          : 'AI Requests: ${membership.aiRequestsRemaining}/${membership.maxDailyAIRequests} remaining',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(
+                            color: membership.aiRequestsRemaining <= 0
+                                ? colors.onErrorContainer
+                                : null,
+                          ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => context.go('/pro'),
-                    child: Text(
-                      'Upgrade',
-                      style: TextStyle(color: colors.primary),
+                  if (membership.aiRequestsRemaining > 0)
+                    TextButton(
+                      onPressed: () => context.go('/pro'),
+                      child: Text(
+                        'Upgrade',
+                        style: TextStyle(color: colors.primary),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
