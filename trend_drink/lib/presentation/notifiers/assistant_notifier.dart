@@ -319,9 +319,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   List<String> _tokenize(String s) {
     final tokens = s
         .split(RegExp(r'[,;\s/&+]+'))
+        .map((t) => t.trim())
         .where((t) => t.length > 2) // Boş sözcükleri atla (var, mi, mi, etc)
         .toList();
-
+    
     // Common Türkçe stop words'ü kaldır
     const stopwords = {
       'var',
