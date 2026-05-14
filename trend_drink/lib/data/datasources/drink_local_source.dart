@@ -1757,5 +1757,149 @@ class DrinkLocalSource {
       allergens: [],
       alternatives: {},
     ),
+    DrinkModel(
+      id: 'elderflower-spritzer',
+      title: 'Elderflower Spritzer',
+      category: 'Soda',
+      description: 'Beyaz üzüm ve yabani filizle ferahlatıcı alkolsüz soda.',
+      history:
+          'Elderflower, Avrupa kırsalında yüzyıllardır yaz içeceklerinde kullanılır; modern spritzerlarla yeniden popüler oldu.',
+      temperature: 'Soğuk',
+      pros: ['Ferahlık verir', 'Düşük kalorili', 'Doğal antioksidanlar içerir'],
+      cons: ['Elderflower şurubu her yerde bulunmayabilir', 'Hafif tatlıdır'],
+      tip: 'Buzlu olarak servis edin ve limon kabuğu ekleyin.',
+      preparation:
+          '1. Elderflower şurubu (30 ml)\n2. Soda suyu (150 ml)\n3. Limon suyu (10 ml)\n4. Buz\n\nYapılış:\n1) Bardağa buz koyun\n2) Elderflower şurubunu ve limon suyunu ekleyin\n3) Soda suyunu yavaşça döküp karıştırın',
+      ingredients: ['elderflower şurubu', 'soda suyu', 'limon', 'buz'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?q=80&w=800&auto=format&fit=crop',
+      gradient: const LinearGradient(colors: [Color(0xFFE8EAF6), Color(0xFFB3E5FC)]),
+    ),
+    DrinkModel(
+      id: 'black-sesame-latte',
+      title: 'Black Sesame Latte',
+      category: 'Kahve',
+      description: 'Susamlı, kremamsı ve hafif fındıksı bir latte deneyimi.',
+      history:
+          'Siyah susam, Doğu Asya mutfağında tatlı ve içecek tariflerinde uzun zamandır tercih edilir.',
+      temperature: 'Sıcak',
+      pros: ['Besleyici yağlar içerir', 'Aromatik bir tat sunar', 'Farklı bir latte alternatifi'],
+      cons: ['Susam alerjisi olanlar için uygun değil', 'Yoğun kıvamı herkes sevmez'],
+      tip: 'Süt köpüğünü hafif tutun, üzerinde susam serpin.',
+      preparation:
+          '1. Siyah susam ezmesi (1 yemek kaşığı)\n2. Süt (200 ml)\n3. Şeker/honey (1 çay kaşığı)\n\nYapılış:\n1) Susam ezmesini az miktar sıcak sütte ezin\n2) Kalan sütü ısıtıp ekleyin\n3) Tatlandırıcıyı karıştırıp servis edin',
+      ingredients: ['siyah susam', 'süt', 'şeker'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1562440499-64b3605ee1b4?q=80&w=800&auto=format&fit=crop',
+      gradient: const LinearGradient(colors: [Color(0xFF4E342E), Color(0xFFBCAAA4)]),
+    ),
+    DrinkModel(
+      id: 'mango-green-tea',
+      title: 'Mango Green Tea',
+      category: 'Çay',
+      description: 'Yeşil çay ve mango aromasıyla tropikal yaz çayı.',
+      history:
+          'Mango ve yeşil çay, Asya kültürlerinde tazeleyici içecekler olarak birlikte sunulur.',
+      temperature: 'Soğuk',
+      pros: ['Antioksidanlar sağlar', 'Ferahlık verir', 'Vitamin dolu'],
+      cons: ['Mango mevsimsel olabilir', 'Çay tadı baskılanabilir'],
+      tip: 'Soğuk demleme ile daha yumuşak bir tat elde edin.',
+      preparation:
+          '1. Yeşil çay poşeti (1)\n2. Sıcak su (200 ml)\n3. Mango suyu (100 ml)\n4. Buz\n\nYapılış:\n1) Yeşil çayı demlendirin ve soğutun\n2) Mango suyunu ekleyip buzla servis edin',
+      ingredients: ['yeşil çay', 'mango suyu', 'buz'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1524594168175-8c5834d9178f?q=80&w=800&auto=format&fit=crop',
+      gradient: const LinearGradient(colors: [Color(0xFF7CB342), Color(0xFFFFEB3B)]),
+    ),
+    DrinkModel(
+      id: 'greek-yogurt-berry-smoothie',
+      title: 'Greek Yogurt Berry Smoothie',
+      category: 'Smoothie',
+      description: 'Yoğurt bazlı kırmızı meyveli besleyici smoothie.',
+      history:
+          'Yunan yoğurdu, smoothie tarifleriyle küresel popülerliğe ulaşmıştır.',
+      temperature: 'Soğuk',
+      pros: ['Protein yüksektir', 'Probiyotik destekler', 'Tatlı ve hafif'],
+      cons: ['Laktoz içerebilir', 'Yoğun kıvamlı olabilir'],
+      tip: 'Granola ile servis edebilirsiniz.',
+      preparation:
+          '1. Yunan yoğurdu (150 g)\n2. Karışık kırmızı meyveler (1 fincan)\n3. Ballı şurup (1 çay kaşığı)\n4. Buz\n\nYapılış:\n1) Tüm malzemeleri blenderda pürüzsüz olana kadar çekin',
+      ingredients: ['yoğurt', 'çilek', 'böğürtlen', 'bal', 'buz'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=800&auto=format&fit=crop',
+      gradient: const LinearGradient(colors: [Color(0xFFBA68C8), Color(0xFFFFCDD2)]),
+    ),
+    DrinkModel(
+      id: 'spiced-apple-cider',
+      title: 'Spiced Apple Cider',
+      category: 'Çay',
+      description: 'Sıcak elma suyu, tarçın ve karanfil ile baharatlı içecek.',
+      history:
+          'Baharatlı elma suyu, soğuk kış günlerinde Avrupa ve Amerika’da sevilen bir gelenektir.',
+      temperature: 'Sıcak',
+      pros: ['Rahatlatıcı bir aroma', 'Bağışıklık sistemini destekler', 'Kış için ideal'],
+      cons: ['Şeker içerir', 'Bazı baharatlar hassas mideye neden olabilir'],
+      tip: 'Tarçın çubuğu ile servis edin.',
+      preparation:
+          '1. Elma suyu (200 ml)\n2. Tarçın çubuğu (1)\n3. Karanfil (3 adet)\n4. Portakal kabuğu\n\nYapılış:\n1) Tüm malzemeleri 10 dk kaynatın\n2) Süzüp sıcak servis edin',
+      ingredients: ['elma suyu', 'tarçın', 'karanfil', 'portakal kabuğu'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1514361892638-1c1a9ad0c532?q=80&w=800&auto=format&fit=crop',
+      gradient: const LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFD84315)]),
+    ),
+    DrinkModel(
+      id: 'cucumber-mint-water',
+      title: 'Cucumber Mint Water',
+      category: 'Fit',
+      description: 'Salatalık ve nane ile düşük kalorili detoks suyu.',
+      history:
+          'Nane ve salatalık suyu, yaz aylarında ferahlatıcı bir hidrate kaynağı olarak kullanılır.',
+      temperature: 'Soğuk',
+      pros: ['Hafif ve ferahlatıcı', 'Düşük kalorili', 'Cilt için faydalı'],
+      cons: ['Taze malzeme ister', 'Kısa sürede bozulabilir'],
+      tip: 'Nane yapraklarını hafifçe ezin.',
+      preparation:
+          '1. Salatalık (yarım, dilimlenmiş)\n2. Taze nane (5-6 yaprak)\n3. Su (300 ml)\n4. Limon dilimi\n\nYapılış:\n1) Malzemeleri suya ekleyin\n2) 1 saat buzdolabında bekletip servis edin',
+      ingredients: ['salatalık', 'nane', 'su', 'limon'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
+      gradient: const LinearGradient(colors: [Color(0xFF81C784), Color(0xFFB2FF59)]),
+    ),
+    DrinkModel(
+      id: 'blue-lagoon-mocktail',
+      title: 'Blue Lagoon Mocktail',
+      category: 'Kokteyl',
+      description: 'Mavi curacao aroması olmayan, alkolsüz tropik kokteyl.',
+      history:
+          'Mocktail kültürü, alkol yerine aromatik karışımlar sunarak herkes için keyifli içecekler yaratır.',
+      temperature: 'Soğuk',
+      pros: ['Alkolsüz', 'Renkli ve eğlenceli', 'Yaz için ideal'],
+      cons: ['Mavi tonlu katkı maddeleri içerebilir', 'Çocuklar için tatlı olabilir'],
+      tip: 'Garnitür olarak kiraz kullanın.',
+      preparation:
+          '1. Ananas suyu (100 ml)\n2. Lime suyu (15 ml)\n3. Mavi şurup (10 ml)\n4. Soda suyu (100 ml)\n5. Buz\n\nYapılış:\n1) Tüm sıvıları karıştırın\n2) Bardağa buz ekleyip servis edin',
+      ingredients: ['ananas suyu', 'lime', 'mavi şurup', 'soda suyu', 'buz'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=800&auto=format&fit=crop',
+      gradient: const LinearGradient(colors: [Color(0xFF03A9F4), Color(0xFF81D4FA)]),
+    ),
+    DrinkModel(
+      id: 'pumpkin-spice-latte',
+      title: 'Pumpkin Spice Latte',
+      category: 'Kahve',
+      description: 'Balkabağı baharatı ve espresso ile mevsimsel sıcak latte.',
+      history:
+          'Pumpkin spice latte, son yıllarda sonbahar cafelerinin simgesi haline geldi.',
+      temperature: 'Sıcak',
+      pros: ['Mevsimsel tatlı aroma', 'Rahatlatıcı', 'Kahve ile uyumlu'],
+      cons: ['Şeker içeriği yüksek olabilir', 'Balkabağı aroması herkesin tercihi değil'],
+      tip: 'Tarçın serpiştirerek servis edin.',
+      preparation:
+          '1. Espresso (30 ml)\n2. Balkabağı püresi (1 yemek kaşığı)\n3. Balkabağı baharatı (1 çay kaşığı)\n4. Süt (200 ml)\n5. Vanilya şurubu (1 çay kaşığı)\n\nYapılış:\n1) Espressoyu hazırlayın\n2) Balkabağı püresi ve baharatları sütle ısıtın\n3) Espressoya ekleyip karıştırın',
+      ingredients: ['espresso', 'balkabağı püresi', 'süt', 'tarçın', 'vanilya'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
+      gradient: const LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFEF6C00)]),
+    ),
   ];
 }

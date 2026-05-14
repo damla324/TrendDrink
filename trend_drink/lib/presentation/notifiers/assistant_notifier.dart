@@ -18,7 +18,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       ChatMessage(
         id: 'welcome',
         text:
-            'Merhaba! Ben İçecek AI 🍵\n\nElindeki malzemeleri yaz, bir kategori sor ya da ruh haline göre öneri isteye bilirsin.',
+            'Merhaba! Ben İçecek AI 🍵\n\n'
+            'Elindeki malzemeleri yaz (örn: \"limon, muz, yoğurt\") ve ben sana tam bu malzemeleri içeren tarif önerileri sunayım! '
+            'Veya bir kategori sor (kahve, çay, smoothie, fit, kokteyl vs) ya da ruh haline göre öneri isteyin. '
+            'Hangi ürüne hassasiyetin varsa onu da söyle, ona göre alternatifler sunayım! 💚',
         author: ChatAuthor.assistant,
       ),
     ];
@@ -54,8 +57,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final titleMatch = _findByTitle(drinks, lower);
     if (titleMatch != null) {
       return _msg(
-        'Oh, **${titleMatch.title}** mi istiyorsun! 😋 Çok güzel bir seçim! '
-        'Detayını görmek için bağlantıya tıkla, tarif ve püf noktaları seni bekliyor! 👇',
+        'Oh, **${titleMatch.title}** mi istiyorsun? 😋 Süper bir tercih! ' 
+        'Tarifi hemen paylaşayım; malzemeler, adımlar ve püf noktaları aşağıdaki düğmede seni bekliyor. ' 
+        'Bu tarife bakıp sonra bana "benzer ama daha hafif" veya "şekersiz" gibi bir istek daha yazabilirsin. 👇',
         drinkId: titleMatch.id,
       );
     }
@@ -68,8 +72,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       final names = suggestions.map((d) => d.title).join(', ');
       final mainId = suggestions.first.id;
       return _msg(
-        'Elindeki malzemelerle bu leziz içecekleri yapabilirsin! ✨\n\n**$names**\n\n'
-        'Detaylarını görmek için herhangi birine tıkla, hepsi eşi benzeri yok! 🍹',
+        'Elindeki malzemeler harika, hemen bunlarla güzel bir içecek çıkarabilirsin! ✨\n\n' 
+        'Sana en uygun üç seçenek: **$names**.\n\n' 
+        'Aşağıdaki düğmeye tıklayarak seçtiğim tarifin detaylı tarifine ulaşabilirsin. ' 
+        'Şimdi bana da söyle: bu tariflerden hangisini daha çok denemek istersin ya da hangi malzemeyi kesinlikle kullanmak istersin? 🍹',
         drinkId: mainId,
       );
     }
@@ -80,8 +86,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       final suggestions = categoryMatch.take(3).toList();
       final names = suggestions.map((d) => d.title).join(', ');
       return _msg(
-        'Bu kategoride bende harika seçenekler var! 🎯\n\n**$names**\n\n'
-        'Hangisin hoşuna gitti? Tıkla, detayını keşfet! 😊',
+        'Bu kategori tam senlik! 🎯 Sana uygun üç tane lezzet seçtim: **$names**.\n\n' 
+        'Bu tariflerin her biri için detaylı tarif bağlantısı aşağıdaki butonda. ' 
+        'Hangisini görmek istersin ve bu tarifte hangi malzemeyi öne çıkarmak istersin? 😊',
         drinkId: suggestions.first.id,
       );
     }
@@ -99,8 +106,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         final suggestions = hot.take(3).toList();
         final names = suggestions.map((d) => d.title).join(', ');
         return _msg(
-          'Sıcak bir şey mi istiyorsun? Buraya bak! ☕\n\n**$names**\n\n'
-          'Hangisinin tadını merak ediyorsun?',
+          'Sıcak bir şey çekiyor olabilirsin; bunun için bazı özel tarifler seçtim. ☕\n\n' 
+          '**$names**\n\n' 
+          'Aşağıdaki butona basınca seçtiğim tarife hemen ulaşacaksın. ' 
+          'Sonra bana hangi hisle içmek istediğini de söyle, daha kişisel öneriler vereyim! 😊',
           drinkId: suggestions.first.id,
         );
       }
@@ -113,21 +122,34 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         final suggestions = cold.take(3).toList();
         final names = suggestions.map((d) => d.title).join(', ');
         return _msg(
-          'Soğuk bir serinlik mi lazım? Tam zamanında! 🧊\n\n**$names**\n\n'
-          'Biri hoşuna gitti mi? Detayını görmek için tıkla!',
+          'Soğuk bir ferahlık mı istersin? Hemen sana uygun seçenekler hazırladım. 🧊\n\n' 
+          '**$names**\n\n' 
+          'Birini seçmek için aşağıdaki butonu kullan, tarifin tam detaylarını sana açayım. ' 
+          'Sonra istersen buz oranını da beraber ayarlarız! 😄',
           drinkId: suggestions.first.id,
         );
       }
     }
 
     // ── 6. Fallback ─────────────────────────────────────────────────────
-    final topDrinks = drinks.take(3).toList();
+    final random = DateTime.now().millisecond % 3;
+    final selectedDrinks = drinks..shuffle();
+    final topDrinks = selectedDrinks.take(3).toList();
     final topNames = topDrinks.map((d) => d.title).join(', ');
-    return _msg(
-      'Hmm, tam anlayamadım ama yapacağım! 😄 Şimdi çok popüler olan içecekler:\n\n**$topNames**\n\n'
-      'Eğer bir malzeme, kategori (kahve, çay, smoothie vs) ya da ruh halin hakkında yazarsan, '
-      'sana daha doğru şeyler önerebilirim! 💪',
-    );
+    
+    final fallbackMessages = [
+      'Hmm, tam anlayamadım ama yardımcı olmak istiyorum! 😊\n\n'
+          '**$topNames** gibi lezzetler seni çekebilir. Aşağıdan birini seç ve tarifi görelim!\n\n'
+          'Sonra bana daha spesifik söyle (malzeme, kalori, tat profili) ki doğru tarifi bulabilirim! 💡',
+      'Bekle, ben seninçin şu üç tarif buldum: **$topNames**. 🎯\n\n'
+          'Bunlardan hangisi senin kulağına hoş geldi? Hangisini denemek isterdin?\n\n'
+          'Detaylarını görmek için aşağı bastığında, bana da \"tatlı seviyorum\" veya \"sağlıklı arıyorum\" gibi daha kesin çıklama yaparsan, seni öğrenerim! 📝',
+      'Vay canına, bu soru çok güzel! Çıldırttın beni 😄\n\n'
+          'Sana şu tarif önerileri yapıyorum: **$topNames**\n\n'
+          'İstersen bak, beğendim mi yaz. Hatta \"elma var\", \"vegan istiyorum\" veya \"5 dakikada yapabilecek şey\" gibi başka ipuçları verirsen, daha yapı iyi eşleşme bulabilirim! 🎨',
+    ];
+    
+    return _msg(fallbackMessages[random]);
   }
 
   ChatMessage? _matchSensitivity(List<DrinkModel> drinks, String lower) {
@@ -191,7 +213,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
               emoji = '🍯';
               message =
                   '$emoji Şeker kontrolü yapıyorsun, harika! 💪 Sana özel seçenekler:\n\n**$names**\n\n'
-                  'Sağlıklı tercih ettiğin için tebrik ederim! 🎉';
+                  'Bunlardan biri hoşuna gitti mi? Eğer istersen şeker yerine kullanabileceğin alternatifleri de paylaşayım. 🎉';
               break;
             case 'süt':
               emoji = '🥛';
@@ -228,7 +250,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
               message =
                   '$emoji Fındıktan uzak mı durmak istiyorsun? Sorun değil! '
                   'Başka muhteşem seçenekler:\n\n**$names**\n\n'
-                  'Hepsi başka şekilde leziz! 😊';
+                  'Hangisi daha cazip? Veya benzer tatlar içinde fındık yerine ne kullanabileceğini de söyleyeyim. 😊';
               break;
             default:
               emoji = '✨';
@@ -294,15 +316,23 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       .replaceAll('ö', 'o')
       .replaceAll('ü', 'u');
 
-  List<String> _tokenize(String s) =>
-      s.split(RegExp(r'[,;\s/&+]+')).where((t) => t.length >= 3).toList();
+  List<String> _tokenize(String s) {
+    final tokens = s
+        .split(RegExp(r'[,;\s/&+]+'))
+        .where((t) => t.length > 2) // Boş sözcükleri atla (var, mi, mi, etc)
+        .toList();
+    
+    // Common Türkçe stop words'ü kaldır
+    const stopwords = {'var', 'yok', 'ama', 'veya', 'degil', 'degil', 'daha', 'sonra'};
+    return tokens.where((t) => !stopwords.contains(t.toLowerCase())).toList();
+  }
 
   DrinkModel? _findByTitle(List<DrinkModel> drinks, String lower) {
     for (final d in drinks) {
       final normalized = _normalize(d.title);
       if (lower.contains(normalized) || normalized.contains(lower)) return d;
       for (final word in lower.split(' ')) {
-        if (word.length >= 4 && normalized.contains(word)) return d;
+        if (word.length >= 3 && normalized.contains(word)) return d;
       }
     }
     return null;
@@ -310,10 +340,26 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
   List<DrinkModel> _findByIngredients(
       List<DrinkModel> drinks, List<String> tokens) {
-    return drinks.where((d) {
-      return d.ingredients
-          .any((ing) => tokens.any((t) => _normalize(ing).contains(t)));
-    }).toList();
+    final normalizedTokens = tokens.map(_normalize).toList();
+    final result = <DrinkModel>[];
+    
+    for (final d in drinks) {
+      int matchCount = 0;
+      for (final token in normalizedTokens) {
+        if (token.isEmpty) continue;
+        final found = d.ingredients.any((ing) {
+          final normalized = _normalize(ing);
+          return normalized == token || 
+                 normalized.contains(token) || 
+                 token.contains(normalized);
+        });
+        if (found) matchCount++;
+      }
+      if (matchCount > 0) {
+        result.add(d);
+      }
+    }
+    return result.toList();
   }
 
   List<DrinkModel> _findByCategory(List<DrinkModel> drinks, String lower) {
