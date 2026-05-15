@@ -1874,5 +1874,95 @@ class DrinkLocalSource {
           'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
       gradient: LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFEF6C00)]),
     ),
+    DrinkModel(
+      id: 'spiced-caramel-cold-brew',
+      title: 'Spiced Caramel Cold Brew',
+      category: 'Kahve',
+      description: 'Karamel baharatı ile tatlandırılmış soğuk demleme kahve.',
+      history:
+          'Soğuk demleme kahve, 21. yüzyılın coffee shop trendlerinden biridir; baharatlı karamel dokunuşu ise son zamanlarda popülerleşti.',
+      temperature: 'Soğuk',
+      pros: ['Düşük asitli', 'Zengin tat profili', 'Enerji verici'],
+      cons: ['Yüksek şeker içerebilir', 'Hazırlama süresi uzun'],
+      tip: 'Karamel ve tarçını şeker yerine gerçek baharatlarla dengeleyin.',
+      preparation:
+          '1. Cold brew (150 ml)\n2. Karamel şurubu (2 çay kaşığı)\n3. Tarçın (bir tutam)\n4. Buz\n5. Süt (50 ml)\n\nYapılış:\n1) Bardağa buz koyun\n2) Cold brew ekleyin\n3) Karamel şurubu ve tarçını ekleyin\n4) Sütü ilave edin\n5) Karıştırarak servis edin',
+      ingredients: ['cold brew', 'karamel şurubu', 'tarçın', 'buz', 'süt'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop',
+      gradient: LinearGradient(colors: [Color(0xFF5D4037), Color(0xFFFFD54F)]),
+    ),
+    DrinkModel(
+      id: 'blueberry-elderflower-soda',
+      title: 'Blueberry Elderflower Soda',
+      category: 'Soda',
+      description: 'Yaban mersini ve ağaçkakışı şurubu ile hafif ve ferahlatıcı soda.',
+      history:
+          'Ağaçkakışı şurubu 19. yüzyıldan beri Avrupa içeceklerinde kullanılır; yaban mersini ile birleşimi modern soda trendidir.',
+      temperature: 'Soğuk',
+      pros: ['Doğal antioksidanlar', 'Düşük kalori', 'Göz alıcı renk'],
+      cons: ['Ağaçkakışı şurubu bulmak zor olabilir', 'Hafif şekerli tadı herkese hitap etmeyebilir'],
+      tip: 'Taze nane yaprağıyla servis edin.',
+      preparation:
+          '1. Ağaçkakışı şurubu (20 ml)\n2. Yaban mersini (50 g)\n3. Limon suyu (10 ml)\n4. Soda suyu (150 ml)\n5. Buz\n\nYapılış:\n1) Yaban mersinlerini hafifçe ezin\n2) Şurup ve limon suyunu ekleyin\n3) Soda suyunu ilave edin\n4) Buz ekleyerek servis edin',
+      ingredients: ['ağaçkakışı şurubu', 'yaban mersini', 'limon', 'soda suyu', 'buz'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1500336624523-d727130c3328?q=80&w=800&auto=format&fit=crop',
+      gradient: LinearGradient(colors: [Color(0xFF283593), Color(0xFF7C4DFF)]),
+    ),
+    DrinkModel(
+      id: 'almond-matcha-protein-smoothie',
+      title: 'Almond Matcha Protein Smoothie',
+      category: 'Smoothie',
+      description: 'Matcha, badem sütü ve protein tozu ile besleyici bir smoothie.',
+      history:
+          'Matcha smoothie konsepti, sağlıklı yaşam ve protein içeriklerinin buluşmasıyla fitness kafe menülerinde yaygınlaştı.',
+      temperature: 'Soğuk',
+      pros: ['Yüksek protein', 'L-theanine ile dengeli enerji', 'Vegan alternatifli'],
+      cons: ['Matcha pahalı olabilir', 'Bazı kişiler için yoğun tatlı'],
+      tip: 'Oat milk veya badem sütü ile hafif bir kıvam elde edin.',
+      preparation:
+          '1. Matcha tozu (1 çay kaşığı)\n2. Badem sütü (200 ml)\n3. Vanilyalı protein tozu (1 ölçek)\n4. Muz (1/2)\n5. Buz\n\nYapılış:\n1) Tüm malzemeleri blenderda pürüzsüz olana kadar karıştır\n2) Hemen servis et',
+      ingredients: ['matcha tozu', 'badem sütü', 'protein tozu', 'muz', 'buz'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1532634726-8b9fb99825cf?q=80&w=800&auto=format&fit=crop',
+      gradient: LinearGradient(colors: [Color(0xFF7B1FA2), Color(0xFF4A148C)]),
+    ),
+    DrinkModel(
+      id: 'sparkling-apple-tea',
+      title: 'Sparkling Apple Tea',
+      category: 'Çay',
+      description: 'Gazlı elma çayı, ferahlatıcı ve hafif meyveli bir içecek.',
+      history:
+          'Meyveli çaylara soda ekleme trendi, batı café kültüründe son yıllarda hızla yayıldı.',
+      temperature: 'Soğuk',
+      pros: ['Ferahlatıcı', 'Düşük kalori', 'Doğal meyve aroması'],
+      cons: ['Soda karbonasyonu bazılarını rahatsız edebilir', 'Tat yoğunluğu meyveye bağlı'],
+      tip: 'Soğuk demleme elma çayı kullanırsanız acılığı azaltır.',
+      preparation:
+          '1. Demlenmiş elma çayı (150 ml)\n2. Elma suyu (50 ml)\n3. Soda suyu (100 ml)\n4. Limon dilimi\n5. Buz\n\nYapılış:\n1) Bardağa buz koy\n2) Elma çayı ve elma suyunu ekle\n3) Soda suyunu ilave et\n4) Limon dilimi ile servis et',
+      ingredients: ['elma çayı', 'elma suyu', 'soda suyu', 'limon', 'buz'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
+      gradient: LinearGradient(colors: [Color(0xFFFFA000), Color(0xFFFFEB3B)]),
+    ),
+    DrinkModel(
+      id: 'raw-ginger-shot',
+      title: 'Raw Ginger Shot',
+      category: 'Fit',
+      description: 'Doğal zencefil ile hazırlanan sıcak ve canlandırıcı şot.',
+      history:
+          'Zencefil şotları, doğal sağlık içeceği trendi içinde popülerleşen güçlü bir bağışıklık desteğidir.',
+      temperature: 'Soğuk',
+      pros: ['Anti-inflamatuar', 'Sindirim destekleyici', 'Hızlı enerji'],
+      cons: ['Tadi çok kuvvetli', 'Mide hassasiyeti olanlar için zorlayıcı'],
+      tip: 'Aç karnına küçük bir yudum alın.',
+      preparation:
+          '1. Taze zencefil (30 g)\n2. Limon suyu (15 ml)\n3. Bal (1 çay kaşığı)\n4. Su (50 ml)\n\nYapılış:\n1) Zencefili rendeleyin ve suyla blenderda çekin\n2) Limon suyu ve bal ekleyin\n3) Süzerek küçük bir bardakta servis edin',
+      ingredients: ['zencefil', 'limon', 'bal', 'su'],
+      imageUrl:
+          'https://images.unsplash.com/photo-1508154048109-de555266b2f0?q=80&w=800&auto=format&fit=crop',
+      gradient: LinearGradient(colors: [Color(0xFFFF8A65), Color(0xFFFF7043)]),
+    ),
   ];
 }
