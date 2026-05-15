@@ -348,10 +348,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   }
 
   DrinkModel? _findByTitle(List<DrinkModel> drinks, String lower) {
+    final words = lower.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).toList();
     for (final d in drinks) {
       final normalized = _normalize(d.title);
       if (lower.contains(normalized) || normalized.contains(lower)) return d;
-      for (final word in lower.split(' ')) {
+
+      // Only use word-level title matching for short single-word queries.
+      if (words.length == 1) {
+        final word = words.first;
         if (word.length >= 3 && normalized.contains(word)) return d;
       }
     }
@@ -415,7 +419,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       return exactMatches.map((match) => match.drink).toList();
     }
 
-    if (partialMatches.isNotEmpty && normalizedTokens.length == 1) {
+    if (partialMatches.isNotEmpty) {
       partialMatches.sort((a, b) {
         if (b.score != a.score) return b.score.compareTo(a.score);
         if (b.matchCount != a.matchCount) return b.matchCount.compareTo(a.matchCount);

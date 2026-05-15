@@ -57,7 +57,7 @@ class DrinkNotifier extends AsyncNotifier<List<DrinkModel>> {
         return <DrinkModel>[];
       }
       final items = ingredients
-          .split(RegExp(r'[\n,;]'))
+          .split(RegExp(r'[\n,;\s/&+]+'))
           .map((item) => item.trim())
           .where((item) => item.isNotEmpty)
           .toList();
