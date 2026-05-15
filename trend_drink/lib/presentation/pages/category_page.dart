@@ -237,8 +237,8 @@ class _DrinkCircleCardState extends State<_DrinkCircleCard> {
             // Circle
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: 110,
-              height: 110,
+              width: 130,
+              height: 130,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: _hovered
@@ -267,8 +267,8 @@ class _DrinkCircleCardState extends State<_DrinkCircleCard> {
                 child: CachedNetworkImage(
                   imageUrl: widget.drink.imageUrl,
                   fit: BoxFit.cover,
-                  width: 110,
-                  height: 110,
+                  width: 130,
+                  height: 130,
                   placeholder: (_, __) => Container(color: AppTheme.mocha),
                   errorWidget: (_, __, ___) => Container(color: AppTheme.mocha),
                 ),
