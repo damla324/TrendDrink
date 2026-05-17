@@ -197,11 +197,18 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       'kaju': 'kaju',
     };
 
+    String? allergen;
     for (final entry in sensitivityMap.entries) {
       if (lower.contains(entry.key)) {
-        final allergen = entry.value;
-        final compatible =
-            drinks.where((d) => !d.allergens.contains(allergen)).toList();
+        allergen = entry.value;
+        break;
+      }
+    }
+
+    allergen ??= _inferAllergenFromQuery(lower);
+    if (allergen == null) return null;
+
+    final compatible = drinks.where((d) => !d.allergens.contains(allergen)).toList();
 
         if (compatible.isNotEmpty) {
           final suggestions = compatible.take(3).toList();
@@ -313,6 +320,59 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           return _msg(noOptionMessage);
         }
       }
+    }
+    return null;
+  }
+
+  String? _inferAllergenFromQuery(String lower) {
+    const negativeTerms = [
+      'hassasiyet',
+      'hassasiyetim',
+      'alerji',
+      'alerjim',
+      'alerjisi',
+      'istemiyorum',
+      'istemem',
+      'istemiyor',
+      'kaçın',
+      'kacın',
+      'uzak',
+      'yok',
+      'sorun',
+      'rahatsiz',
+      'tolerans',
+      'tüketmem',
+      'tehlike',
+      'zarar',
+    ];
+
+    if (!negativeTerms.any(lower.contains)) return null;
+
+    const allergenKeywords = {
+      'kafein': 'kafein',
+      'kafeinsiz': 'kafein',
+      'cafeinsiz': 'kafein',
+      'decaf': 'kafein',
+      'şeker': 'şeker',
+      'sugar': 'şeker',
+      'şekerli': 'şeker',
+      'süt': 'süt',
+      'sut': 'süt',
+      'laktoz': 'süt',
+      'vegan': 'vegan',
+      'vejetaryen': 'vegan',
+      'gluten': 'gluten',
+      'çikolata': 'çikolata',
+      'çikolatadan': 'çikolata',
+      'fındık': 'fındık',
+      'findik': 'fındık',
+      'badem': 'kaju',
+      'kaju': 'kaju',
+      'almond': 'kaju',
+    };
+
+    for (final entry in allergenKeywords.entries) {
+      if (lower.contains(entry.key)) return entry.value;
     }
     return null;
   }
