@@ -319,8 +319,6 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           }
           return _msg(noOptionMessage);
         }
-      }
-    }
     return null;
   }
 
