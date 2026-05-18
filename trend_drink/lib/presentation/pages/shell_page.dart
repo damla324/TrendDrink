@@ -283,9 +283,11 @@ class _CategoriesSheet extends StatelessWidget {
                           ],
                         ),
                         child: ClipOval(
-                          child: cat.imageUrl.startsWith('Assets/')
+                          child: cat.name == 'Kahve' || cat.name == 'Kokteyl'
                               ? Image.asset(
-                                  cat.imageUrl,
+                                  cat.name == 'Kahve'
+                                      ? 'Assets/photo/kahve_category_main.jpg'
+                                      : 'Assets/photo/kokteyl_category_main.jpg',
                                   fit: BoxFit.cover,
                                   errorBuilder: (_, __, ___) => Container(
                                     color: AppTheme.mocha,

@@ -74,23 +74,23 @@ class _CategoryContent extends StatelessWidget {
   String get _coverImage {
     switch (categoryName) {
       case 'Kahve':
-        return 'https://images.unsplash.com/photo-1542181961-9590d0c79dab?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/kahve.jpg';
       case 'Matcha':
-        return 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/matcha.jpg';
       case 'Frozen':
-        return 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/frozen.jpg';
       case 'Kokteyl':
-        return 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/kokteyl.jpg';
       case 'Smoothie':
-        return 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/smoothie.jpg';
       case 'Çay':
-        return 'https://images.unsplash.com/photo-1576092762740-410023a10526?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/cay.jpg';
       case 'Soda':
-        return 'https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/soda.jpg';
       case 'Fit':
-        return 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/fit.jpg';
       default:
-        return 'https://images.unsplash.com/photo-1517712981146-06dc73adc36d?q=80&w=1200&auto=format&fit=crop';
+        return 'Assets/photo/background.png';
     }
   }
 
