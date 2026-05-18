@@ -87,29 +87,37 @@ class HomePageV2 extends ConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Circular category button with emoji
+                          // Circular category button with asset image
                           Container(
                             width: 110,
                             height: 110,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: (cat['color'] as Color).withOpacity(0.15),
                               border: Border.all(
-                                color: (cat['color'] as Color).withOpacity(0.5),
+                                color: (cat['color'] as Color).withAlpha(128),
                                 width: 2,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: (cat['color'] as Color).withOpacity(0.1),
+                                  color: (cat['color'] as Color).withAlpha(26),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
-                            child: Center(
-                              child: Text(
-                                cat['emoji'] as String,
-                                style: const TextStyle(fontSize: 32),
+                            child: ClipOval(
+                              child: Image.asset(
+                                _categoryAssetImage(categoryName),
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Container(
+                                  color: (cat['color'] as Color).withAlpha(38),
+                                  child: Center(
+                                    child: Text(
+                                      cat['emoji'] as String,
+                                      style: const TextStyle(fontSize: 32),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -227,5 +235,28 @@ class HomePageV2 extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _categoryAssetImage(String categoryName) {
+    switch (categoryName) {
+      case 'Kahve':
+        return 'Assets/photos/kahve.jpg';
+      case 'Matcha':
+        return 'Assets/photos/matcha.jpg';
+      case 'Frozen':
+        return 'Assets/photos/frozen.jpg';
+      case 'Kokteyl':
+        return 'Assets/photos/kokteyl.jpg';
+      case 'Smoothie':
+        return 'Assets/photos/smothe.jpg';
+      case 'Çay':
+        return 'Assets/photos/çay.jpg';
+      case 'Soda':
+        return 'Assets/photos/soda.jpg';
+      case 'Fit':
+        return 'Assets/photos/fit.jpg';
+      default:
+        return 'Assets/photo/background.png';
+    }
   }
 }

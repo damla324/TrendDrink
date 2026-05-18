@@ -74,21 +74,21 @@ class _CategoryContent extends StatelessWidget {
   String get _coverImage {
     switch (categoryName) {
       case 'Kahve':
-        return 'Assets/photo/kahve.jpg';
+        return 'Assets/photos/kahve.jpg';
       case 'Matcha':
-        return 'Assets/photo/matcha.jpg';
+        return 'Assets/photos/matcha.jpg';
       case 'Frozen':
-        return 'Assets/photo/frozen.jpg';
+        return 'Assets/photos/frozen.jpg';
       case 'Kokteyl':
-        return 'Assets/photo/kokteyl.jpg';
+        return 'Assets/photos/kokteyl.jpg';
       case 'Smoothie':
-        return 'Assets/photo/smoothie.jpg';
+        return 'Assets/photos/smothe.jpg';
       case 'Çay':
-        return 'Assets/photo/cay.jpg';
+        return 'Assets/photos/çay.jpg';
       case 'Soda':
-        return 'Assets/photo/soda.jpg';
+        return 'Assets/photos/soda.jpg';
       case 'Fit':
-        return 'Assets/photo/fit.jpg';
+        return 'Assets/photos/fit.jpg';
       default:
         return 'Assets/photo/background.png';
     }
