@@ -154,12 +154,18 @@ class _CategoryHero extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // Cover image
-          CachedNetworkImage(
-            imageUrl: coverImage,
-            fit: BoxFit.cover,
-            placeholder: (_, __) => Container(color: AppTheme.mocha),
-            errorWidget: (_, __, ___) => Container(color: AppTheme.mocha),
-          ),
+          coverImage.startsWith('Assets/')
+              ? Image.asset(
+                  coverImage,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(color: AppTheme.mocha),
+                )
+              : CachedNetworkImage(
+                  imageUrl: coverImage,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(color: AppTheme.mocha),
+                  errorWidget: (_, __, ___) => Container(color: AppTheme.mocha),
+                ),
           // Gradient overlay
           Container(
             decoration: BoxDecoration(

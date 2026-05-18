@@ -283,24 +283,39 @@ class _CategoriesSheet extends StatelessWidget {
                           ],
                         ),
                         child: ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: cat.imageUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) => Container(
-                              color: AppTheme.mocha,
-                              child: Center(
-                                child: Text(cat.emoji,
-                                    style: const TextStyle(fontSize: 22)),
-                              ),
-                            ),
-                            errorWidget: (_, __, ___) => Container(
-                              color: AppTheme.mocha,
-                              child: Center(
-                                child: Text(cat.emoji,
-                                    style: const TextStyle(fontSize: 22)),
-                              ),
-                            ),
-                          ),
+                          child: cat.imageUrl.startsWith('Assets/')
+                              ? Image.asset(
+                                  cat.imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Container(
+                                    color: AppTheme.mocha,
+                                    child: Center(
+                                      child: Text(cat.emoji,
+                                          style:
+                                              const TextStyle(fontSize: 22)),
+                                    ),
+                                  ),
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: cat.imageUrl,
+                                  fit: BoxFit.cover,
+                                  placeholder: (_, __) => Container(
+                                    color: AppTheme.mocha,
+                                    child: Center(
+                                      child: Text(cat.emoji,
+                                          style:
+                                              const TextStyle(fontSize: 22)),
+                                    ),
+                                  ),
+                                  errorWidget: (_, __, ___) => Container(
+                                    color: AppTheme.mocha,
+                                    child: Center(
+                                      child: Text(cat.emoji,
+                                          style:
+                                              const TextStyle(fontSize: 22)),
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 6),

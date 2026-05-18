@@ -18,8 +18,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       ChatMessage(
         id: 'welcome',
         text: 'Merhaba! Ben İçecek AI 🍵\n\n'
-            'Elindeki malzemeleri yaz (örn: "limon, muz, yoğurt") ve ben sana tam bu malzemeleri içeren tarif önerileri sunayım! '
-            'Veya bir kategori sor (kahve, çay, smoothie, fit, kokteyl vs) ya da ruh haline göre öneri isteyin. '
+            'Elindeki malzemeleri yaz (örn: "limon, muz, yoğurt") veya sohbet eder gibi söyle (örn: "Elimde muz ve süt var, bunlarla ne yapabilirim?"). '
+            'Veya bir kategori sor (kahve, çay, smoothie, fit, kokteyl vs) ya da ruh haline göre öneri iste. '
             'Hangi ürüne hassasiyetin varsa onu da söyle, ona göre alternatifler sunayım! 💚',
         author: ChatAuthor.assistant,
       ),
@@ -64,8 +64,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // ── 2. Ingredient matching ──────────────────────────────────────────
-    final tokens = _tokenize(lower);
-    final byIngredient = _findByIngredients(drinks, tokens);
+    final ingredientTokens = _extractIngredientTokens(lower);
+    final byIngredient = _findByIngredients(drinks, ingredientTokens);
     if (byIngredient.isNotEmpty) {
       final suggestions = byIngredient.take(3).toList();
       final names = suggestions.map((d) => d.title).join(', ');
@@ -79,17 +79,20 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       );
     }
 
-    final looksLikeIngredientQuery = tokens.length > 1 || lower.contains(',') || lower.contains(' var');
+    final looksLikeIngredientQuery = _isIngredientIntent(lower, ingredientTokens);
     if (looksLikeIngredientQuery) {
-      final tokensStr = tokens.join(', ');
+      if (ingredientTokens.isEmpty) {
+        return _msg(
+          'Sohbetinden anladığım kadarıyla elindeki malzemelerle ne yapabileceğini merak ediyorsun. '
+          'Bana sadece malzemelerini yaz: örn. "Elimde muz, süt ve bal var" veya "Evde çilek ve yoğurt var, bunlarla ne yapabilirim?"',
+        );
+      }
+      final tokensStr = ingredientTokens.join(', ');
       return _msg(
-        'Aramadığım sonuçları filtrele! 🔍\n\n'
-        'Aradığın malzeme kombinasyonunda ($tokensStr) tam olarak uyan içecek bulamadım. '
-        'Lütfen:\n'
-        '• Malzemeleri tek tek söyle (örn: "elma var", "muz var")\n'
-        '• Ya da az sayıda malzeme ile dene\n'
-        '• Eğer bir içecekten kaçınmak istiyorsan onu söyle (örn: "süt istemiyorum")\n\n'
-        'Ne istediğini daha açık anlatabilirim! 😊',
+        'Aradığın malzeme kombinasyonunda (**$tokensStr**) tam olarak uyan içecek bulamadım. '
+        'Dilersen malzemeleri biraz daha sadeleştir veya sadece ana malzemeleri söyle. \n'
+        'Örneğin: "Elimde muz ve süt var" ya da "Evde sadece çilek var".\n'
+        'Ayrıca bir malzemeden kaçınmak istersen, onu da yazabilirsin (örn: "süt istemiyorum").',
       );
     }
 
@@ -325,7 +328,6 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           }
           return _msg(noOptionMessage);
         }
-    return null;
   }
 
   String? _inferAllergenFromQuery(String lower) {
@@ -395,20 +397,138 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final tokens = s
         .split(RegExp(r'[,;\s/&+]+'))
         .map((t) => t.trim())
-        .where((t) => t.length > 2) // Boş sözcükleri atla (var, mi, mi, etc)
+        .where((t) => t.length > 1)
         .toList();
-    
-    // Common Türkçe stop words'ü kaldır
+
     const stopwords = {
       'var',
       'yok',
       'ama',
+      'ancak',
+      'fakat',
       'veya',
-      'degil',
+      've',
+      'ile',
+      'icin',
+      'için',
+      'ne',
+      'neyi',
+      'neleri',
+      'hangi',
+      'nasıl',
+      'nasil',
+      'bana',
+      'bunu',
+      'bu',
+      'şu',
+      'benim',
+      'bende',
+      'elimde',
+      'evde',
+      'bunlarla',
+      'bunla',
+      'varsa',
+      'yapabilirim',
+      'yaparım',
+      'yapayım',
+      'tavsiye',
+      'öner',
+      'oner',
+      'isterim',
+      'istiyorum',
+      'lütfen',
+      'mı',
+      'mi',
+      'mu',
+      'mü',
+      'da',
+      'de',
       'daha',
-      'sonra'
+      'sonra',
     };
     return tokens.where((t) => !stopwords.contains(t.toLowerCase())).toList();
+  }
+
+  String _cleanIngredientQuery(String lower) {
+    var cleaned = lower.replaceAll(RegExp(r'[?!.]'), ' ');
+    const removePatterns = [
+      r'\belimde\b',
+      r'\bevde\b',
+      r'\bbende\b',
+      r'\bbenim\b',
+      r'\bbunlarla\b',
+      r'\bbunla\b',
+      r'\bbununla\b',
+      r'\bvarsa\b',
+      r'\bvar\b',
+      r'\byok\b',
+      r'\bama\b',
+      r'\bveya\b',
+      r'\bve\b',
+      r'\bile\b',
+      r'\bicin\b',
+      r'\biçin\b',
+      r'\bne\b',
+      r'\bneyi\b',
+      r'\bneleri\b',
+      r'\bhangi\b',
+      r'\bnasıl\b',
+      r'\bnasil\b',
+      r'\byapabilirim\b',
+      r'\byaparim\b',
+      r'\byapayim\b',
+      r'\btavsiye\b',
+      r'\böner\b',
+      r'\boner\b',
+      r'\bisterim\b',
+      r'\bistiyorum\b',
+      r'\bbana\b',
+      r'\bplease\b',
+      r'\bmi\b',
+      r'\bmu\b',
+      r'\bmü\b',
+      r'\bda\b',
+      r'\bde\b',
+      r'\bdaha\b',
+      r'\bsonra\b',
+      r'\bbu\b',
+      r'\bşu\b',
+    ];
+    for (final pattern in removePatterns) {
+      cleaned = cleaned.replaceAll(RegExp(pattern), ' ');
+    }
+    return cleaned;
+  }
+
+  List<String> _extractIngredientTokens(String lower) {
+    final cleaned = _cleanIngredientQuery(lower);
+    return _tokenize(cleaned);
+  }
+
+  bool _isIngredientIntent(String lower, List<String> tokens) {
+    const ingredientIntentTriggers = [
+      'elimde',
+      'evde',
+      'bende',
+      'bunlarla',
+      'bununla',
+      'varsa',
+      'var',
+      'ne yapabilirim',
+      'ne yapayim',
+      'ne önerirsin',
+      'hangi tarif',
+      'hangi icecek',
+      'hangi içecek',
+      'ne içsem',
+      'ne yapabilirim',
+      'tavsiye',
+      'öner',
+      'isterim',
+      'istiyorum',
+    ];
+    final triggerFound = ingredientIntentTriggers.any(lower.contains);
+    return triggerFound || tokens.length >= 2;
   }
 
   DrinkModel? _findByTitle(List<DrinkModel> drinks, String lower) {

@@ -17,8 +17,7 @@ const List<CategoryMeta> kCategories = [
   CategoryMeta(
     name: 'Kahve',
     emoji: '☕',
-    imageUrl:
-        'https://images.unsplash.com/photo-1580613854894-37517173e659?q=80&w=400&auto=format&fit=crop',
+    imageUrl: 'Assets/photo/kahve_category_main.jpg',
     accentColor: Color(0xFF8B4513),
   ),
   CategoryMeta(
