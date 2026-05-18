@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -33,11 +34,31 @@ class ChatBubble extends StatelessWidget {
               ),
             ],
           ),
-          child: Text(
-            message.text,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: isUser ? Colors.white : Theme.of(context).colorScheme.onSurface,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                message.text,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: isUser ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
+              if (message.drinkId != null && !isUser)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: ElevatedButton.icon(
+                    onPressed: () => context.push('/drink/${message.drinkId}'),
+                    icon: const Icon(Icons.local_drink_outlined, size: 18),
+                    label: const Text('Tarifi Aç'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
                 ),
+            ],
           ),
         ),
       ),

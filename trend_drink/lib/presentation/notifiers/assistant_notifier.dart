@@ -81,9 +81,15 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     final looksLikeIngredientQuery = tokens.length > 1 || lower.contains(',') || lower.contains(' var');
     if (looksLikeIngredientQuery) {
+      final tokensStr = tokens.join(', ');
       return _msg(
-        'Bu malzemelere tam olarak uyan bir içecek bulamadım. '
-        'Elindeki malzemeleri biraz değiştirerek ya da farklı birleştirerek tekrar sorabilirsin. 😊',
+        'Aramadığım sonuçları filtrele! 🔍\n\n'
+        'Aradığın malzeme kombinasyonunda ($tokensStr) tam olarak uyan içecek bulamadım. '
+        'Lütfen:\n'
+        '• Malzemeleri tek tek söyle (örn: "elma var", "muz var")\n'
+        '• Ya da az sayıda malzeme ile dene\n'
+        '• Eğer bir içecekten kaçınmak istiyorsan onu söyle (örn: "süt istemiyorum")\n\n'
+        'Ne istediğini daha açık anlatabilirim! 😊',
       );
     }
 
@@ -428,43 +434,24 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (normalizedTokens.isEmpty) return [];
 
     final exactMatches = <_IngredientMatch>[];
-    final partialMatches = <_IngredientMatch>[];
 
     for (final drink in drinks) {
-      final matchedTokenIndices = <int>{};
-      var exactCount = 0;
+      final drinkIngredientsNormalized = drink.ingredients
+          .map((ing) => _normalize(ing).toLowerCase())
+          .toList();
 
-      for (var tokenIndex = 0;
-          tokenIndex < normalizedTokens.length;
-          tokenIndex++) {
-        final token = normalizedTokens[tokenIndex];
-        for (final ingredient in drink.ingredients) {
-          final normalizedIngredient = _normalize(ingredient);
-          if (normalizedIngredient == token) {
-            matchedTokenIndices.add(tokenIndex);
-            exactCount += 2;
-            break;
-          }
-          if (normalizedIngredient.contains(token) ||
-              token.contains(normalizedIngredient)) {
-            matchedTokenIndices.add(tokenIndex);
-            exactCount += 1;
-            break;
-          }
+      int matchedCount = 0;
+      for (final token in normalizedTokens) {
+        final normalized = token.toLowerCase();
+        if (drinkIngredientsNormalized.any((ing) => ing.contains(normalized) || ing == normalized)) {
+          matchedCount++;
         }
       }
 
-      if (matchedTokenIndices.isEmpty) continue;
-
-      final matchCount = matchedTokenIndices.length;
-      final score = matchCount * 100 + exactCount * 10 -
-          (drink.ingredients.length - matchCount);
-      final match = _IngredientMatch(drink, matchCount, score);
-
-      if (matchCount == normalizedTokens.length) {
-        exactMatches.add(match);
-      } else {
-        partialMatches.add(match);
+      if (matchedCount == normalizedTokens.length) {
+        final extraIngredientCount = drinkIngredientsNormalized.length - matchedCount;
+        final score = matchedCount * 100 - extraIngredientCount * 5;
+        exactMatches.add(_IngredientMatch(drink, matchedCount, score));
       }
     }
 
@@ -475,15 +462,6 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         return a.drink.title.compareTo(b.drink.title);
       });
       return exactMatches.map((match) => match.drink).toList();
-    }
-
-    if (partialMatches.isNotEmpty) {
-      partialMatches.sort((a, b) {
-        if (b.score != a.score) return b.score.compareTo(a.score);
-        if (b.matchCount != a.matchCount) return b.matchCount.compareTo(a.matchCount);
-        return a.drink.title.compareTo(b.drink.title);
-      });
-      return partialMatches.map((match) => match.drink).toList();
     }
 
     return [];
