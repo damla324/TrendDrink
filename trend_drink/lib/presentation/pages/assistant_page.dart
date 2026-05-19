@@ -94,16 +94,22 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Column(
+      body: Stack(
+        fit: StackFit.expand,
         children: [
+          // Arka Plan Görseli ve Overlay Geri Getirildi
+          Image.asset('Assets/photos/background.png', fit: BoxFit.cover),
+          Container(color: const Color(0xFF0D0905).withAlpha(210)),
+          
+          Column(
+            children: [
           if (!membership.isPro)
             Container(
               color: membership.aiRequestsRemaining <= 0
                   ? colors.errorContainer
                   : colors.primaryContainer,
               padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
+                  child: Row(children: [
                   Icon(
                     membership.aiRequestsRemaining <= 0
                         ? Icons.error_outline
@@ -148,6 +154,8 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
           ),
           _buildQuickPrompts(),
           _buildInputBar(),
+        ],
+          ),
         ],
       ),
     );
@@ -454,28 +462,61 @@ class _RichText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Simple bold parsing: **text**
-    final boldPattern = RegExp(r'\*\*(.*?)\*\*');
-    final spans = <TextSpan>[];
-    final allMatches = boldPattern.allMatches(text).toList();
+    final List<InlineSpan> spans = [];
+    // Markdown link [Title](id) ve Kalın metin **Text** regex'i
+    final regex = RegExp(r'\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*');
+    int lastIndex = 0;
 
-    int lastEnd = 0;
-    for (final match in allMatches) {
-      if (match.start > lastEnd) {
-        spans.add(TextSpan(text: text.substring(lastEnd, match.start)));
+    for (final match in regex.allMatches(text)) {
+      // Eşleşme öncesindeki düz metni ekle
+      if (match.start > lastIndex) {
+        spans.add(TextSpan(text: text.substring(lastIndex, match.start)));
       }
-      spans.add(TextSpan(
-        text: match.group(1),
-        style: const TextStyle(fontWeight: FontWeight.w700),
-      ));
-      lastEnd = match.end;
-    }
-    if (lastEnd < text.length) {
-      spans.add(TextSpan(text: text.substring(lastEnd)));
+
+      if (match.group(1) != null) {
+        // İçecek Linki Eşleşmesi: [Title](id)
+        final title = match.group(1)!;
+        final id = match.group(2)!;
+        spans.add(
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => context.go('/drink/$id'),
+                child: Text(
+                  title,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.ledCyan,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppTheme.ledCyan.withAlpha(150),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      } else if (match.group(3) != null) {
+        // Kalın Metin Eşleşmesi: **Text**
+        spans.add(
+          TextSpan(
+            text: match.group(3),
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        );
+      }
+      lastIndex = match.end;
     }
 
-    return RichText(
-      text: TextSpan(
+    // Kalan metni ekle
+    if (lastIndex < text.length) {
+      spans.add(TextSpan(text: text.substring(lastIndex)));
+    }
+
+    return Text.rich(
+      TextSpan(
         style: GoogleFonts.plusJakartaSans(
           fontSize: 13.5,
           color: isUser ? AppTheme.cream : AppTheme.dimCream.withAlpha(220),
