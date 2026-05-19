@@ -262,7 +262,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
         return _MessageBubble(
           message: msg,
           onDrinkTap: msg.drinkId != null
-              ? () => context.go('/drink/${msg.drinkId}')
+              ? () => context.push('/drink/${msg.drinkId}')
               : null,
         );
       },
@@ -483,7 +483,7 @@ class _RichText extends StatelessWidget {
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
-                onTap: () => context.go('/drink/$id'),
+                onTap: () => context.push('/drink/$id'),
                 child: Text(
                   title,
                   style: GoogleFonts.plusJakartaSans(
