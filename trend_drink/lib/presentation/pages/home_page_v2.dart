@@ -70,9 +70,9 @@ class HomePageV2 extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
-                    crossAxisSpacing: 4,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 0.9,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.72,
                   ),
                   itemCount: categoryData.length,
                   itemBuilder: (context, index) {
@@ -90,8 +90,8 @@ class HomePageV2 extends ConsumerWidget {
                         children: [
                           // Circular category button with asset image
                           Container(
-                            width: 110,
-                            height: 110,
+                          width: 68,
+                          height: 68,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
@@ -244,7 +244,7 @@ class HomePageV2 extends ConsumerWidget {
           .firstWhere((cat) => cat.name == categoryName)
           .imageUrl;
     } catch (_) {
-      return 'Assets/photos/background.png';
+      return 'Assets/photo/background.png';
     }
   }
 }

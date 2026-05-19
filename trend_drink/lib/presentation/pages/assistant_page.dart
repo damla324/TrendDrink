@@ -98,7 +98,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
         fit: StackFit.expand,
         children: [
           // Arka Plan Görseli ve Overlay Geri Getirildi
-          Image.asset('Assets/photos/background.png', fit: BoxFit.cover),
+          Image.asset('Assets/photo/background.png', fit: BoxFit.cover),
           Container(color: const Color(0xFF0D0905).withAlpha(210)),
           
           Column(
@@ -166,7 +166,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     final hPad = isMobile ? 16.0 : 36.0;
     return Container(
       padding: EdgeInsets.fromLTRB(
-          hPad, isMobile ? 16 : 28, hPad, isMobile ? 14 : 20),
+          hPad, isMobile ? 12 : 28, hPad, isMobile ? 10 : 20),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(color: AppTheme.gold.withAlpha(25)),
@@ -252,7 +252,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     final hPad = MediaQuery.sizeOf(context).width < 768 ? 16.0 : 36.0;
     return ListView.builder(
       controller: _scrollController,
-      padding: EdgeInsets.fromLTRB(hPad, 20, hPad, 8),
+      padding: EdgeInsets.fromLTRB(hPad, 12, hPad, 8),
       itemCount: messages.length + (_sending ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == messages.length) {
@@ -294,7 +294,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     final isMobile = MediaQuery.sizeOf(context).width < 768;
     final hPad = isMobile ? 16.0 : 36.0;
     return Container(
-      padding: EdgeInsets.fromLTRB(hPad, 14, hPad, isMobile ? 20 : 28),
+      padding: EdgeInsets.fromLTRB(hPad, 10, hPad, isMobile ? 14 : 28),
       child: Row(
         children: [
           Expanded(

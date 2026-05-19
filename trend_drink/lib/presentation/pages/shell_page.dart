@@ -29,7 +29,7 @@ class _DesktopShell extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('Assets/photos/background.png', fit: BoxFit.cover),
+          Image.asset('Assets/photo/background.png', fit: BoxFit.cover),
           Container(color: const Color(0xFF0D0905).withAlpha(210)),
           Row(
             children: [
@@ -75,7 +75,7 @@ class _MobileShell extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('Assets/photos/background.png', fit: BoxFit.cover),
+          Image.asset('Assets/photo/background.png', fit: BoxFit.cover),
           Container(color: const Color(0xFF0D0905).withAlpha(210)),
           Padding(
             padding: EdgeInsets.only(bottom: isTop ? 74 : 0),

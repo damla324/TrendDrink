@@ -78,7 +78,7 @@ class _CategoryContent extends StatelessWidget {
           .firstWhere((cat) => cat.name == categoryName)
           .imageUrl;
     } catch (_) {
-      return 'Assets/photos/background.png';
+        return 'Assets/photo/background.png';
     }
   }
 
@@ -112,7 +112,7 @@ class _CategoryContent extends StatelessWidget {
             ),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 160,
-              mainAxisExtent: 168,
+              mainAxisExtent: 200,
               mainAxisSpacing: 28,
               crossAxisSpacing: 24,
             ),
