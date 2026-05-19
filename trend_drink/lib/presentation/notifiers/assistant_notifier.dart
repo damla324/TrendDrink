@@ -170,40 +170,29 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
   ChatMessage? _matchSensitivity(List<DrinkModel> drinks, String lower) {
     // ── Sensitivity/allergen keywords ──────────────────────────────────
-    const sensitivityMap = {
-      'kafeinsiz': 'kafein',
-      'cafeinsiz': 'kafein',
-      'decaf': 'kafein',
-      'kafein istemiyorum': 'kafein',
-      'şekersiz': 'şeker',
-      'şeker istemiyorum': 'şeker',
-      'şeker yok': 'şeker',
-      'diyabet': 'şeker',
-      'sugarfree': 'şeker',
-      'sugar free': 'şeker',
-      'sütsüz': 'süt',
-      'sut istemiyorum': 'süt',
-      'süt istemiyorum': 'süt',
-      'laktozsuz': 'süt',
-      'dairy free': 'süt',
-      'vegan': 'vegan',
-      'vejetaryen': 'vegan',
-      'glutensiz': 'gluten',
-      'gluten free': 'gluten',
-      'glutenfree': 'gluten',
-      'alerjim var': 'alerji',
-      'alerji': 'alerji',
-      'alerjik': 'alerji',
-      'allergen': 'alerji',
-      'çikolatadan': 'çikolata',
-      'çikolata istemiyorum': 'çikolata',
-      'fındık istemiyorum': 'fındık',
-      'findik istemiyorum': 'fındık',
-      'badem istemiyorum': 'kaju',
-      'fındık': 'fındık',
-      'findik': 'fındık',
-      'almond': 'kaju',
-      'kaju': 'kaju',
+    final sensitivityMap = {
+      // Kafein varyasyonları
+      'kafeinsiz': 'kafein', 'cafeinsiz': 'kafein', 'decaf': 'kafein', 
+      'uyku kacirmasin': 'kafein', 'carpinti yapmasin': 'kafein',
+      
+      // Şeker varyasyonları
+      'sekersiz': 'şeker', 'seker istemiyorum': 'şeker', 'seker yok': 'şeker',
+      'diyabet': 'şeker', 'sugarfree': 'şeker', 'tatlandirici istemiyorum': 'şeker',
+      'formda kalmam lazim': 'şeker', 'diyetteyim': 'şeker',
+      
+      // Süt varyasyonları
+      'sutsuz': 'süt', 'sut istemiyorum': 'süt', 'laktozsuz': 'süt',
+      'dairy free': 'süt', 'sut dokunuyor': 'süt', 'sut olmasin': 'süt',
+      
+      // Beslenme modelleri
+      'vegan': 'vegan', 'vejetaryen': 'vegan', 'hayvansal gida yok': 'vegan',
+      'glutensiz': 'gluten', 'gluten free': 'gluten', 'corek otu': 'gluten',
+      
+      // Alerjenler
+      'alerjim var': 'alerji', 'alerji': 'alerji', 'alerjik': 'alerji',
+      'cikolata istemiyorum': 'çikolata', 'cikolatadan kaciyorum': 'çikolata',
+      'findik istemiyorum': 'fındık', 'kuruyemis olmasin': 'fındık',
+      'badem istemiyorum': 'kaju', 'kaju': 'kaju',
     };
 
     String? allergen;
@@ -218,13 +207,19 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final needsAlternative = lower.contains('yerine') || lower.contains('alternatif');
     if (allergen == null && !needsAlternative) return null;
 
-    // Eğer alerjen tespit edildiyse, ya içinde o madde olmayanları 
-    // ya da o maddeye özel alternatifi olan içecekleri buluyoruz.
+    // Negatif tercih kontrolü: Hem alerjen listesine hem de malzeme listesine bakıyoruz.
     final compatible = drinks.where((d) {
       if (allergen == null) return false;
-      final isSafe = !d.allergens.contains(allergen);
+      
+      // Malzeme veya alerjen listesinde bu ürünün olup olmadığına bak
+      final hasIngredient = d.ingredients.any((ing) => _normalize(ing).contains(allergen!));
+      final hasAllergen = d.allergens.contains(allergen);
+      
+      final containsUnwanted = hasIngredient || hasAllergen;
       final hasReplacement = d.alternatives.containsKey(allergen);
-      return isSafe || hasReplacement;
+      
+      // Eğer istenmeyen madde yoksa veya varsa bile bir alternatifi tanımlanmışsa içeceği kabul et
+      return !containsUnwanted || hasReplacement;
     }).toList();
 
         if (compatible.isNotEmpty) {
@@ -355,24 +350,25 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
   String? _inferAllergenFromQuery(String lower) {
     const negativeTerms = [
-      'hassasiyet',
-      'hassasiyetim',
-      'alerji',
-      'alerjim',
-      'alerjisi',
       'istemiyorum',
       'istemem',
       'istemiyor',
-      'kaçın',
-      'kacın',
+      'olmasin',
+      'koyma',
+      'bulunmasin',
+      'icermeyen',
+      'olmayan',
       'uzak',
       'yok',
-      'sorun',
+      'siz',
+      'suz',
+      'haric',
+      'disinda',
+      'kullanma',
+      'hassasiyet',
+      'alerji',
       'rahatsiz',
       'tolerans',
-      'tüketmem',
-      'tehlike',
-      'zarar',
     ];
 
     if (!negativeTerms.any(lower.contains)) return null;
@@ -407,14 +403,18 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────
-  String _normalize(String s) => s
+  String _normalize(String s) {
+    return s
       .toLowerCase()
+      .replaceAll(RegExp(r'[!,.?(){}\[\]]'), ' ') // Noktalama işaretlerini temizle
       .replaceAll('ğ', 'g')
       .replaceAll('ş', 's')
       .replaceAll('ç', 'c')
       .replaceAll('ı', 'i')
       .replaceAll('ö', 'o')
-      .replaceAll('ü', 'u');
+      .replaceAll('ü', 'u')
+      .trim();
+  }
 
   List<String> _tokenize(String s) {
     final tokens = s
@@ -537,18 +537,19 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       'bununla',
       'varsa',
       'var',
-      'ne yapabilirim',
-      'ne yapayim',
-      'ne önerirsin',
-      'hangi tarif',
-      'hangi icecek',
-      'hangi içecek',
-      'ne içsem',
-      'ne yapabilirim',
-      'tavsiye',
+      'hazirlayabilirim',
+      'yapabilirim',
+      'yapayim',
       'öner',
-      'isterim',
-      'istiyorum',
+      'oner',
+      'tarif',
+      'icecek',
+      'icsem',
+      'karistir',
+      'ne olur',
+      'ne cikar',
+      'neler var',
+      'tavsiye',
     ];
     final triggerFound = ingredientIntentTriggers.any(lower.contains);
     return triggerFound || tokens.length >= 2;
