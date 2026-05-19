@@ -215,14 +215,31 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     allergen ??= _inferAllergenFromQuery(lower);
-    if (allergen == null) return null;
+    final needsAlternative = lower.contains('yerine') || lower.contains('alternatif');
+    if (allergen == null && !needsAlternative) return null;
 
-    final compatible = drinks.where((d) => !d.allergens.contains(allergen)).toList();
+    // Eğer alerjen tespit edildiyse, ya içinde o madde olmayanları 
+    // ya da o maddeye özel alternatifi olan içecekleri buluyoruz.
+    final compatible = drinks.where((d) {
+      if (allergen == null) return false;
+      final isSafe = !d.allergens.contains(allergen);
+      final hasReplacement = d.alternatives.containsKey(allergen);
+      return isSafe || hasReplacement;
+    }).toList();
 
         if (compatible.isNotEmpty) {
-          final suggestions = compatible.take(3).toList();
+          // Alternatifi olanları en başa getiriyoruz
+          final sorted = compatible.toList()..sort((a, b) {
+            final aHasAlt = a.alternatives.containsKey(allergen) ? 0 : 1;
+            final bHasAlt = b.alternatives.containsKey(allergen) ? 0 : 1;
+            return aHasAlt.compareTo(bHasAlt);
+          });
+
+          final suggestions = sorted.take(3).toList();
           final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
           final drinkId = suggestions.first.id;
+          final firstDrink = suggestions.first;
+          final hasSpecificAlt = firstDrink.alternatives.containsKey(allergen);
 
           String message;
           String emoji;
@@ -232,20 +249,32 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
               emoji = '✨';
               message =
                   '$emoji Kafeinsiz mi istiyorsun? Rahatlığını düşündüğün için çok hoşuma gitti! '
-                  'İşte tam seçeceğin şeyler:\n\n$names\n\n'
-                  'Birine tıkla, tadını çık! ☕🚫';
+                  'İşte tam sana göre seçenekler:\n\n$names\n\n';
+              if (hasSpecificAlt) {
+                message += '💡 **${firstDrink.title}** hazırlarken kahve yerine **${firstDrink.alternatives[allergen]}** kullanmanı öneririm. Tadı harika oluyor! ☕🚫';
+              } else {
+                message += 'Birine tıkla, tadını çıkar! ✨';
+              }
               break;
             case 'şeker':
               emoji = '🍯';
               message =
-                  '$emoji Şeker kontrolü yapıyorsun, harika! 💪 Sana özel seçenekler:\n\n$names\n\n'
-                  'Bunlardan biri hoşuna gitti mi? Eğer istersen şeker yerine kullanabileceğin alternatifleri de paylaşayım. 🎉';
+                  '$emoji Şeker hassasiyetini anlıyorum, çok bilinçli bir yaklaşım! 💪\n\n$names\n\n';
+              if (hasSpecificAlt) {
+                message += '💡 **${firstDrink.title}** tarifinde şeker yerine **${firstDrink.alternatives[allergen]}** kullanarak aynı lezzeti yakalayabilirsin! 🎉';
+              } else {
+                message += 'Bunlardan biri hoşuna gitti mi? Şekersiz de çok lezzetli tariflerim var. 😊';
+              }
               break;
             case 'süt':
               emoji = '🥛';
               message =
-                  '$emoji Sütü istemiyorsun, anladım! Benim burada harika vegan dostu içecekler var:\n\n$names\n\n'
-                  'Hepsi de leziz ve doyurucu! 😋';
+                  '$emoji Süt hassasiyetin mi var? Hiç sorun değil! İşte seçtiğim içecekler:\n\n$names\n\n';
+              if (hasSpecificAlt) {
+                message += '💡 **${firstDrink.title}** hazırlarken inek sütü yerine **${firstDrink.alternatives[allergen]}** kullanırsan sindirimi çok daha rahat olacaktır! 😋';
+              } else {
+                message += 'Bu tarifler vegan dostudur ve seni çok iyi hissettirecek! 🌿';
+              }
               break;
             case 'vegan':
               emoji = '🌱';
@@ -274,26 +303,20 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
             case 'fındık':
               emoji = '🥜';
               message =
-                  '$emoji Fındıktan uzak mı durmak istiyorsun? Sorun değil! '
-                  'Başka muhteşem seçenekler:\n\n$names\n\n'
-                  'Hangisi daha cazip? Veya benzer tatlar içinde fındık yerine ne kullanabileceğini de söyleyeyim. 😊';
+                  '$emoji Fındık/Yemiş alerjisi önemli bir konu, hemen önlemimi aldım! ⚠️\n\n$names\n\n';
+              if (hasSpecificAlt) {
+                message += '💡 **${firstDrink.title}** yaparken fındık yerine **${firstDrink.alternatives[allergen]}** kullanarak güvenle bu lezzetin tadına bakabilirsin. 😊';
+              } else {
+                message += 'Bu tarifler senin için tamamen güvenli ve yemiş içermiyor! 💪';
+              }
               break;
             default:
               emoji = '✨';
               message =
-                  '$emoji **$allergen** endişesi var mı? Benim burada güzel seçenekler var:\n\n$names\n\n'
-                  'Birine tıkla, detaylarını gör!';
-          }
-
-          // ── Enhanced alternatives display ────────────────────────────
-          if (suggestions.isNotEmpty &&
-              suggestions.first.alternatives.isNotEmpty) {
-            final firstDrink = suggestions.first;
-            final altList = firstDrink.alternatives.entries
-                .map((e) => '  • ${e.key} → ${e.value}')
-                .join('\n');
-            message +=
-                '\n\n💡 **${firstDrink.title}** için alternatifler:\n$altList';
+                  '$emoji **$allergen** hassasiyetin için en uygun tarifleri seçtim:\n\n$names\n\n';
+              if (hasSpecificAlt) {
+                message += '💡 **${firstDrink.title}** içindeki $allergen yerine **${firstDrink.alternatives[allergen]}** kullanmanı tavsiye ederim.';
+              }
           }
 
           return _msg(message, drinkId: drinkId);
