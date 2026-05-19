@@ -41,7 +41,7 @@ const List<CategoryMeta> kCategories = [
   CategoryMeta(
     name: 'Smoothie',
     emoji: '🥤',
-    imageUrl: 'Assets/photos/smothe.jpg',
+    imageUrl: 'Assets/photos/smothe.jpg', // Belirttiğiniz isim: smothe.jpg
     accentColor: Color(0xFF8BC34A),
   ),
   CategoryMeta(

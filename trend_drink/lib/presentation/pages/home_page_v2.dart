@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trenddrink/core/models/category_meta.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
 
 class HomePageV2 extends ConsumerWidget {
@@ -238,25 +239,12 @@ class HomePageV2 extends ConsumerWidget {
   }
 
   String _categoryAssetImage(String categoryName) {
-    switch (categoryName) {
-      case 'Kahve':
-        return 'Assets/photos/kahve.jpg';
-      case 'Matcha':
-        return 'Assets/photos/matcha.jpg';
-      case 'Frozen':
-        return 'Assets/photos/frozen.jpg';
-      case 'Kokteyl':
-        return 'Assets/photos/kokteyl.jpg';
-      case 'Smoothie':
-        return 'Assets/photos/smothe.jpg';
-      case 'Çay':
-        return 'Assets/photos/çay.jpg';
-      case 'Soda':
-        return 'Assets/photos/soda.jpg';
-      case 'Fit':
-        return 'Assets/photos/fit.jpg';
-      default:
-        return 'Assets/photo/background.png';
+    try {
+      return kCategories
+          .firstWhere((cat) => cat.name == categoryName)
+          .imageUrl;
+    } catch (_) {
+      return 'Assets/photos/background.png';
     }
   }
 }
