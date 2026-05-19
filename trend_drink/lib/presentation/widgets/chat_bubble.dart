@@ -38,12 +38,7 @@ class ChatBubble extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                message.text,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: isUser ? Colors.white : Theme.of(context).colorScheme.onSurface,
-                    ),
-              ),
+              _buildTextContent(context, message.text, isUser),
               if (message.drinkId != null && !isUser)
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
@@ -61,6 +56,66 @@ class ChatBubble extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextContent(BuildContext context, String text, bool isUser) {
+    final List<InlineSpan> spans = [];
+    // Regex: Matches [Title](id) or **BoldText**
+    final regex = RegExp(r'\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*');
+    int lastIndex = 0;
+
+    for (final match in regex.allMatches(text)) {
+      // Add plain text before the match
+      if (match.start > lastIndex) {
+        spans.add(TextSpan(text: text.substring(lastIndex, match.start)));
+      }
+
+      if (match.group(1) != null) {
+        // Link match: [Title](id)
+        final title = match.group(1)!;
+        final id = match.group(2)!;
+        spans.add(
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: GestureDetector(
+              onTap: () => context.push('/drink/$id'),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: isUser ? Colors.white : Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                      decorationColor: isUser ? Colors.white : Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+            ),
+          ),
+        );
+      } else if (match.group(3) != null) {
+        // Bold text match: **Text**
+        spans.add(
+          TextSpan(
+            text: match.group(3),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        );
+      }
+      lastIndex = match.end;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      spans.add(TextSpan(text: text.substring(lastIndex)));
+    }
+
+    return Text.rich(
+      TextSpan(
+        children: spans,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: isUser ? Colors.white : Theme.of(context).colorScheme.onSurface,
+            ),
       ),
     );
   }
