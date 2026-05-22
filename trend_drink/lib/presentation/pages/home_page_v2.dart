@@ -40,6 +40,9 @@ class HomePageV2 extends ConsumerWidget {
           return SingleChildScrollView(
             child: Column(
               children: [
+                // Sliding Announcement Banner
+                const _SlidingBanner(),
+
                 // Header section
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -247,5 +250,77 @@ class HomePageV2 extends ConsumerWidget {
     } catch (_) {
       return 'Assets/photo/background.png';
     }
+  }
+}
+
+class _SlidingBanner extends StatefulWidget {
+  const _SlidingBanner();
+
+  @override
+  State<_SlidingBanner> createState() => _SlidingBannerState();
+}
+
+class _SlidingBannerState extends State<_SlidingBanner> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startScrolling());
+  }
+
+  void _startScrolling() async {
+    while (_scrollController.hasClients) {
+      await Future.delayed(const Duration(seconds: 1));
+      if (_scrollController.hasClients) {
+        final maxExtent = _scrollController.position.maxScrollExtent;
+        await _scrollController.animateTo(
+          maxExtent,
+          duration: Duration(milliseconds: (maxExtent * 40).toInt()),
+          curve: Curves.linear,
+        );
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(0);
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final text = 'TrendDrink\'e Hoş Geldiniz! 🍹 En güncel ve lezzetli içecek tariflerini keşfedin. 🍵 AI Asistanımız ile elinizdeki malzemelere göre anında tarif önerileri alın! ✨ Favori içeceklerinizi kaydedin ve kendi listenizi oluşturun. 🥤 Sağlıklı yaşam için "Fit" kategorimize göz atmayı unutmayın! 🌿';
+    
+    return Container(
+      height: 36,
+      width: double.infinity,
+      color: Theme.of(context).primaryColor.withOpacity(0.1),
+      child: ListView.builder(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
