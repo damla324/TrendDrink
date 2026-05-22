@@ -88,12 +88,12 @@ class HomePageV2 extends ConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Circular category button with asset image
+                          // Square category button with asset image
                           Container(
                           width: 68,
                           height: 68,
                             decoration: BoxDecoration(
-                              shape: BoxShape.circle,
+                              borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: (cat['color'] as Color).withAlpha(128),
                                 width: 2,
@@ -106,7 +106,8 @@ class HomePageV2 extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                            child: ClipOval(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(14),
                               child: Image.asset(
                                 _categoryAssetImage(categoryName),
                                 fit: BoxFit.cover,
