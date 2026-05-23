@@ -200,11 +200,11 @@ class HomePageV2 extends ConsumerWidget {
                 ),
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+      ],
+    ),
+  );
+}
 
   Widget _buildMenuItem(String title, IconData icon, bool isActive) {
     return Padding(
