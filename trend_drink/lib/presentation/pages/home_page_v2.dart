@@ -72,10 +72,10 @@ class HomePageV2 extends ConsumerWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.72,
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 24,
+                    childAspectRatio: 0.8,
                   ),
                   itemCount: categoryData.length,
                   itemBuilder: (context, index) {
@@ -93,8 +93,8 @@ class HomePageV2 extends ConsumerWidget {
                         children: [
                           // Square category button with asset image
                           Container(
-                          width: 68,
-                          height: 68,
+                            width: 100,
+                            height: 100,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
@@ -110,7 +110,7 @@ class HomePageV2 extends ConsumerWidget {
                               ],
                             ),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(15),
                               child: Image.asset(
                                 _categoryAssetImage(categoryName),
                                 fit: BoxFit.cover,
@@ -132,8 +132,9 @@ class HomePageV2 extends ConsumerWidget {
                           Text(
                             categoryName,
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
+                              fontSize: 14,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

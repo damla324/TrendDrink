@@ -48,6 +48,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final drinks = await _repository.fetchAllDrinks();
     final lower = _normalize(query);
 
+    // ── 0. Social/Greeting Interaction ─────────────────────────────────
+    final socialResp = _handleSocialInteractions(lower);
+    if (socialResp != null) return socialResp;
+
     // ── 0. Sensitivity/Allergen matching ────────────────────────────────
     final sensitivityResp = _matchSensitivity(drinks, lower);
     if (sensitivityResp != null) return sensitivityResp;
@@ -166,6 +170,30 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     ];
 
     return _msg(fallbackMessages[random]);
+  }
+
+  ChatMessage? _handleSocialInteractions(String lower) {
+    // Greetings
+    if (lower.contains('merhaba') || lower.contains('selam') || lower.contains('hey')) {
+      return _msg(
+        'Merhaba! Harika bir gün geçiriyor olmanı dilerim. ✨ Bugün senin için hangi lezzeti hazırlayalım? '
+        'Malzemelerini yazabilir veya ruh haline göre bir öneri isteyebilirsin. 🍹',
+      );
+    }
+
+    // Identity / Function
+    if (lower.contains('kimsin') || lower.contains('nesin') || lower.contains('ne yapabilirsin')) {
+      return _msg(
+        'Ben senin kişisel içecek uzmanıyım! 🤖 Elindeki malzemelerden tarif üretebilir, '
+        'alerjilerine dikkat edebilir ve moduna en uygun içeceği seçmende yardımcı olabilirim. Denemeye ne dersin? 🍵',
+      );
+    }
+
+    // Wellbeing
+    if (lower.contains('nasilsin') || lower.contains('naber') || lower.contains('ne haber')) {
+      return _msg('Harikayım! Yeni tarifler keşfettikçe daha da mutlu oluyorum. Sen nasılsın? Sana enerji verecek bir kahveye ne dersin? ☕');
+    }
+    return null;
   }
 
   ChatMessage? _matchSensitivity(List<DrinkModel> drinks, String lower) {
@@ -623,8 +651,11 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       'smoothie': 'Smoothie',
       'cay': 'Çay',
       'tea': 'Çay',
+      'bitki cayi': 'Çay',
       'soda': 'Soda',
+      'gazli': 'Soda',
       'fit': 'Fit',
+      'diyet': 'Fit',
       'saglikli': 'Fit',
       'protein': 'Fit',
     };
@@ -639,9 +670,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   ChatMessage? _matchMood(List<DrinkModel> drinks, String lower) {
     if (lower.contains('enerji') ||
         lower.contains('uyku') ||
-        lower.contains('yorgun')) {
+        lower.contains('yorgun') ||
+        lower.contains('sabah') ||
+        lower.contains('uyandim')) {
       final e = drinks
-          .where((d) => d.category == 'Kahve' || d.category == 'Matcha')
+          .where((d) =>
+              d.category == 'Kahve' ||
+              d.category == 'Matcha' ||
+              _normalize(d.description).contains('enerji'))
           .take(2)
           .toList();
       if (e.isNotEmpty) {
@@ -652,10 +688,11 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         );
       }
     }
-    if (lower.contains('diyet') ||
+    if (lower.contains('detoks') ||
         lower.contains('fit') ||
         lower.contains('saglik') ||
-        lower.contains('sağlık')) {
+        lower.contains('sağlık') ||
+        lower.contains('zayifla')) {
       final f = drinks
           .where((d) => d.category == 'Fit' || d.category == 'Smoothie')
           .take(3)
