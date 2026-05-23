@@ -70,12 +70,12 @@ class HomePageV2 extends ConsumerWidget {
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 24,
-                    childAspectRatio: 0.8,
+                    crossAxisSpacing: 2,
+                    mainAxisSpacing: 4,
+                    childAspectRatio: 0.98,
                   ),
                   itemCount: categoryData.length,
                   itemBuilder: (context, index) {
@@ -93,8 +93,8 @@ class HomePageV2 extends ConsumerWidget {
                         children: [
                           // Square category button with asset image
                           Container(
-                            width: 100,
-                            height: 100,
+                            width: 125,
+                            height: 125,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
@@ -126,7 +126,7 @@ class HomePageV2 extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           
                           // Category name
                           Text(
@@ -134,7 +134,7 @@ class HomePageV2 extends ConsumerWidget {
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

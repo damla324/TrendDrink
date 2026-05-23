@@ -176,7 +176,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // Greetings
     if (lower.contains('merhaba') || lower.contains('selam') || lower.contains('hey')) {
       return _msg(
-        'Merhaba! Harika bir gün geçiriyor olmanı dilerim. ✨ Bugün senin için hangi lezzeti hazırlayalım? '
+        'Merhaba! Harika bir gün geçirmeni dilerim. ✨ Ben senin içecek uzmanıyım. Bugün senin için hangi lezzeti hazırlayalım? '
         'Malzemelerini yazabilir veya ruh haline göre bir öneri isteyebilirsin. 🍹',
       );
     }
@@ -191,8 +191,19 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     // Wellbeing
     if (lower.contains('nasilsin') || lower.contains('naber') || lower.contains('ne haber')) {
-      return _msg('Harikayım! Yeni tarifler keşfettikçe daha da mutlu oluyorum. Sen nasılsın? Sana enerji verecek bir kahveye ne dersin? ☕');
+      return _msg(
+        'Harikayım! Yeni tarifler keşfettikçe ve sana yardımcı oldukça daha da mutlu oluyorum. 😊 '
+        'Sen nasılsın? Sana enerji verecek bir kahveye veya ferahlatıcı bir soğuk çaya ne dersin? ☕🥤',
+      );
     }
+
+    // Gratitude
+    if (lower.contains('tesekkur') || lower.contains('sag ol') || lower.contains('eyvallah')) {
+      return _msg(
+        'Rica ederim! 😊 Senin için buradayım. Başka bir tarif denemek istersen veya elinde yeni malzemeler varsa bana her zaman yazabilirsin. Afiyet olsun! 🍹✨',
+      );
+    }
+
     return null;
   }
 
@@ -459,6 +470,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       'fakat',
       'veya',
       've',
+      'bir',
       'ile',
       'icin',
       'için',
@@ -492,9 +504,23 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       'mi',
       'mu',
       'mü',
+      'misin',
+      'musun',
+      'müsün',
+      'mısın',
       'da',
       'de',
+      'ya',
+      'ye',
       'daha',
+      'biraz',
+      'cok',
+      'fazla',
+      'az',
+      'olsun',
+      'olmasın',
+      'baska',
+      'farklı',
       'sonra',
     };
     return tokens.where((t) => !stopwords.contains(t.toLowerCase())).toList();
