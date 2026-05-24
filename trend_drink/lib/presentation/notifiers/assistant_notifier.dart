@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
 import 'package:trenddrink/core/models/drink_model.dart';
@@ -17,764 +19,207 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     return [
       ChatMessage(
         id: 'welcome',
-        text: 'Merhaba! Ben İçecek AI 🍵\n\n'
-            'Elindeki malzemeleri yaz (örn: "limon, muz, yoğurt") veya sohbet eder gibi söyle (örn: "Elimde muz ve süt var, bunlarla ne yapabilirim?"). '
-            'Veya bir kategori sor (kahve, çay, smoothie, fit, kokteyl vs) ya da ruh haline göre öneri iste. '
-            'Hangi ürüne hassasiyetin varsa onu da söyle, ona göre alternatifler sunayım! 💚',
+        text:
+            'Merhaba! Ben İçecek AI 🍵\n\nElindeki malzemeleri yaz, fotoğraf yükle (✨ Pro özelliği) ya da sohbet eder gibi anlat. '
+            'Örneğin: "Elimde muz ve süt var" veya bir buzdolabı fotoğrafı paylaş — sana uygun tarifi seçeyim.',
         author: ChatAuthor.assistant,
       ),
     ];
   }
 
-  Future<void> sendMessage(String text) async {
+  Future<void> sendMessage(String text,
+      {Uint8List? imageBytes, String? imageName}) async {
     final message = text.trim();
-    if (message.isEmpty) return;
+    if (message.isEmpty && imageBytes == null) return;
 
     state = [
       ...state,
       ChatMessage(
         id: 'user-${DateTime.now().millisecondsSinceEpoch}',
-        text: message,
+        text: message.isEmpty ? '(Fotoğraf gönderildi)' : message,
         author: ChatAuthor.user,
+        imageBytes: imageBytes,
+        imageName: imageName,
       ),
     ];
 
-    await Future<void>.delayed(const Duration(milliseconds: 700));
-    final response = await _buildResponse(message);
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+    final response =
+        await _buildResponse(message, hasImage: imageBytes != null);
     state = [...state, response];
   }
 
-  Future<ChatMessage> _buildResponse(String query) async {
+  Future<ChatMessage> _buildResponse(String query,
+      {bool hasImage = false}) async {
     final drinks = await _repository.fetchAllDrinks();
     final lower = _normalize(query);
 
-    // ── 0. Social/Greeting Interaction ─────────────────────────────────
-    final socialResp = _handleSocialInteractions(lower);
-    if (socialResp != null) return socialResp;
-
-    // ── 0. Sensitivity/Allergen matching ────────────────────────────────
-    final sensitivityResp = _matchSensitivity(drinks, lower);
-    if (sensitivityResp != null) return sensitivityResp;
-
-    // ── 1. Exact/partial drink title match ─────────────────────────────
-    final titleMatch = _findByTitle(drinks, lower);
-    if (titleMatch != null) {
-      return _msg(
-        'Oh, [${titleMatch.title}](${titleMatch.id}) mi istiyorsun? 😋 Süper bir tercih! '
-        'Tarifi hemen paylaşayım; malzemeler, adımlar ve püf noktaları aşağıdaki düğmede seni bekliyor. '
-        'Bu tarife bakıp sonra bana "benzer ama daha hafif" veya "şekersiz" gibi bir istek daha yazabilirsin. 👇',
-        drinkId: titleMatch.id,
-      );
-    }
-
-    // ── 2. Ingredient matching ──────────────────────────────────────────
-    final ingredientTokens = _extractIngredientTokens(lower);
-    final byIngredient = _findByIngredients(drinks, ingredientTokens);
-    if (byIngredient.isNotEmpty) {
-      final suggestions = byIngredient.take(3).toList();
-      final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
-      final mainId = suggestions.first.id;
-      return _msg(
-        'Elindeki malzemelere en uygun içecekleri buldum! ✨\n\n'
-        'Sana en uygun üç seçenek: $names.\n\n'
-        'Aşağıdaki düğmeye tıklayarak seçtiğim tarifin detaylı tarifine ulaşabilirsin. '
-        'Şimdi bana da söyle: bu tariflerden hangisini daha çok denemek istersin ya da hangi malzemeyi kesinlikle kullanmak istersin? 🍹',
-        drinkId: mainId,
-      );
-    }
-
-    final looksLikeIngredientQuery = _isIngredientIntent(lower, ingredientTokens);
-    if (looksLikeIngredientQuery) {
-      if (ingredientTokens.isEmpty) {
-        return _msg(
-          'Sohbetinden anladığım kadarıyla elindeki malzemelerle ne yapabileceğini merak ediyorsun. '
-          'Bana sadece malzemelerini yaz: örn. "Elimde muz, süt ve bal var" veya "Evde çilek ve yoğurt var, bunlarla ne yapabilirim?"',
-        );
-      }
-      final tokensStr = ingredientTokens.join(', ');
-      return _msg(
-        'Aradığın malzeme kombinasyonunda (**$tokensStr**) tam olarak uyan içecek bulamadım. '
-        'Dilersen malzemeleri biraz daha sadeleştir veya sadece ana malzemeleri söyle. \n'
-        'Örneğin: "Elimde muz ve süt var" ya da "Evde sadece çilek var".\n'
-        'Ayrıca bir malzemeden kaçınmak istersen, onu da yazabilirsin (örn: "süt istemiyorum").',
-      );
-    }
-
-    // ── 3. Category keyword ─────────────────────────────────────────────
-    final categoryMatch = _findByCategory(drinks, lower);
-    if (categoryMatch.isNotEmpty) {
-      final suggestions = categoryMatch.take(3).toList();
-      final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
-      return _msg(
-        'Bu kategori tam senlik! 🎯 Sana uygun üç tane lezzet seçtim: $names.\n\n'
-        'Bu tariflerin her biri için detaylı tarif bağlantısı aşağıdaki butonda. '
-        'Hangisini görmek istersin ve bu tarifte hangi malzemeyi öne çıkarmak istersin? 😊',
-        drinkId: suggestions.first.id,
-      );
-    }
-
-    // ── 4. Mood/feeling keywords ────────────────────────────────────────
-    final moodResp = _matchMood(drinks, lower);
-    if (moodResp != null) return moodResp;
-
-    // ── 5. Temperature ──────────────────────────────────────────────────
-    if (lower.contains('sıcak') ||
-        lower.contains('sicak') ||
-        lower.contains('ılık')) {
-      final hot = drinks.where((d) => d.temperature == 'Sıcak').toList();
-      if (hot.isNotEmpty) {
-        final suggestions = hot.take(3).toList();
-        final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
-        return _msg(
-          'Sıcak bir şey çekiyor olabilirsin; bunun için bazı özel tarifler seçtim. ☕\n\n'
-          '$names\n\n'
-          'Aşağıdaki butona basınca seçtiğim tarife hemen ulaşacaksın. '
-          'Sonra bana hangi hisle içmek istediğini de söyle, daha kişisel öneriler vereyim! 😊',
-          drinkId: suggestions.first.id,
-        );
-      }
-    }
-    if (lower.contains('soğuk') ||
-        lower.contains('soguk') ||
-        lower.contains('buzlu')) {
-      final cold = drinks.where((d) => d.temperature == 'Soğuk').toList();
-      if (cold.isNotEmpty) {
-        final suggestions = cold.take(3).toList();
-        final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
-        return _msg(
-          'Soğuk bir ferahlık mı istersin? Hemen sana uygun seçenekler hazırladım. 🧊\n\n'
-          '$names\n\n'
-          'Birini seçmek için aşağıdaki butonu kullan, tarifin tam detaylarını sana açayım. '
-          'Sonra istersen buz oranını da beraber ayarlarız! 😄',
-          drinkId: suggestions.first.id,
-        );
-      }
-    }
-
-    // ── 6. Fallback ─────────────────────────────────────────────────────
-    final random = DateTime.now().millisecond % 3;
-    final selectedDrinks = drinks..shuffle();
-    final topDrinks = selectedDrinks.take(3).toList();
-    final topNames = topDrinks.map((d) => '[${d.title}](${d.id})').join(', ');
-
-    final fallbackMessages = [
-      'Hmm, tam anlayamadım ama yardımcı olmak istiyorum! 😊\n\n'
-          '$topNames gibi lezzetler seni çekebilir. Aşağıdan birini seç ve tarifi görelim!\n\n'
-          'Sonra bana daha spesifik söyle (malzeme, kalori, tat profili) ki doğru tarifi bulabilirim! 💡',
-      'Bekle, ben seninçin şu üç tarif buldum: $topNames. 🎯\n\n'
-          'Bunlardan hangisi senin kulağına hoş geldi? Hangisini denemek isterdin?\n\n'
-          'Detaylarını görmek için aşağı bastığında, bana da "tatlı seviyorum" veya "sağlıklı arıyorum" gibi daha kesin çıklama yaparsan, seni öğrenerim! 📝',
-      'Vay canına, bu soru çok güzel! Çıldırttın beni 😄\n\n'
-          'Sana şu tarif önerileri yapıyorum: $topNames\n\n'
-          'İstersen bak, beğendim mi yaz. Hatta "elma var", "vegan istiyorum" veya "5 dakikada yapabilecek şey" gibi başka ipuçları verirsen, daha yapı iyi eşleşme bulabilirim! 🎨',
-    ];
-
-    return _msg(fallbackMessages[random]);
-  }
-
-  ChatMessage? _handleSocialInteractions(String lower) {
-    // Greetings
-    if (lower.contains('merhaba') || lower.contains('selam') || lower.contains('hey')) {
-      return _msg(
-        'Merhaba! Harika bir gün geçirmeni dilerim. ✨ Ben senin içecek uzmanıyım. Bugün senin için hangi lezzeti hazırlayalım? '
-        'Malzemelerini yazabilir veya ruh haline göre bir öneri isteyebilirsin. 🍹',
-      );
-    }
-
-    // Identity / Function
-    if (lower.contains('kimsin') || lower.contains('nesin') || lower.contains('ne yapabilirsin')) {
-      return _msg(
-        'Ben senin kişisel içecek uzmanıyım! 🤖 Elindeki malzemelerden tarif üretebilir, '
-        'alerjilerine dikkat edebilir ve moduna en uygun içeceği seçmende yardımcı olabilirim. Denemeye ne dersin? 🍵',
-      );
-    }
-
-    // Wellbeing
-    if (lower.contains('nasilsin') || lower.contains('naber') || lower.contains('ne haber')) {
-      return _msg(
-        'Harikayım! Yeni tarifler keşfettikçe ve sana yardımcı oldukça daha da mutlu oluyorum. 😊 '
-        'Sen nasılsın? Sana enerji verecek bir kahveye veya ferahlatıcı bir soğuk çaya ne dersin? ☕🥤',
-      );
-    }
-
-    // Gratitude
-    if (lower.contains('tesekkur') || lower.contains('sag ol') || lower.contains('eyvallah')) {
-      return _msg(
-        'Rica ederim! 😊 Senin için buradayım. Başka bir tarif denemek istersen veya elinde yeni malzemeler varsa bana her zaman yazabilirsin. Afiyet olsun! 🍹✨',
-      );
-    }
-
-    return null;
-  }
-
-  ChatMessage? _matchSensitivity(List<DrinkModel> drinks, String lower) {
-    // ── Sensitivity/allergen keywords ──────────────────────────────────
-    final sensitivityMap = {
-      // Kafein varyasyonları
-      'kafeinsiz': 'kafein', 'cafeinsiz': 'kafein', 'decaf': 'kafein', 
-      'uyku kacirmasin': 'kafein', 'carpinti yapmasin': 'kafein',
-      
-      // Şeker varyasyonları
-      'sekersiz': 'şeker', 'seker istemiyorum': 'şeker', 'seker yok': 'şeker',
-      'diyabet': 'şeker', 'sugarfree': 'şeker', 'tatlandirici istemiyorum': 'şeker',
-      'formda kalmam lazim': 'şeker', 'diyetteyim': 'şeker',
-      
-      // Süt varyasyonları
-      'sutsuz': 'süt', 'sut istemiyorum': 'süt', 'laktozsuz': 'süt',
-      'dairy free': 'süt', 'sut dokunuyor': 'süt', 'sut olmasin': 'süt',
-      
-      // Beslenme modelleri
-      'vegan': 'vegan', 'vejetaryen': 'vegan', 'hayvansal gida yok': 'vegan',
-      'glutensiz': 'gluten', 'gluten free': 'gluten', 'corek otu': 'gluten',
-      
-      // Alerjenler
-      'alerjim var': 'alerji', 'alerji': 'alerji', 'alerjik': 'alerji',
-      'cikolata istemiyorum': 'çikolata', 'cikolatadan kaciyorum': 'çikolata',
-      'findik istemiyorum': 'fındık', 'kuruyemis olmasin': 'fındık',
-      'badem istemiyorum': 'kaju', 'kaju': 'kaju',
-    };
-
-    String? allergen;
-    for (final entry in sensitivityMap.entries) {
-      if (lower.contains(entry.key)) {
-        allergen = entry.value;
-        break;
-      }
-    }
-
-    allergen ??= _inferAllergenFromQuery(lower);
-    final needsAlternative = lower.contains('yerine') || lower.contains('alternatif');
-    if (allergen == null && !needsAlternative) return null;
-
-    // Negatif tercih kontrolü: Hem alerjen listesine hem de malzeme listesine bakıyoruz.
-    final compatible = drinks.where((d) {
-      if (allergen == null) return false;
-      
-      // Malzeme veya alerjen listesinde bu ürünün olup olmadığına bak
-      final hasIngredient = d.ingredients.any((ing) => _normalize(ing).contains(allergen!));
-      final hasAllergen = d.allergens.contains(allergen);
-      
-      final containsUnwanted = hasIngredient || hasAllergen;
-      final hasReplacement = d.alternatives.containsKey(allergen);
-      
-      // Eğer istenmeyen madde yoksa veya varsa bile bir alternatifi tanımlanmışsa içeceği kabul et
-      return !containsUnwanted || hasReplacement;
-    }).toList();
-
-        if (compatible.isNotEmpty) {
-          // Alternatifi olanları en başa getiriyoruz
-          final sorted = compatible.toList()..sort((a, b) {
-            final aHasAlt = a.alternatives.containsKey(allergen) ? 0 : 1;
-            final bHasAlt = b.alternatives.containsKey(allergen) ? 0 : 1;
-            return aHasAlt.compareTo(bHasAlt);
-          });
-
-          final suggestions = sorted.take(3).toList();
-          final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
-          final drinkId = suggestions.first.id;
-          final firstDrink = suggestions.first;
-          final hasSpecificAlt = firstDrink.alternatives.containsKey(allergen);
-
-          String message;
-          String emoji;
-
-          switch (allergen) {
-            case 'kafein':
-              emoji = '✨';
-              message =
-                  '$emoji Kafeinsiz mi istiyorsun? Rahatlığını düşündüğün için çok hoşuma gitti! '
-                  'İşte tam sana göre seçenekler:\n\n$names\n\n';
-              if (hasSpecificAlt) {
-                message += '💡 **${firstDrink.title}** hazırlarken kahve yerine **${firstDrink.alternatives[allergen]}** kullanmanı öneririm. Tadı harika oluyor! ☕🚫';
-              } else {
-                message += 'Birine tıkla, tadını çıkar! ✨';
-              }
-              break;
-            case 'şeker':
-              emoji = '🍯';
-              message =
-                  '$emoji Şeker hassasiyetini anlıyorum, çok bilinçli bir yaklaşım! 💪\n\n$names\n\n';
-              if (hasSpecificAlt) {
-                message += '💡 **${firstDrink.title}** tarifinde şeker yerine **${firstDrink.alternatives[allergen]}** kullanarak aynı lezzeti yakalayabilirsin! 🎉';
-              } else {
-                message += 'Bunlardan biri hoşuna gitti mi? Şekersiz de çok lezzetli tariflerim var. 😊';
-              }
-              break;
-            case 'süt':
-              emoji = '🥛';
-              message =
-                  '$emoji Süt hassasiyetin mi var? Hiç sorun değil! İşte seçtiğim içecekler:\n\n$names\n\n';
-              if (hasSpecificAlt) {
-                message += '💡 **${firstDrink.title}** hazırlarken inek sütü yerine **${firstDrink.alternatives[allergen]}** kullanırsan sindirimi çok daha rahat olacaktır! 😋';
-              } else {
-                message += 'Bu tarifler vegan dostudur ve seni çok iyi hissettirecek! 🌿';
-              }
-              break;
-            case 'vegan':
-              emoji = '🌱';
-              message =
-                  '$emoji Veganlık çok gurur verici! 🌍 İşte tamamen vegan içecekler:\n\n$names\n\n'
-                  'Hepsi 100% animal-free, birine tıkla! 💚';
-              break;
-            case 'gluten':
-              emoji = '🌾';
-              message =
-                  '$emoji Glutenden uzak mı durmak istiyorsun? Tamam, anladım! ✅\n\n$names\n\n'
-                  'Hepsi güvenli, rahatça içebilirsin! 😊';
-              break;
-            case 'alerji':
-              emoji = '⚠️';
-              message =
-                  '$emoji Aman diye! Yaygın alerjenlerden uzak, güvenli seçenekler:\n\n$names\n\n'
-                  'Rahatlıkla deneyebilirsin! 💚';
-              break;
-            case 'çikolata':
-              emoji = '🍫';
-              message =
-                  '$emoji Çikolatadan kaçıyorsun, tamam! Başka tatların da çok güzel olur:\n\n$names\n\n'
-                  'Hangisine kafa attın? 😄';
-              break;
-            case 'fındık':
-              emoji = '🥜';
-              message =
-                  '$emoji Fındık/Yemiş alerjisi önemli bir konu, hemen önlemimi aldım! ⚠️\n\n$names\n\n';
-              if (hasSpecificAlt) {
-                message += '💡 **${firstDrink.title}** yaparken fındık yerine **${firstDrink.alternatives[allergen]}** kullanarak güvenle bu lezzetin tadına bakabilirsin. 😊';
-              } else {
-                message += 'Bu tarifler senin için tamamen güvenli ve yemiş içermiyor! 💪';
-              }
-              break;
-            default:
-              emoji = '✨';
-              message =
-                  '$emoji **$allergen** hassasiyetin için en uygun tarifleri seçtim:\n\n$names\n\n';
-              if (hasSpecificAlt) {
-                message += '💡 **${firstDrink.title}** içindeki $allergen yerine **${firstDrink.alternatives[allergen]}** kullanmanı tavsiye ederim.';
-              }
-          }
-
-          return _msg(message, drinkId: drinkId);
-        } else {
-          String noOptionMessage;
-          String emoji;
-
-          switch (allergen) {
-            case 'kafein':
-              emoji = '😅';
-              noOptionMessage =
-                  '$emoji Üzgünüm, şu anda kafeinsiz seçenek çok sınırlı. '
-                  'Ama merak etme, yakında daha çok eklerim! Başka bir tercih yapmak ister misin? 🍹';
-              break;
-            case 'şeker':
-              emoji = '😅';
-              noOptionMessage =
-                  '$emoji Şekersiz seçenekler kısıtlı ama merak etme, başka leziz şeyler önerebilirim! '
-                  'Başka bir kategori ister misin? ☕';
-              break;
-            case 'vegan':
-              emoji = '😅';
-              noOptionMessage =
-                  '$emoji Tamamen vegan seçenekler şu anda sınırlı ama geliştiriliyorum! '
-                  'Başka bir tercih yapmak ister misin? 🌱';
-              break;
-            default:
-              emoji = '😅';
-              noOptionMessage =
-                  '$emoji Bu kriter için henüz uygun içecek bulamadım ama arayışımda devam! '
-                  'Başka bir tercih yapmak ister misin? 💪';
-          }
-          return _msg(noOptionMessage);
+    // Görsel destekli akış (multimodal placeholder + pratik öneri).
+    if (hasImage) {
+      final tokens = _extractIngredientTokens(lower);
+      if (tokens.isNotEmpty) {
+        final byIng = _findByIngredients(drinks, tokens);
+        if (byIng.isNotEmpty) {
+          final top = byIng.take(3).toList();
+          final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+          return _msg(
+            '📷 Fotoğrafını ve yazdığın malzemeleri inceledim. Senin için en iyi tarifler: $names\n\n'
+            'Aşağıdaki butondan detayına geç. İstersen "şekersiz" veya "sıcak" gibi ek bir filtre de yazabilirsin.',
+            drinkId: top.first.id,
+          );
         }
+      }
+      return _msg(
+        '📷 Fotoğrafını aldım. Görseldeki malzemeleri kısaca yazabilir misin? '
+        'Örneğin: "Muz, süt, yulaf, bal var". Böylece sana en doğru tarifi seçeyim. ✨\n\n'
+        '_İpucu: AI Vision tam entegrasyonu için Pro üyeliğinde Gemini görsel analiz yakında aktif!_',
+      );
+    }
+
+    // 1) Sosyal
+    final social = _handleSocial(lower);
+    if (social != null) return social;
+
+    // 2) Başlık eşleşmesi
+    final title = _findByTitle(drinks, lower);
+    if (title != null) {
+      return _msg(
+        '[${title.title}](${title.id}) harika tercih! 😋 Tam detaylar aşağıdaki butonda.',
+        drinkId: title.id,
+      );
+    }
+
+    // 3) Malzeme
+    final tokens = _extractIngredientTokens(lower);
+    final byIng = _findByIngredients(drinks, tokens);
+    if (byIng.isNotEmpty) {
+      final top = byIng.take(3).toList();
+      final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+      return _msg(
+        'Bu malzemelerle yapabileceğin en iyi 3 tarif: $names ✨\n\nAşağıdaki butona tıkla, ilkinin detayını açayım.',
+        drinkId: top.first.id,
+      );
+    }
+
+    // 4) Kategori
+    final byCat = _findByCategory(drinks, lower);
+    if (byCat.isNotEmpty) {
+      final top = byCat.take(3).toList();
+      final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+      return _msg(
+        'Bu kategoride seni mest edecek 3 tarif seçtim: $names 🎯',
+        drinkId: top.first.id,
+      );
+    }
+
+    // 5) Fallback
+    final shuffled = [...drinks]..shuffle();
+    final top = shuffled.take(3).toList();
+    final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+    return _msg(
+      'Tam yakalayamadım ama belki şunlardan biri ilgini çeker: $names 🌟\n\nDaha kesin bir cevap istersen "malzeme: muz, süt" gibi yazabilirsin.',
+      drinkId: top.first.id,
+    );
   }
 
-  String? _inferAllergenFromQuery(String lower) {
-    const negativeTerms = [
-      'istemiyorum',
-      'istemem',
-      'istemiyor',
-      'olmasin',
-      'koyma',
-      'bulunmasin',
-      'icermeyen',
-      'olmayan',
-      'uzak',
-      'yok',
-      'siz',
-      'suz',
-      'haric',
-      'disinda',
-      'kullanma',
-      'hassasiyet',
-      'alerji',
-      'rahatsiz',
-      'tolerans',
-    ];
-
-    if (!negativeTerms.any(lower.contains)) return null;
-
-    const allergenKeywords = {
-      'kafein': 'kafein',
-      'kafeinsiz': 'kafein',
-      'cafeinsiz': 'kafein',
-      'decaf': 'kafein',
-      'şeker': 'şeker',
-      'sugar': 'şeker',
-      'şekerli': 'şeker',
-      'süt': 'süt',
-      'sut': 'süt',
-      'laktoz': 'süt',
-      'vegan': 'vegan',
-      'vejetaryen': 'vegan',
-      'gluten': 'gluten',
-      'çikolata': 'çikolata',
-      'çikolatadan': 'çikolata',
-      'fındık': 'fındık',
-      'findik': 'fındık',
-      'badem': 'kaju',
-      'kaju': 'kaju',
-      'almond': 'kaju',
-    };
-
-    for (final entry in allergenKeywords.entries) {
-      if (lower.contains(entry.key)) return entry.value;
+  ChatMessage? _handleSocial(String lower) {
+    if (lower.contains('merhaba') || lower.contains('selam')) {
+      return _msg('Merhaba! Bugün hangi lezzeti hazırlayalım? 🍹');
+    }
+    if (lower.contains('teşekkür') || lower.contains('sagol')) {
+      return _msg('Rica ederim! Afiyet olsun. ☕');
     }
     return null;
   }
 
-  // ── Helpers ────────────────────────────────────────────────────────────
-  String _normalize(String s) {
-    return s
+  ChatMessage _msg(String text, {String? drinkId}) => ChatMessage(
+        id: 'ai-${DateTime.now().millisecondsSinceEpoch}',
+        text: text,
+        author: ChatAuthor.assistant,
+        drinkId: drinkId,
+      );
+
+  String _normalize(String s) => s
       .toLowerCase()
-      .replaceAll(RegExp(r'[!,.?(){}\[\]]'), ' ') // Noktalama işaretlerini temizle
-      .replaceAll('ğ', 'g')
-      .replaceAll('ş', 's')
-      .replaceAll('ç', 'c')
       .replaceAll('ı', 'i')
       .replaceAll('ö', 'o')
-      .replaceAll('ü', 'u')
-      .trim();
-  }
+      .replaceAll('ç', 'c')
+      .replaceAll('ş', 's')
+      .replaceAll('ğ', 'g')
+      .replaceAll('ü', 'u');
 
-  List<String> _tokenize(String s) {
-    final tokens = s
-        .split(RegExp(r'[,;\s/&+]+'))
-        .map((t) => t.trim())
-        .where((t) => t.length > 1)
-        .toList();
-
-    const stopwords = {
-      'var',
-      'yok',
-      'ama',
-      'ancak',
-      'fakat',
-      'veya',
-      've',
-      'bir',
-      'ile',
-      'icin',
-      'için',
-      'ne',
-      'neyi',
-      'neleri',
-      'hangi',
-      'nasıl',
-      'nasil',
-      'bana',
-      'bunu',
-      'bu',
-      'şu',
-      'benim',
-      'bende',
-      'elimde',
-      'evde',
-      'bunlarla',
-      'bunla',
-      'varsa',
-      'yapabilirim',
-      'yaparım',
-      'yapayım',
-      'tavsiye',
-      'öner',
-      'oner',
-      'isterim',
-      'istiyorum',
-      'lütfen',
-      'mı',
-      'mi',
-      'mu',
-      'mü',
-      'misin',
-      'musun',
-      'müsün',
-      'mısın',
-      'da',
-      'de',
-      'ya',
-      'ye',
-      'daha',
-      'biraz',
-      'cok',
-      'fazla',
-      'az',
-      'olsun',
-      'olmasın',
-      'baska',
-      'farklı',
-      'sonra',
-    };
-    return tokens.where((t) => !stopwords.contains(t.toLowerCase())).toList();
-  }
-
-  String _cleanIngredientQuery(String lower) {
-    var cleaned = lower.replaceAll(RegExp(r'[?!.]'), ' ');
-    const removePatterns = [
-      r'\belimde\b',
-      r'\bevde\b',
-      r'\bbende\b',
-      r'\bbenim\b',
-      r'\bbunlarla\b',
-      r'\bbunla\b',
-      r'\bbununla\b',
-      r'\bvarsa\b',
-      r'\bvar\b',
-      r'\byok\b',
-      r'\bama\b',
-      r'\bveya\b',
-      r'\bve\b',
-      r'\bile\b',
-      r'\bicin\b',
-      r'\biçin\b',
-      r'\bne\b',
-      r'\bneyi\b',
-      r'\bneleri\b',
-      r'\bhangi\b',
-      r'\bnasıl\b',
-      r'\bnasil\b',
-      r'\byapabilirim\b',
-      r'\byaparim\b',
-      r'\byapayim\b',
-      r'\btavsiye\b',
-      r'\böner\b',
-      r'\boner\b',
-      r'\bisterim\b',
-      r'\bistiyorum\b',
-      r'\bbana\b',
-      r'\bplease\b',
-      r'\bmi\b',
-      r'\bmu\b',
-      r'\bmü\b',
-      r'\bda\b',
-      r'\bde\b',
-      r'\bdaha\b',
-      r'\bsonra\b',
-      r'\bbu\b',
-      r'\bşu\b',
-    ];
-    for (final pattern in removePatterns) {
-      cleaned = cleaned.replaceAll(RegExp(pattern), ' ');
+  DrinkModel? _findByTitle(List<DrinkModel> drinks, String lower) {
+    for (final d in drinks) {
+      if (_normalize(d.title).contains(lower) && lower.length > 2) {
+        return d;
+      }
     }
-    return cleaned;
+    return null;
   }
 
   List<String> _extractIngredientTokens(String lower) {
-    final cleaned = _cleanIngredientQuery(lower);
-    return _tokenize(cleaned);
-  }
-
-  bool _isIngredientIntent(String lower, List<String> tokens) {
-    const ingredientIntentTriggers = [
-      'elimde',
-      'evde',
-      'bende',
-      'bunlarla',
-      'bununla',
-      'varsa',
-      'var',
-      'hazirlayabilirim',
-      'yapabilirim',
-      'yapayim',
-      'öner',
-      'oner',
-      'tarif',
-      'icecek',
-      'icsem',
-      'karistir',
-      'ne olur',
-      'ne cikar',
-      'neler var',
-      'tavsiye',
+    const keywords = [
+      'muz',
+      'sut',
+      'yogurt',
+      'bal',
+      'elma',
+      'cilek',
+      'limon',
+      'portakal',
+      'yulaf',
+      'kakao',
+      'kahve',
+      'sucuk',
+      'vanilya',
+      'tarcin',
+      'zencefil',
+      'nane',
+      'seker',
+      'su',
+      'buz',
+      'cay',
+      'matcha',
+      'karpuz',
+      'muhrek',
+      'badem',
+      'findik'
     ];
-    final triggerFound = ingredientIntentTriggers.any(lower.contains);
-    return triggerFound || tokens.length >= 2;
-  }
-
-  DrinkModel? _findByTitle(List<DrinkModel> drinks, String lower) {
-    final words = lower.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).toList();
-    for (final d in drinks) {
-      final normalized = _normalize(d.title);
-      if (lower.contains(normalized) || normalized.contains(lower)) return d;
-
-      // Only use word-level title matching for short single-word queries.
-      if (words.length == 1) {
-        final word = words.first;
-        if (word.length >= 3 && normalized.contains(word)) return d;
-      }
-    }
-    return null;
+    return keywords.where((k) => lower.contains(k)).toList();
   }
 
   List<DrinkModel> _findByIngredients(
       List<DrinkModel> drinks, List<String> tokens) {
-    final normalizedTokens =
-        tokens.map(_normalize).where((token) => token.isNotEmpty).toList();
-
-    if (normalizedTokens.isEmpty) return [];
-
-    final exactMatches = <_IngredientMatch>[];
-
-    for (final drink in drinks) {
-      final drinkIngredientsNormalized = drink.ingredients
-          .map((ing) => _normalize(ing).toLowerCase())
-          .toList();
-
-      int matchedCount = 0;
-      for (final token in normalizedTokens) {
-        final normalized = token.toLowerCase();
-        if (drinkIngredientsNormalized.any((ing) => ing.contains(normalized) || ing == normalized)) {
-          matchedCount++;
-        }
+    if (tokens.isEmpty) return [];
+    final scored = <(DrinkModel, int)>[];
+    for (final d in drinks) {
+      var score = 0;
+      final ingNormalized = d.ingredients.map((i) => _normalize(i)).join(' ');
+      for (final t in tokens) {
+        if (ingNormalized.contains(t)) score++;
       }
-
-      if (matchedCount == normalizedTokens.length) {
-        final extraIngredientCount = drinkIngredientsNormalized.length - matchedCount;
-        final score = matchedCount * 100 - extraIngredientCount * 5;
-        exactMatches.add(_IngredientMatch(drink, matchedCount, score));
-      }
+      if (score > 0) scored.add((d, score));
     }
-
-    if (exactMatches.isNotEmpty) {
-      exactMatches.sort((a, b) {
-        if (b.score != a.score) return b.score.compareTo(a.score);
-        if (b.matchCount != a.matchCount) return b.matchCount.compareTo(a.matchCount);
-        return a.drink.title.compareTo(b.drink.title);
-      });
-      return exactMatches.map((match) => match.drink).toList();
-    }
-
-    return [];
+    scored.sort((a, b) => b.$2.compareTo(a.$2));
+    return scored.map((e) => e.$1).toList();
   }
 
   List<DrinkModel> _findByCategory(List<DrinkModel> drinks, String lower) {
-    const categoryMap = {
+    const map = {
       'kahve': 'Kahve',
-      'coffee': 'Kahve',
       'matcha': 'Matcha',
-      'frozen': 'Frozen',
-      'dondurulmus': 'Frozen',
       'kokteyl': 'Kokteyl',
-      'cocktail': 'Kokteyl',
+      'frozen': 'Frozen',
       'smoothie': 'Smoothie',
       'cay': 'Çay',
-      'tea': 'Çay',
-      'bitki cayi': 'Çay',
       'soda': 'Soda',
-      'gazli': 'Soda',
       'fit': 'Fit',
-      'diyet': 'Fit',
-      'saglikli': 'Fit',
-      'protein': 'Fit',
     };
-    for (final entry in categoryMap.entries) {
+    for (final entry in map.entries) {
       if (lower.contains(entry.key)) {
         return drinks.where((d) => d.category == entry.value).toList();
       }
     }
     return [];
   }
-
-  ChatMessage? _matchMood(List<DrinkModel> drinks, String lower) {
-    if (lower.contains('enerji') ||
-        lower.contains('uyku') ||
-        lower.contains('yorgun') ||
-        lower.contains('sabah') ||
-        lower.contains('uyandim')) {
-      final e = drinks
-          .where((d) =>
-              d.category == 'Kahve' ||
-              d.category == 'Matcha' ||
-              _normalize(d.description).contains('enerji'))
-          .take(2)
-          .toList();
-      if (e.isNotEmpty) {
-        return _msg(
-          '💪 Enerji lazım, biliyorum! Kahve veya matcha combo seni ayağa kaldırır!\n\n${e.map((d) => '[${d.title}](${d.id})').join(", ")}\n\n'
-          'Hangisi sana daha hoş gelir? Tıkla, yapılışını öğren! ⚡',
-          drinkId: e.first.id,
-        );
-      }
-    }
-    if (lower.contains('detoks') ||
-        lower.contains('fit') ||
-        lower.contains('saglik') ||
-        lower.contains('sağlık') ||
-        lower.contains('zayifla')) {
-      final f = drinks
-          .where((d) => d.category == 'Fit' || d.category == 'Smoothie')
-          .take(3)
-          .toList();
-      if (f.isNotEmpty) {
-        return _msg(
-          '💪 Sağlıkla ilgileniyorsun, çok hoş! Benim burada harika seçenekler var:\n\n${f.map((d) => '[${d.title}](${d.id})').join(", ")}\n\n'
-          'Hangisi seni heyecanlandırdı? Birine tıkla! 🌱',
-          drinkId: f.first.id,
-        );
-      }
-    }
-    if (lower.contains('parti') ||
-        lower.contains('eglence') ||
-        lower.contains('eğlence') ||
-        lower.contains('aksam') ||
-        lower.contains('akşam')) {
-      final p = drinks.where((d) => d.category == 'Kokteyl').take(3).toList();
-      if (p.isNotEmpty) {
-        return _msg(
-          '🎉 Eğlenceye mi kalkıyorsun? Mükemmel! İşte akşam favoritileri:\n\n${p.map((d) => '[${d.title}](${d.id})').join(", ")}\n\n'
-          'Hangisiyle başlamak ister misin? Tıkla, tarifi görmek için! 🍹',
-          drinkId: p.first.id,
-        );
-      }
-    }
-    if (lower.contains('klasik') ||
-        lower.contains('favorim') ||
-        lower.contains('sevdiğim') ||
-        lower.contains('sevdigim')) {
-      final classics = drinks.take(4).toList();
-      if (classics.isNotEmpty) {
-        return _msg(
-          '😊 Klasik seçenekler mi istiyorsun? Çok iyi! İşte en populer içecekler:\n\n${classics.map((d) => '[${d.title}](${d.id})').join(", ")}\n\n'
-          'Bunlardan hangisi seni en çok etkiledi? 🌟',
-          drinkId: classics.first.id,
-        );
-      }
-    }
-    return null;
-  }
-
-  ChatMessage _msg(String text, {String? drinkId}) {
-    return ChatMessage(
-      id: 'assistant-${DateTime.now().millisecondsSinceEpoch}',
-      text: text,
-      author: ChatAuthor.assistant,
-      drinkId: drinkId,
-    );
-  }
-}
-
-class _IngredientMatch {
-  _IngredientMatch(this.drink, this.matchCount, this.score);
-
-  final DrinkModel drink;
-  final int matchCount;
-  final int score;
 }

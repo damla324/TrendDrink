@@ -1,5 +1,10 @@
+// Enhanced theme — single source of truth for the app's Material theme.
+// Keeps legacy aliases (AppTheme.gold etc.) for backwards-compat while
+// delegating colours to the new AppPalette.
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:trenddrink/core/theme/app_palette.dart';
+import 'package:trenddrink/core/theme/app_typography.dart';
 
 enum ThemeVariant {
   // Free themes
@@ -17,17 +22,17 @@ enum ThemeVariant {
 class AppTheme {
   AppTheme._();
 
-  // ─── Static Color Constants ────────────────────────────────────────────
-  static const Color gold = Color(0xFFFFD700);
-  static const Color ledCyan = Color(0xFF00FFFF);
-  static const Color cream = Color(0xFFF5E6D3);
-  static const Color dimCream = Color(0xFFE8D7C3);
-  static const Color mocha = Color(0xFF8B4513);
-  static const Color espresso = Color(0xFF3E2723);
-  static const Color darkMocha = Color(0xFF5D4037);
-  static const Color caramel = Color(0xFFD2691E);
-  static const Color mutedBrown = Color(0xFF8D6E63);
-  static const double sidebarWidth = 280.0;
+  // ─── Legacy aliases (so existing widgets keep compiling) ────────────────
+  static const Color gold = AppPalette.gold;
+  static const Color ledCyan = AppPalette.ledCyan;
+  static const Color cream = AppPalette.cream;
+  static const Color dimCream = AppPalette.dimCream;
+  static const Color mocha = AppPalette.mocha;
+  static const Color espresso = AppPalette.espresso;
+  static const Color darkMocha = AppPalette.cocoa;
+  static const Color caramel = AppPalette.caramel;
+  static const Color mutedBrown = AppPalette.mutedBrown;
+  static const double sidebarWidth = AppPalette.sidebarExpandedWidth;
 
   static const Map<ThemeVariant, String> variantNames = {
     ThemeVariant.sunrise: 'Sunrise',
@@ -55,51 +60,87 @@ class AppTheme {
   ];
 
   static ThemeData themeData(ThemeVariant variant, Brightness brightness) {
-    final colorSeed = _seedColorForVariant(variant);
+    final seed = _seedColorForVariant(variant);
     final scheme = ColorScheme.fromSeed(
-      seedColor: colorSeed,
+      seedColor: seed,
       brightness: brightness,
-      primary: colorSeed,
-      secondary: brightness == Brightness.dark ? const Color(0xFF4DFFF6) : const Color(0xFF7C4DFF),
-      surface: brightness == Brightness.dark ? const Color(0xFF111111) : const Color(0xFFF8F4EF),
+      primary: AppPalette.gold,
+      secondary: AppPalette.ledCyan,
+      surface: AppPalette.espresso,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: scheme.surface,
-      textTheme: GoogleFonts.plusJakartaSansTextTheme(
-        brightness == Brightness.dark
-            ? Typography.material2021(platform: TargetPlatform.windows).white
-            : Typography.material2021(platform: TargetPlatform.windows).black,
-      ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: scheme.surface,
-        foregroundColor: scheme.onSurface,
+      scaffoldBackgroundColor: Colors.transparent,
+      canvasColor: Colors.transparent,
+      textTheme: AppTypography.textTheme(brightness),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppPalette.cream,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: scheme.primary,
-          foregroundColor: scheme.onPrimary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+          backgroundColor: AppPalette.gold,
+          foregroundColor: AppPalette.espresso,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          textStyle: AppTypography.label(size: 12, letterSpacing: 0.9),
         ),
       ),
-      bottomAppBarTheme: BottomAppBarThemeData(
-        color: scheme.surface,
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppPalette.gold,
+          foregroundColor: AppPalette.espresso,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
       ),
       cardTheme: CardThemeData(
-        color: scheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        elevation: 4,
+        color: AppPalette.mocha.withAlpha(180),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        elevation: 0,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: brightness == Brightness.dark 
-            ? scheme.surface 
-            : scheme.onSurface.withValues(alpha: 0.08),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
+        fillColor: AppPalette.mocha.withAlpha(140),
+        hintStyle: AppTypography.body(
+          size: 13,
+          color: AppPalette.dimCream.withAlpha(140),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: AppPalette.gold.withAlpha(40)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppPalette.gold, width: 1.4),
+        ),
+      ),
+      dividerTheme: DividerThemeData(
+        color: AppPalette.gold.withAlpha(28),
+        thickness: 1,
+        space: 1,
+      ),
+      iconTheme: const IconThemeData(color: AppPalette.cream),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: AppPalette.espresso,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppPalette.gold.withAlpha(60)),
+        ),
+        textStyle: AppTypography.label(
+          size: 11,
+          color: AppPalette.cream,
+          letterSpacing: 0.4,
+        ),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(builders: {
         TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
@@ -112,9 +153,9 @@ class AppTheme {
   static Color _seedColorForVariant(ThemeVariant variant) {
     switch (variant) {
       case ThemeVariant.sunrise:
-        return const Color(0xFF8E44AD);
+        return const Color(0xFFE07A3A);
       case ThemeVariant.noir:
-        return const Color(0xFF120136);
+        return AppPalette.espresso;
       case ThemeVariant.forest:
         return const Color(0xFF0B3B2E);
       case ThemeVariant.oceanWave:
@@ -122,7 +163,7 @@ class AppTheme {
       case ThemeVariant.purpleGradient:
         return const Color(0xFF9D4EDD);
       case ThemeVariant.goldLux:
-        return const Color(0xFFFFD700);
+        return AppPalette.gold;
       case ThemeVariant.darkCrimson:
         return const Color(0xFFDC143C);
       case ThemeVariant.matrixGreen:
@@ -130,11 +171,8 @@ class AppTheme {
     }
   }
 
-  static bool isProVariant(ThemeVariant variant) {
-    return proVariants.contains(variant);
-  }
-
-  static String getVariantName(ThemeVariant variant) {
-    return variantNames[variant] ?? 'Unknown';
-  }
+  static bool isProVariant(ThemeVariant variant) =>
+      proVariants.contains(variant);
+  static String getVariantName(ThemeVariant variant) =>
+      variantNames[variant] ?? 'Unknown';
 }

@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trenddrink/core/models/category_meta.dart';
 import 'package:trenddrink/core/models/drink_model.dart';
-import 'package:trenddrink/core/theme/app_theme.dart';
+import 'package:trenddrink/core/theme/app_palette.dart';
+import 'package:trenddrink/core/theme/app_typography.dart';
+import 'package:trenddrink/core/widgets/section_header_hero.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
 
 class CategoryPage extends ConsumerWidget {
@@ -21,44 +22,17 @@ class CategoryPage extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       body: state.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppTheme.gold)),
+            child: CircularProgressIndicator(color: AppPalette.gold)),
         error: (e, _) => Center(
           child: Text('Hata: $e',
-              style: TextStyle(color: AppTheme.cream.withAlpha(180))),
+              style: AppTypography.body(color: AppPalette.cream)),
         ),
         data: (drinks) {
           final filtered =
               drinks.where((d) => d.category == categoryName).toList();
-          return _CategoryContent(
-            categoryName: categoryName,
-            drinks: filtered,
-          );
+          return _CategoryContent(categoryName: categoryName, drinks: filtered);
         },
       ),
-      // Mobile: floating back button
-      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      floatingActionButton: MediaQuery.sizeOf(context).width < 768
-          ? SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: GestureDetector(
-                  onTap: () => context.go('/'),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E140A).withAlpha(220),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          color: AppTheme.gold.withAlpha(80)),
-                    ),
-                    child: const Icon(Icons.arrow_back_rounded,
-                        color: AppTheme.cream, size: 18),
-                  ),
-                ),
-              ),
-            )
-          : null,
     );
   }
 }
@@ -71,50 +45,54 @@ class _CategoryContent extends StatelessWidget {
   final String categoryName;
   final List<DrinkModel> drinks;
 
-  // Representative image per category
-  String get _coverImage {
+  CategoryMeta? get _meta {
     try {
-      return kCategories
-          .firstWhere((cat) => cat.name == categoryName)
-          .imageUrl;
+      return kCategories.firstWhere((c) => c.name == categoryName);
     } catch (_) {
-        return 'Assets/photo/background.png';
+      return null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < 768;
+    final hPad = isMobile ? 16.0 : 40.0;
+
     return CustomScrollView(
       slivers: [
-        // ── Header banner ─────────────────────────────────────────────
         SliverToBoxAdapter(
-          child: _CategoryHero(
-            name: categoryName,
-            coverImage: _coverImage,
-            drinkCount: drinks.length,
+          child: SectionHeaderHero(
+            title: categoryName,
+            subtitle:
+                '${drinks.length} özenle seçilmiş tarif · ${_meta?.emoji ?? ""}',
+            height: 180,
+            actions: [
+              if (!isMobile)
+                IconButton(
+                  onPressed: () => context.go('/'),
+                  icon: const Icon(Icons.arrow_back_rounded,
+                      color: AppPalette.cream, size: 22),
+                  tooltip: 'Ana sayfa',
+                ),
+            ],
           ),
         ),
-        // ── Drink grid ────────────────────────────────────────────────
         SliverPadding(
-          padding: EdgeInsets.fromLTRB(
-            MediaQuery.sizeOf(context).width < 768 ? 16 : 40,
-            36,
-            MediaQuery.sizeOf(context).width < 768 ? 16 : 40,
-            48,
-          ),
+          padding: EdgeInsets.fromLTRB(hPad, 28, hPad, 50),
           sliver: SliverGrid(
             delegate: SliverChildBuilderDelegate(
-              (context, index) => _DrinkCircleCard(
+              (context, index) => _DrinkCard(
                 drink: drinks[index],
                 delayMs: index * 60,
+                accent: _meta?.accentColor ?? AppPalette.gold,
               ),
               childCount: drinks.length,
             ),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 160,
-              mainAxisExtent: 200,
-              mainAxisSpacing: 28,
-              crossAxisSpacing: 24,
+              maxCrossAxisExtent: 240,
+              mainAxisExtent: 270,
+              mainAxisSpacing: 22,
+              crossAxisSpacing: 22,
             ),
           ),
         ),
@@ -123,186 +101,173 @@ class _CategoryContent extends StatelessWidget {
   }
 }
 
-// ── Category Hero Banner ──────────────────────────────────────────────────
-class _CategoryHero extends StatelessWidget {
-  const _CategoryHero({
-    required this.name,
-    required this.coverImage,
-    required this.drinkCount,
-  });
-  final String name;
-  final String coverImage;
-  final int drinkCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 220,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Cover image
-          coverImage.startsWith('Assets/')
-              ? Image.asset(
-                  coverImage,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(color: AppTheme.mocha),
-                )
-              : CachedNetworkImage(
-                  imageUrl: coverImage,
-                  fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(color: AppTheme.mocha),
-                  errorWidget: (_, __, ___) => Container(color: AppTheme.mocha),
-                ),
-          // Gradient overlay
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppTheme.espresso.withAlpha(100),
-                  AppTheme.espresso.withAlpha(220),
-                ],
-              ),
-            ),
-          ),
-          // Content
-          Positioned(
-            bottom: 28,
-            left: MediaQuery.sizeOf(context).width < 768 ? 20 : 48,
-            right: MediaQuery.sizeOf(context).width < 768 ? 20 : 48,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: MediaQuery.sizeOf(context).width < 768 ? 28 : 40,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.cream,
-                    letterSpacing: -0.3,
-                  ),
-                )
-                    .animate()
-                    .fadeIn(duration: 600.ms)
-                    .slideX(begin: -0.1, end: 0),
-                const SizedBox(height: 6),
-                Text(
-                  '$drinkCount içecek seçeneği sizi bekliyor',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    color: AppTheme.dimCream.withAlpha(200),
-                  ),
-                ).animate().fadeIn(duration: 600.ms, delay: 100.ms),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Drink Circle Card ────────────────────────────────────────────────────
-class _DrinkCircleCard extends StatefulWidget {
-  const _DrinkCircleCard({required this.drink, required this.delayMs});
+class _DrinkCard extends StatefulWidget {
+  const _DrinkCard(
+      {required this.drink, required this.delayMs, required this.accent});
   final DrinkModel drink;
   final int delayMs;
+  final Color accent;
 
   @override
-  State<_DrinkCircleCard> createState() => _DrinkCircleCardState();
+  State<_DrinkCard> createState() => _DrinkCardState();
 }
 
-class _DrinkCircleCardState extends State<_DrinkCircleCard> {
-  bool _hovered = false;
+class _DrinkCardState extends State<_DrinkCard> {
+  bool _hover = false;
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
         onTap: () => context.go('/drink/${widget.drink.id}'),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Circle
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 130,
-              height: 130,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: _hovered
-                    ? [
-                        BoxShadow(
-                          color: AppTheme.gold.withAlpha(80),
-                          blurRadius: 20,
-                          spreadRadius: 2,
-                        )
-                      ]
-                    : [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(70),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        )
-                      ],
-                border: Border.all(
-                  color: _hovered
-                      ? AppTheme.gold.withAlpha(200)
-                      : AppTheme.gold.withAlpha(40),
-                  width: _hovered ? 2.5 : 1.5,
-                ),
-              ),
-              child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: widget.drink.imageUrl,
-                  fit: BoxFit.cover,
-                  width: 130,
-                  height: 130,
-                  placeholder: (_, __) => Container(color: AppTheme.mocha),
-                  errorWidget: (_, __, ___) => Container(color: AppTheme.mocha),
-                ),
-              ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.identity()..scale(_hover ? 1.025 : 1.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            color: AppPalette.mocha.withAlpha(180),
+            border: Border.all(
+              color: _hover
+                  ? widget.accent.withAlpha(190)
+                  : AppPalette.gold.withAlpha(30),
+              width: _hover ? 1.6 : 1,
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(
-                widget.drink.title,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  fontWeight: _hovered ? FontWeight.w600 : FontWeight.w400,
-                  color: _hovered ? AppTheme.cream : AppTheme.dimCream,
-                  height: 1.3,
-                ),
+            boxShadow: [
+              BoxShadow(
+                color: widget.accent.withAlpha(_hover ? 90 : 0),
+                blurRadius: 22,
+                spreadRadius: 1,
               ),
-            ),
-            if (_hovered)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  widget.drink.temperature,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 10,
-                    color: AppTheme.gold.withAlpha(200),
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.5,
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: widget.drink.imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppPalette.mocha.withAlpha(220),
+                                AppPalette.espresso.withAlpha(240),
+                              ],
+                            ),
+                          ),
+                          child: const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppPalette.gold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                widget.accent.withAlpha(60),
+                                AppPalette.mocha,
+                              ],
+                            ),
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.local_cafe_rounded,
+                                color: AppPalette.gold, size: 36),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              AppPalette.obsidian.withAlpha(170),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppPalette.obsidian.withAlpha(160),
+                            borderRadius: BorderRadius.circular(20),
+                            border:
+                                Border.all(color: widget.accent.withAlpha(120)),
+                          ),
+                          child: Text(
+                            widget.drink.temperature,
+                            style: AppTypography.label(
+                              size: 9,
+                              color: AppPalette.cream,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-          ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.drink.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.label(
+                          size: 13,
+                          color: AppPalette.cream,
+                          letterSpacing: 0.4,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.drink.description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.body(
+                          size: 11,
+                          color: AppPalette.dimCream.withAlpha(180),
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-    )
-        .animate()
-        .fadeIn(duration: 450.ms, delay: Duration(milliseconds: widget.delayMs))
-        .scale(begin: const Offset(0.88, 0.88), end: const Offset(1, 1));
+      )
+          .animate(delay: Duration(milliseconds: widget.delayMs))
+          .fadeIn(duration: 360.ms)
+          .moveY(begin: 12, end: 0, curve: Curves.easeOutCubic),
+    );
   }
 }

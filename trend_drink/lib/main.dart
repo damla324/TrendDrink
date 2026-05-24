@@ -1,48 +1,25 @@
 import 'dart:async';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:window_manager/window_manager.dart';
+
 import 'core/app_router.dart';
+import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme_enhanced.dart';
+import 'core/window/window_chrome.dart';
 import 'presentation/notifiers/theme_notifier_v2.dart';
 
 Future<void> main() async {
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      if (!kIsWeb && Platform.isWindows) {
-        await _initWindow();
-      }
-      runApp(
-        const ProviderScope(
-          child: TrendDrinkApp(),
-        ),
-      );
+      await WindowChrome.init();
+      runApp(const ProviderScope(child: TrendDrinkApp()));
     },
-    (error, stackTrace) {
-      debugPrint('🔴 Caught error: $error');
-      debugPrint('Stack trace: $stackTrace');
+    (error, stack) {
+      debugPrint('🔴 Uncaught: $error\n$stack');
     },
   );
-}
-
-Future<void> _initWindow() async {
-  await windowManager.ensureInitialized();
-  const options = WindowOptions(
-    size: Size(1400, 900),
-    minimumSize: Size(960, 600),
-    center: true,
-    backgroundColor: Colors.transparent,
-    skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.normal,
-    title: 'TrendDrink - Premium Beverage Experience',
-  );
-  await windowManager.waitUntilReadyToShow(options, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
 }
 
 class TrendDrinkApp extends ConsumerWidget {
@@ -52,14 +29,49 @@ class TrendDrinkApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(currentThemeModeProvider);
     final themeVariant = ref.watch(themeVariantProvider);
-    
+
     return MaterialApp.router(
-      title: 'TrendDrink - Premium Beverage Experience',
+      title: 'TrendDrink – Premium Beverage Experience',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.themeData(themeVariant, Brightness.light),
       darkTheme: AppTheme.themeData(themeVariant, Brightness.dark),
       themeMode: themeMode,
       routerConfig: appRouter,
+      builder: (context, child) => _RoundedWindowFrame(child: child),
+    );
+  }
+}
+
+/// Frameless pencerede uygulamanın dış kabuğu:
+///   - global koyu kahve background
+///   - 16px köşe yuvarlama
+///   - hafif altın kenarlık ile premium dokunuş
+class _RoundedWindowFrame extends StatelessWidget {
+  const _RoundedWindowFrame({required this.child});
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: AppPalette.appBackgroundGradient,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppPalette.windowRadius),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppPalette.gold.withAlpha(45),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(AppPalette.windowRadius),
+            ),
+            child: child ?? const SizedBox.shrink(),
+          ),
+        ),
+      ),
     );
   }
 }

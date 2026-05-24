@@ -1,35 +1,36 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:trenddrink/core/theme/app_theme.dart';
+import 'package:trenddrink/core/models/category_meta.dart';
+import 'package:trenddrink/core/theme/app_palette.dart';
+import 'package:trenddrink/core/theme/app_typography.dart';
+import 'package:trenddrink/core/widgets/about_dialog.dart';
+import 'package:trenddrink/features/paywall/paywall_sheet.dart';
 import 'package:trenddrink/presentation/notifiers/membership_notifier.dart';
 
-// ── Sidebar Category Model ─────────────────────────────────────────────────
-class _SidebarSection {
-  const _SidebarSection({
-    required this.label,
+class _NavEntry {
+  const _NavEntry({
     required this.icon,
+    required this.label,
     required this.route,
-    this.children = const [],
     this.isAi = false,
+    this.children = const [],
   });
-  final String label;
   final IconData icon;
+  final String label;
   final String route;
-  final List<_SidebarChild> children;
   final bool isAi;
+  final List<_NavChild> children;
 }
 
-class _SidebarChild {
-  const _SidebarChild({required this.label, required this.route});
+class _NavChild {
+  const _NavChild({required this.label, required this.route});
   final String label;
   final String route;
 }
 
-// ── Sidebar Widget ─────────────────────────────────────────────────────────
 class LeftSidebar extends ConsumerStatefulWidget {
   const LeftSidebar({super.key});
 
@@ -39,63 +40,42 @@ class LeftSidebar extends ConsumerStatefulWidget {
 
 class _LeftSidebarState extends ConsumerState<LeftSidebar>
     with SingleTickerProviderStateMixin {
-  late AnimationController _ledController;
-  int? _expandedIndex;
+  bool _railExpanded = false;
+  int? _expandedItem; // hangi grup açık
+  late final AnimationController _ledCtrl;
 
-  static const List<_SidebarSection> _sections = [
-    _SidebarSection(
-      label: 'Ana Sayfa',
+  // Tüm içecek kategorileri "İçecekler" başlığı altında tek hub.
+  static final List<_NavEntry> _entries = [
+    const _NavEntry(
       icon: Icons.home_rounded,
+      label: 'Ana Sayfa',
       route: '/',
     ),
-    _SidebarSection(
-      label: 'Kahve Türleri',
-      icon: Icons.coffee_rounded,
-      route: '/category/Kahve',
-      children: [
-        _SidebarChild(label: 'Kahve', route: '/category/Kahve'),
-        _SidebarChild(label: 'Matcha', route: '/category/Matcha'),
-      ],
-    ),
-    _SidebarSection(
-      label: 'Kokteyl & Frozen',
+    _NavEntry(
       icon: Icons.local_bar_rounded,
-      route: '/category/Kokteyl',
-      children: [
-        _SidebarChild(label: 'Kokteyl', route: '/category/Kokteyl'),
-        _SidebarChild(label: 'Frozen', route: '/category/Frozen'),
-      ],
+      label: 'İçecekler',
+      route: '/category/${kCategories.first.name}',
+      children: kCategories
+          .map((c) => _NavChild(label: c.name, route: '/category/${c.name}'))
+          .toList(),
     ),
-    _SidebarSection(
-      label: 'Sağlıklı Seçenekler',
-      icon: Icons.favorite_rounded,
-      route: '/category/Smoothie',
-      children: [
-        _SidebarChild(label: 'Smoothie', route: '/category/Smoothie'),
-        _SidebarChild(label: 'Fit', route: '/category/Fit'),
-      ],
-    ),
-    _SidebarSection(
-      label: 'Çay & Soda',
-      icon: Icons.local_cafe_rounded,
-      route: '/category/Çay',
-      children: [
-        _SidebarChild(label: 'Çay', route: '/category/Çay'),
-        _SidebarChild(label: 'Soda', route: '/category/Soda'),
-      ],
-    ),
-    _SidebarSection(
-      label: 'İçecek AI',
+    const _NavEntry(
       icon: Icons.auto_awesome_rounded,
+      label: 'İçecek AI',
       route: '/assistant',
       isAi: true,
+    ),
+    const _NavEntry(
+      icon: Icons.settings_rounded,
+      label: 'Ayarlar',
+      route: '/settings',
     ),
   ];
 
   @override
   void initState() {
     super.initState();
-    _ledController = AnimationController(
+    _ledCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1800),
     )..repeat(reverse: true);
@@ -103,53 +83,79 @@ class _LeftSidebarState extends ConsumerState<LeftSidebar>
 
   @override
   void dispose() {
-    _ledController.dispose();
+    _ledCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
+    final width = _railExpanded
+        ? AppPalette.sidebarExpandedWidth
+        : AppPalette.sidebarCollapsedWidth;
 
-    return SizedBox(
-      width: AppTheme.sidebarWidth,
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppTheme.espresso.withAlpha(200),
-              border: Border(
-                right: BorderSide(
-                  color: AppTheme.gold.withAlpha(30),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _railExpanded = true),
+      onExit: (_) => setState(() {
+        _railExpanded = false;
+        _expandedItem = null;
+      }),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        width: width,
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: AppPalette.sidebarGradient,
+                border: Border(
+                  right: BorderSide(color: AppPalette.gold.withAlpha(34)),
                 ),
               ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLogo(),
-                const SizedBox(height: 8),
-                Divider(color: AppTheme.gold.withAlpha(25), height: 1),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: ListView.builder(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    itemCount: _sections.length,
-                    itemBuilder: (context, index) {
-                      final section = _sections[index];
-                      return _buildSectionItem(
-                        context: context,
-                        section: section,
-                        index: index,
-                        currentLocation: location,
-                      );
-                    },
+              child: Column(
+                children: [
+                  _buildLogo(),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 1,
+                    color: AppPalette.gold.withAlpha(28),
                   ),
-                ),
-                _buildBottomInfo(),
-              ],
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      itemCount: _entries.length,
+                      itemBuilder: (context, i) {
+                        final e = _entries[i];
+                        final active = _isActive(e, location);
+                        return _SidebarItem(
+                          entry: e,
+                          isActive: active,
+                          isExpanded: _expandedItem == i,
+                          railExpanded: _railExpanded,
+                          ledCtrl: _ledCtrl,
+                          currentLocation: location,
+                          onTap: () {
+                            if (e.children.isNotEmpty && _railExpanded) {
+                              setState(() => _expandedItem =
+                                  _expandedItem == i ? null : i);
+                            }
+                            context.go(e.route);
+                          },
+                          onChildTap: (child) => context.go(child.route),
+                        );
+                      },
+                    ),
+                  ),
+                  _MembershipCard(railExpanded: _railExpanded),
+                  const SizedBox(height: 10),
+                  _AboutButton(railExpanded: _railExpanded),
+                  const SizedBox(height: 14),
+                ],
+              ),
             ),
           ),
         ),
@@ -157,535 +163,497 @@ class _LeftSidebarState extends ConsumerState<LeftSidebar>
     );
   }
 
-  Widget _buildLogo() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-      child: Row(
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              color: AppTheme.gold.withAlpha(20),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppTheme.gold.withAlpha(60)),
-            ),
-            child: const Center(
-              child: Text('☕', style: TextStyle(fontSize: 18)),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            'TrendDrink',
-            style: GoogleFonts.playfairDisplay(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AppTheme.cream,
-              letterSpacing: 0.3,
-            ),
-          ),
-        ],
-      ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.2, end: 0),
-    );
-  }
-
-  Widget _buildSectionItem({
-    required BuildContext context,
-    required _SidebarSection section,
-    required int index,
-    required String currentLocation,
-  }) {
-    final isExpanded = _expandedIndex == index;
-    final isActive = _isActive(section, currentLocation);
-
-    if (section.isAi) {
-      return _buildAiItem(context, section, isActive);
+  bool _isActive(_NavEntry e, String location) {
+    if (e.route == '/' && location == '/') return true;
+    if (e.route != '/' && location.startsWith(e.route.split('?').first)) {
+      return true;
     }
-
-    if (section.children.isEmpty) {
-      return _buildSimpleItem(context, section, isActive);
-    }
-
-    return _buildExpandableItem(
-      context: context,
-      section: section,
-      index: index,
-      isExpanded: isExpanded,
-      isActive: isActive,
-      currentLocation: currentLocation,
-    );
-  }
-
-  bool _isActive(_SidebarSection section, String location) {
-    if (section.route == '/' && location == '/') return true;
-    if (section.route != '/' && location.startsWith(section.route)) return true;
-    for (final child in section.children) {
-      if (location.startsWith(child.route)) return true;
+    for (final c in e.children) {
+      if (location.startsWith(c.route)) return true;
     }
     return false;
   }
 
-  Widget _buildSimpleItem(
-    BuildContext context,
-    _SidebarSection section,
-    bool isActive,
-  ) {
-    return _SidebarTile(
-      icon: section.icon,
-      label: section.label,
-      isActive: isActive,
-      onTap: () => context.go(section.route),
-    ).animate().fadeIn(duration: 400.ms, delay: 50.ms);
-  }
-
-  Widget _buildExpandableItem({
-    required BuildContext context,
-    required _SidebarSection section,
-    required int index,
-    required bool isExpanded,
-    required bool isActive,
-    required String currentLocation,
-  }) {
-    return Column(
-      children: [
-        _SidebarTile(
-          icon: section.icon,
-          label: section.label,
-          isActive: isActive,
-          trailing: AnimatedRotation(
-            turns: isExpanded ? 0.5 : 0,
-            duration: const Duration(milliseconds: 220),
-            child: Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: AppTheme.dimCream.withAlpha(160),
-              size: 16,
-            ),
-          ),
-          onTap: () {
-            setState(() {
-              _expandedIndex = isExpanded ? null : index;
-            });
-            context.go(section.route);
-          },
-        ),
-        AnimatedCrossFade(
-          firstChild: const SizedBox.shrink(),
-          secondChild: Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 4),
-            child: Column(
-              children: section.children.map((child) {
-                final childActive = currentLocation.startsWith(child.route);
-                return _SidebarChildTile(
-                  label: child.label,
-                  isActive: childActive,
-                  onTap: () => context.go(child.route),
-                );
-              }).toList(),
-            ),
-          ),
-          crossFadeState:
-              isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-          duration: const Duration(milliseconds: 220),
-        ),
-      ],
-    ).animate().fadeIn(duration: 400.ms, delay: 50.ms);
-  }
-
-  Widget _buildAiItem(
-    BuildContext context,
-    _SidebarSection section,
-    bool isActive,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: AnimatedBuilder(
-        animation: _ledController,
-        builder: (context, child) {
-          final glow = _ledController.value;
-          return GestureDetector(
-            onTap: () => context.go(section.route),
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: Container(
-                height: 44,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: LinearGradient(
-                    colors: isActive
-                        ? [
-                            AppTheme.ledCyan.withAlpha(50),
-                            AppTheme.ledCyan.withAlpha(20),
-                          ]
-                        : [
-                            AppTheme.ledCyan
-                                .withAlpha((15 + (glow * 25)).round()),
-                            Colors.transparent,
-                          ],
+  Widget _buildLogo() {
+    return SizedBox(
+      height: 78,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 16, 14, 6),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                gradient: AppPalette.goldAccent,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppPalette.gold.withAlpha(120),
+                    blurRadius: 12,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.ledCyan
-                          .withAlpha((40 + (glow * 60)).round()),
-                      blurRadius: 12 + glow * 8,
-                    ),
-                  ],
-                  border: Border.all(
-                    color:
-                        AppTheme.ledCyan.withAlpha((60 + (glow * 80)).round()),
-                  ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                child: Row(
-                  children: [
-                    Icon(
-                      section.icon,
-                      size: 18,
-                      color: AppTheme.ledCyan,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      section.label,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.ledCyan,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppTheme.ledCyan,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.ledCyan
-                                .withAlpha((120 + (glow * 135)).round()),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                ],
+              ),
+              child: const Icon(
+                Icons.local_cafe_rounded,
+                color: AppPalette.espresso,
+                size: 20,
               ),
             ),
-          );
-        },
+            if (_railExpanded)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Text(
+                    'TrendDrink',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.display(
+                      size: 18,
+                      color: AppPalette.cream,
+                      letterSpacing: 1.2,
+                      weight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
-    ).animate().fadeIn(duration: 600.ms, delay: 200.ms);
+    );
   }
+}
 
-  Widget _buildBottomInfo() {
-    final membership = ref.watch(membershipProvider);
-    
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
+// ─── Sidebar item ───────────────────────────────────────────────────────────
+class _SidebarItem extends StatefulWidget {
+  const _SidebarItem({
+    required this.entry,
+    required this.isActive,
+    required this.isExpanded,
+    required this.railExpanded,
+    required this.ledCtrl,
+    required this.currentLocation,
+    required this.onTap,
+    required this.onChildTap,
+  });
+  final _NavEntry entry;
+  final bool isActive;
+  final bool isExpanded;
+  final bool railExpanded;
+  final AnimationController ledCtrl;
+  final String currentLocation;
+  final VoidCallback onTap;
+  final ValueChanged<_NavChild> onChildTap;
+
+  @override
+  State<_SidebarItem> createState() => _SidebarItemState();
+}
+
+class _SidebarItemState extends State<_SidebarItem> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // Sidebar genişlediği anda tüm etiketler doğrudan görünür.
+    final showLabel = widget.railExpanded;
+    final Color iconColor = widget.entry.isAi
+        ? AppPalette.ledCyan
+        : widget.isActive
+            ? AppPalette.gold
+            : _hover
+                ? AppPalette.cream
+                : AppPalette.dimCream.withAlpha(190);
+
+    final bgColor = widget.isActive
+        ? AppPalette.gold.withAlpha(28)
+        : _hover
+            ? AppPalette.gold.withAlpha(16)
+            : Colors.transparent;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Column(
         children: [
-          // Pro Status Card
-          Container(
-            decoration: BoxDecoration(
-              gradient: membership.isPro
-                  ? LinearGradient(
-                      colors: [
-                        AppTheme.gold.withAlpha(180),
-                        AppTheme.gold.withAlpha(120),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : LinearGradient(
-                      colors: [
-                        AppTheme.mutedBrown.withAlpha(120),
-                        AppTheme.mutedBrown.withAlpha(80),
-                      ],
-                    ),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: membership.isPro
-                    ? AppTheme.gold.withAlpha(100)
-                    : AppTheme.gold.withAlpha(40),
-              ),
-            ),
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            onEnter: (_) => setState(() => _hover = true),
+            onExit: (_) => setState(() => _hover = false),
+            child: GestureDetector(
+              onTap: widget.onTap,
+              child: widget.entry.isAi
+                  ? _buildAiTile(iconColor)
+                  : AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: bgColor,
+                        borderRadius: BorderRadius.circular(14),
+                        border: widget.isActive
+                            ? Border.all(color: AppPalette.gold.withAlpha(70))
+                            : null,
+                      ),
+                      child: Row(
                         children: [
-                          Icon(
-                            membership.isPro ? Icons.star_rounded : Icons.star_outline,
-                            size: 14,
-                            color: membership.isPro ? Colors.white : AppTheme.caramel,
+                          SizedBox(
+                            width: AppPalette.sidebarCollapsedWidth - 24,
+                            child: Icon(widget.entry.icon,
+                                size: 26, color: iconColor),
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            membership.isPro ? 'PRO' : 'FREE',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w900,
-                              color: membership.isPro ? Colors.white : AppTheme.caramel,
-                              letterSpacing: 0.8,
+                          if (showLabel)
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: Text(
+                                  widget.entry.label,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTypography.label(
+                                    size: 12.5,
+                                    color: iconColor,
+                                    letterSpacing: 0.8,
+                                    weight: widget.isActive
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                          if (widget.railExpanded &&
+                              widget.entry.children.isNotEmpty &&
+                              showLabel)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: AnimatedRotation(
+                                duration: const Duration(milliseconds: 200),
+                                turns: widget.isExpanded ? 0.5 : 0,
+                                child: Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  size: 16,
+                                  color: AppPalette.dimCream.withAlpha(160),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        membership.isPro ? 'Unlimited AI' : 'Limited AI',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 8,
-                          color: membership.isPro
-                              ? Colors.white70
-                              : AppTheme.caramel.withAlpha(180),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (!membership.isPro)
-                  GestureDetector(
-                    onTap: () => context.go('/pro'),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.gold.withAlpha(200),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Upgrade',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.espresso,
-                        ),
-                      ),
                     ),
-                  )
-                else
-                  const Icon(
-                    Icons.verified_rounded,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-              ],
             ),
           ),
-          const SizedBox(height: 12),
-          
-          // Settings & Help
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => context.go('/settings'),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.mutedBrown.withAlpha(80),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.settings_rounded,
-                          size: 12,
-                          color: AppTheme.caramel,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Settings',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.caramel,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 12),
-          Text(
-            'v1.0 · Premium Edition',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 9,
-              color: AppTheme.dimCream.withAlpha(80),
-              letterSpacing: 0.5,
+          if (widget.entry.children.isNotEmpty)
+            AnimatedSize(
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOutCubic,
+              child: (widget.isExpanded && widget.railExpanded)
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 22, top: 4),
+                      child: Column(
+                        children: widget.entry.children.map((c) {
+                          final active =
+                              widget.currentLocation.startsWith(c.route);
+                          return _ChildTile(
+                            label: c.label,
+                            isActive: active,
+                            onTap: () => widget.onChildTap(c),
+                          );
+                        }).toList(),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
-          ),
         ],
       ),
     );
   }
-}
 
-// ── Reusable Tile Components ──────────────────────────────────────────────
-class _SidebarTile extends StatefulWidget {
-  const _SidebarTile({
-    required this.icon,
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-    this.trailing,
-  });
-  final IconData icon;
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-  final Widget? trailing;
-
-  @override
-  State<_SidebarTile> createState() => _SidebarTileState();
-}
-
-class _SidebarTileState extends State<_SidebarTile> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (_) => setState(() => _hovered = true),
-        onExit: (_) => setState(() => _hovered = false),
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: widget.isActive
-                  ? AppTheme.gold.withAlpha(25)
-                  : _hovered
-                      ? AppTheme.gold.withAlpha(12)
-                      : Colors.transparent,
-              border: widget.isActive
-                  ? Border.all(
-                      color: AppTheme.gold.withAlpha(50),
-                    )
-                  : null,
+  Widget _buildAiTile(Color iconColor) {
+    return AnimatedBuilder(
+      animation: widget.ledCtrl,
+      builder: (ctx, _) {
+        final glow = widget.ledCtrl.value;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          height: 52,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: AppPalette.ledCyan.withAlpha((60 + (glow * 110)).round()),
+              width: 1.2,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                Icon(
-                  widget.icon,
-                  size: 17,
-                  color: widget.isActive
-                      ? AppTheme.gold
-                      : _hovered
-                          ? AppTheme.dimCream
-                          : AppTheme.dimCream.withAlpha(160),
-                ),
-                const SizedBox(width: 10),
+            gradient: LinearGradient(
+              colors: [
+                AppPalette.ledCyan.withAlpha((20 + (glow * 28)).round()),
+                AppPalette.ledViolet.withAlpha(12),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppPalette.ledCyan.withAlpha((50 + (glow * 70)).round()),
+                blurRadius: 14 + glow * 10,
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: AppPalette.sidebarCollapsedWidth - 24,
+                child: Icon(widget.entry.icon, size: 26, color: iconColor),
+              ),
+              if (widget.railExpanded)
                 Expanded(
                   child: Text(
-                    widget.label,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      fontWeight:
-                          widget.isActive ? FontWeight.w600 : FontWeight.w400,
-                      color: widget.isActive
-                          ? AppTheme.cream
-                          : _hovered
-                              ? AppTheme.cream
-                              : AppTheme.dimCream.withAlpha(200),
+                    widget.entry.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.label(
+                      size: 12.5,
+                      color: AppPalette.ledCyan,
+                      letterSpacing: 0.8,
+                      weight: FontWeight.w700,
                     ),
                   ),
                 ),
-                if (widget.trailing != null) widget.trailing!,
-              ],
-            ),
+              if (widget.railExpanded)
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Container(
+                    width: 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppPalette.ledCyan,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppPalette.ledCyan
+                              .withAlpha((110 + (glow * 140)).round()),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
-class _SidebarChildTile extends StatefulWidget {
-  const _SidebarChildTile({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
+class _ChildTile extends StatefulWidget {
+  const _ChildTile(
+      {required this.label, required this.isActive, required this.onTap});
   final String label;
   final bool isActive;
   final VoidCallback onTap;
 
   @override
-  State<_SidebarChildTile> createState() => _SidebarChildTileState();
+  State<_ChildTile> createState() => _ChildTileState();
 }
 
-class _SidebarChildTileState extends State<_SidebarChildTile> {
-  bool _hovered = false;
+class _ChildTileState extends State<_ChildTile> {
+  bool _hover = false;
 
   @override
   Widget build(BuildContext context) {
+    final color = widget.isActive
+        ? AppPalette.gold
+        : _hover
+            ? AppPalette.cream
+            : AppPalette.dimCream.withAlpha(160);
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
         onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          height: 34,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 12),
           margin: const EdgeInsets.only(bottom: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
             color: widget.isActive
-                ? AppTheme.gold.withAlpha(20)
-                : _hovered
-                    ? AppTheme.gold.withAlpha(10)
+                ? AppPalette.gold.withAlpha(18)
+                : _hover
+                    ? AppPalette.gold.withAlpha(10)
                     : Colors.transparent,
           ),
           child: Row(
             children: [
               Container(
-                width: 4,
-                height: 4,
+                width: 5,
+                height: 5,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.isActive
-                      ? AppTheme.gold
-                      : AppTheme.dimCream.withAlpha(100),
+                  color: color,
                 ),
               ),
               const SizedBox(width: 10),
-              Text(
-                widget.label,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  fontWeight:
-                      widget.isActive ? FontWeight.w500 : FontWeight.w400,
-                  color: widget.isActive
-                      ? AppTheme.gold
-                      : _hovered
-                          ? AppTheme.dimCream
-                          : AppTheme.dimCream.withAlpha(160),
+              Expanded(
+                child: Text(
+                  widget.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.body(
+                    size: 12,
+                    color: color,
+                    letterSpacing: 0.4,
+                    weight: widget.isActive ? FontWeight.w700 : FontWeight.w500,
+                  ),
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Membership / About at the bottom ───────────────────────────────────────
+class _MembershipCard extends ConsumerWidget {
+  const _MembershipCard({required this.railExpanded});
+  final bool railExpanded;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final membership = ref.watch(membershipProvider);
+    final isPro = membership.isPro;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: MouseRegion(
+        cursor: isPro ? SystemMouseCursors.basic : SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () {
+            if (!isPro) {
+              PaywallSheet.show(context);
+            }
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 56,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              gradient: isPro
+                  ? AppPalette.goldAccent
+                  : LinearGradient(
+                      colors: [
+                        AppPalette.gold.withAlpha(40),
+                        AppPalette.gold.withAlpha(15),
+                      ],
+                    ),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: AppPalette.gold.withAlpha(isPro ? 0 : 90),
+              ),
+              boxShadow: isPro
+                  ? [
+                      BoxShadow(
+                          color: AppPalette.gold.withAlpha(80), blurRadius: 14)
+                    ]
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  isPro ? Icons.workspace_premium_rounded : Icons.bolt_rounded,
+                  size: 22,
+                  color: isPro ? AppPalette.espresso : AppPalette.gold,
+                ),
+                if (railExpanded) ...[
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          isPro ? 'PRO ÜYE' : 'FREE',
+                          style: AppTypography.label(
+                            size: 11,
+                            color:
+                                isPro ? AppPalette.espresso : AppPalette.gold,
+                            letterSpacing: 2,
+                            weight: FontWeight.w900,
+                          ),
+                          maxLines: 1,
+                        ),
+                        Text(
+                          isPro ? 'Sınırsız erişim' : 'Premium\'a yükselt',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.body(
+                            size: 10.5,
+                            color: isPro
+                                ? AppPalette.espresso.withAlpha(190)
+                                : AppPalette.dimCream.withAlpha(190),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AboutButton extends StatefulWidget {
+  const _AboutButton({required this.railExpanded});
+  final bool railExpanded;
+
+  @override
+  State<_AboutButton> createState() => _AboutButtonState();
+}
+
+class _AboutButtonState extends State<_AboutButton> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final color =
+        _hover ? AppPalette.cream : AppPalette.dimCream.withAlpha(170);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: GestureDetector(
+          onTap: () => showTrendDrinkAbout(context),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            height: 44,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color:
+                  _hover ? AppPalette.gold.withAlpha(14) : Colors.transparent,
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: AppPalette.sidebarCollapsedWidth - 24,
+                  child:
+                      Icon(Icons.info_outline_rounded, size: 22, color: color),
+                ),
+                if (widget.railExpanded)
+                  Expanded(
+                    child: Text(
+                      'Hakkında',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.label(
+                        size: 12,
+                        color: color,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

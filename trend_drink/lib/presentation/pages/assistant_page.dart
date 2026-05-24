@@ -1,10 +1,16 @@
+import 'dart:typed_data';
+
+import 'package:desktop_drop/desktop_drop.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
-import 'package:trenddrink/core/theme/app_theme.dart';
+import 'package:trenddrink/core/theme/app_palette.dart';
+import 'package:trenddrink/core/theme/app_typography.dart';
+import 'package:trenddrink/core/widgets/frosted_panel.dart';
+import 'package:trenddrink/features/paywall/paywall_sheet.dart';
 import 'package:trenddrink/presentation/notifiers/assistant_notifier.dart';
 import 'package:trenddrink/presentation/notifiers/membership_notifier.dart';
 
@@ -16,11 +22,14 @@ class AssistantPage extends ConsumerStatefulWidget {
 }
 
 class _AssistantPageState extends ConsumerState<AssistantPage> {
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  final _ctrl = TextEditingController();
+  final _scroll = ScrollController();
   bool _sending = false;
+  bool _isDropTarget = false;
+  Uint8List? _pendingImage;
+  String? _pendingImageName;
 
-  static const List<String> _quickPrompts = [
+  static const _quickPrompts = [
     'Kahve öner',
     'Enerji ver',
     'Sıcak içecek',
@@ -31,16 +40,16 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
-    _scrollController.dispose();
+    _ctrl.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent + 100,
+      if (_scroll.hasClients) {
+        _scroll.animateTo(
+          _scroll.position.maxScrollExtent + 100,
           duration: const Duration(milliseconds: 320),
           curve: Curves.easeOut,
         );
@@ -48,221 +57,271 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     });
   }
 
-  Future<void> _send(String text) async {
-    final msg = text.trim();
-    if (msg.isEmpty || _sending) return;
+  Future<void> _send() async {
+    final text = _ctrl.text.trim();
+    final img = _pendingImage;
+    if (text.isEmpty && img == null) return;
+    if (_sending) return;
+
     final membership = ref.read(membershipProvider);
-    
-    // Check if user can send AI requests
-    if (!membership.isPro && membership.aiRequestsRemaining <= 0) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
-              'AI isteği kotan bitti. Yine de bu isteği yanıtlayacağım, ancak bana daha sonra yeniden denemeni öneririm.',
-            ),
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-            action: SnackBarAction(
-              label: 'Upgrade',
-              onPressed: () => context.go('/pro'),
-            ),
-          ),
-        );
-      }
-      // Allow the user to continue using the chat even when the quota is 0.
+
+    // Görsel ekleme Pro özelliği
+    if (img != null && !membership.isPro) {
+      PaywallSheet.show(context);
+      return;
     }
-    
-    _controller.clear();
-    setState(() => _sending = true);
-    await ref.read(assistantProvider.notifier).sendMessage(msg);
-    
-    // Consume AI request if not pro
+
+    _ctrl.clear();
+    setState(() {
+      _sending = true;
+      _pendingImage = null;
+      _pendingImageName = null;
+    });
+
+    await ref.read(assistantProvider.notifier).sendMessage(
+          text,
+          imageBytes: img,
+          imageName: _pendingImageName,
+        );
+
     if (!membership.isPro) {
       ref.read(membershipProvider.notifier).consumeAIRequest();
     }
-    
-    setState(() => _sending = false);
+
+    if (mounted) setState(() => _sending = false);
     _scrollToBottom();
+  }
+
+  Future<void> _pickImage() async {
+    final membership = ref.read(membershipProvider);
+    if (!membership.isPro) {
+      PaywallSheet.show(context);
+      return;
+    }
+    const typeGroup = XTypeGroup(
+      label: 'images',
+      extensions: ['jpg', 'jpeg', 'png', 'webp'],
+    );
+    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    if (file == null) return;
+    final bytes = await file.readAsBytes();
+    setState(() {
+      _pendingImage = bytes;
+      _pendingImageName = file.name;
+    });
+  }
+
+  Future<void> _onDrop(DropDoneDetails details) async {
+    final membership = ref.read(membershipProvider);
+    if (!membership.isPro) {
+      PaywallSheet.show(context);
+      return;
+    }
+    setState(() => _isDropTarget = false);
+    if (details.files.isEmpty) return;
+    final f = details.files.first;
+    final bytes = await f.readAsBytes();
+    setState(() {
+      _pendingImage = bytes;
+      _pendingImageName = f.name;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final membership = ref.watch(membershipProvider);
-    final colors = Theme.of(context).colorScheme;
     final messages = ref.watch(assistantProvider);
     _scrollToBottom();
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        fit: StackFit.expand,
+    return DropTarget(
+      onDragEntered: (_) {
+        if (membership.isPro) setState(() => _isDropTarget = true);
+      },
+      onDragExited: (_) => setState(() => _isDropTarget = false),
+      onDragDone: _onDrop,
+      child: Stack(
         children: [
-          // Arka Plan Görseli ve Overlay Geri Getirildi
-          Image.asset('Assets/photo/background.png', fit: BoxFit.cover),
-          Container(color: const Color(0xFF0D0905).withAlpha(210)),
-          
-          Column(
-            children: [
-          if (!membership.isPro)
-            Container(
-              color: membership.aiRequestsRemaining <= 0
-                  ? colors.errorContainer
-                  : colors.primaryContainer,
-              padding: const EdgeInsets.all(12),
-                  child: Row(children: [
-                  Icon(
-                    membership.aiRequestsRemaining <= 0
-                        ? Icons.error_outline
-                        : Icons.info,
-                    color: membership.aiRequestsRemaining <= 0
-                        ? colors.onErrorContainer
-                        : colors.primary,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      membership.aiRequestsRemaining <= 0
-                          ? 'Bugünlük AI kotan doldu, ama sohbete devam edebilirsin. Yarın tekrar dene veya Pro’ya yükselt.'
-                          : 'AI Requests: ${membership.aiRequestsRemaining}/${membership.maxDailyAIRequests} remaining',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(
-                            color: membership.aiRequestsRemaining <= 0
-                                ? colors.onErrorContainer
-                                : null,
-                          ),
-                    ),
-                  ),
-                  if (membership.aiRequestsRemaining > 0)
-                    TextButton(
-                      onPressed: () => context.go('/pro'),
-                      child: Text(
-                        'Upgrade',
-                        style: TextStyle(color: colors.primary),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Column(
+              children: [
+                if (!membership.isPro)
+                  _buildQuotaBanner(membership.aiRequestsRemaining),
+                _buildHeader(),
+                Expanded(
+                  child: messages.isEmpty
+                      ? _buildEmpty()
+                      : _buildMessageList(messages),
+                ),
+                _buildQuickPrompts(),
+                if (_pendingImage != null) _buildPendingImageBar(),
+                _buildInputBar(),
+              ],
+            ),
+          ),
+          if (_isDropTarget)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Container(
+                  color: AppPalette.ledCyan.withAlpha(40),
+                  child: Center(
+                    child: FrostedPanel(
+                      padding: const EdgeInsets.fromLTRB(36, 28, 36, 28),
+                      alpha: 220,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.cloud_upload_rounded,
+                              size: 56,
+                              color: AppPalette.ledCyan.withAlpha(220)),
+                          const SizedBox(height: 12),
+                          Text('Görseli buraya bırak',
+                              style: AppTypography.display(
+                                size: 18,
+                                color: AppPalette.cream,
+                                letterSpacing: 1.2,
+                              )),
+                        ],
                       ),
                     ),
-                ],
+                  ),
+                ),
               ),
             ),
-          _buildHeader(),
-          Expanded(
-            child: messages.isEmpty
-                ? _buildEmptyState()
-                : _buildMessageList(messages),
-          ),
-          _buildQuickPrompts(),
-          _buildInputBar(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuotaBanner(int remaining) {
+    return Container(
+      color: remaining == 0
+          ? AppPalette.danger.withAlpha(60)
+          : AppPalette.gold.withAlpha(28),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      child: Row(
+        children: [
+          Icon(
+            remaining == 0 ? Icons.error_outline_rounded : Icons.bolt_rounded,
+            size: 16,
+            color: remaining == 0 ? AppPalette.danger : AppPalette.gold,
           ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              remaining == 0
+                  ? 'Günlük AI kotan bitti. Sohbete devam edebilirsin, ya da Pro\'ya geç.'
+                  : 'Günlük AI kullanım hakkın: $remaining',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.body(
+                size: 12,
+                color: AppPalette.cream,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => PaywallSheet.show(context),
+            child: Text('Pro\'ya Geç',
+                style: AppTypography.label(
+                  size: 11,
+                  color: AppPalette.gold,
+                  letterSpacing: 1.4,
+                )),
+          )
         ],
       ),
     );
   }
 
   Widget _buildHeader() {
-    final isMobile = MediaQuery.sizeOf(context).width < 768;
-    final hPad = isMobile ? 16.0 : 36.0;
     return Container(
-      padding: EdgeInsets.fromLTRB(
-          hPad, isMobile ? 12 : 28, hPad, isMobile ? 10 : 20),
+      padding: const EdgeInsets.fromLTRB(36, 24, 36, 18),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: AppTheme.gold.withAlpha(25)),
+          bottom: BorderSide(color: AppPalette.gold.withAlpha(28)),
         ),
       ),
       child: Row(
         children: [
-          // AI Avatar
           Container(
-            width: 48,
-            height: 48,
+            width: 46,
+            height: 46,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.ledCyan.withAlpha(40),
-                  AppTheme.ledCyan.withAlpha(15),
-                ],
-              ),
-              border: Border.all(
-                color: AppTheme.ledCyan.withAlpha(120),
-                width: 1.5,
-              ),
+              gradient: AppPalette.aiAccent,
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.ledCyan.withAlpha(50),
-                  blurRadius: 12,
-                ),
+                    color: AppPalette.ledCyan.withAlpha(120), blurRadius: 14),
               ],
             ),
-            child: const Center(
-              child: Text('✨', style: TextStyle(fontSize: 22)),
-            ),
+            child: const Icon(Icons.auto_awesome_rounded,
+                color: AppPalette.espresso, size: 22),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'İçecek AI',
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.cream,
-                ),
-              ),
-              Text(
-                'Kişisel içecek asistanın',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  color: AppTheme.ledCyan.withAlpha(200),
-                ),
-              ),
+              Text('İçecek AI',
+                  style: AppTypography.display(
+                    size: 22,
+                    color: AppPalette.cream,
+                    letterSpacing: 1.0,
+                  )),
+              Text('Görselden tarif öner • Malzeme analizi',
+                  style: AppTypography.body(
+                    size: 11.5,
+                    color: AppPalette.ledCyan.withAlpha(200),
+                  )),
             ],
           ),
           const Spacer(),
-          _LedPulse(),
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppPalette.ledCyan,
+              boxShadow: [
+                BoxShadow(
+                    color: AppPalette.ledCyan.withAlpha(180), blurRadius: 8),
+              ],
+            ),
+          ),
         ],
       ),
-    ).animate().fadeIn(duration: 500.ms);
+    ).animate().fadeIn(duration: 360.ms);
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmpty() {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text('🍵', style: TextStyle(fontSize: 56)),
-          const SizedBox(height: 16),
-          Text(
-            'Bir içecek sormaya başla',
-            style: GoogleFonts.playfairDisplay(
-              fontSize: 22,
-              color: AppTheme.dimCream.withAlpha(180),
-            ),
-          ),
+          const SizedBox(height: 12),
+          Text('Bir içecek sormaya başla',
+              style: AppTypography.display(
+                size: 18,
+                color: AppPalette.dimCream.withAlpha(180),
+              )),
         ],
       ),
     );
   }
 
   Widget _buildMessageList(List<ChatMessage> messages) {
-    final hPad = MediaQuery.sizeOf(context).width < 768 ? 16.0 : 36.0;
     return ListView.builder(
-      controller: _scrollController,
-      padding: EdgeInsets.fromLTRB(hPad, 12, hPad, 8),
+      controller: _scroll,
+      padding: const EdgeInsets.fromLTRB(36, 14, 36, 10),
       itemCount: messages.length + (_sending ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index == messages.length) {
-          return _TypingIndicator();
-        }
-        final msg = messages[index];
+      itemBuilder: (ctx, i) {
+        if (i == messages.length) return const _TypingIndicator();
+        final m = messages[i];
         return _MessageBubble(
-          message: msg,
-          onDrinkTap: msg.drinkId != null
-              ? () => context.push('/drink/${msg.drinkId}')
+          message: m,
+          onDrinkTap: m.drinkId != null
+              ? () => context.push('/drink/${m.drinkId}')
               : null,
         );
       },
@@ -270,107 +329,197 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
   }
 
   Widget _buildQuickPrompts() {
-    final hPad = MediaQuery.sizeOf(context).width < 768 ? 16.0 : 36.0;
     return Padding(
-      padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 0),
+      padding: const EdgeInsets.fromLTRB(36, 6, 36, 6),
       child: SizedBox(
         height: 36,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: _quickPrompts.length,
           separatorBuilder: (_, __) => const SizedBox(width: 8),
-          itemBuilder: (context, i) {
-            return _QuickChip(
-              label: _quickPrompts[i],
-              onTap: () => _send(_quickPrompts[i]),
-            );
-          },
+          itemBuilder: (ctx, i) => _ChipButton(
+            label: _quickPrompts[i],
+            onTap: () {
+              _ctrl.text = _quickPrompts[i];
+              _send();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPendingImageBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(36, 4, 36, 0),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: AppPalette.mocha.withAlpha(170),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppPalette.ledCyan.withAlpha(80)),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.memory(_pendingImage!,
+                  width: 46, height: 46, fit: BoxFit.cover),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                _pendingImageName ?? 'Görsel ekli',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.body(size: 12, color: AppPalette.cream),
+              ),
+            ),
+            IconButton(
+              onPressed: () => setState(() {
+                _pendingImage = null;
+                _pendingImageName = null;
+              }),
+              icon: Icon(Icons.close_rounded,
+                  color: AppPalette.dimCream.withAlpha(180), size: 18),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildInputBar() {
-    final isMobile = MediaQuery.sizeOf(context).width < 768;
-    final hPad = isMobile ? 16.0 : 36.0;
-    return Container(
-      padding: EdgeInsets.fromLTRB(hPad, 10, hPad, isMobile ? 14 : 28),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(36, 10, 36, 24),
       child: Row(
         children: [
+          _IconBtn(
+            icon: Icons.add_photo_alternate_rounded,
+            tooltip: 'Görsel ekle (Pro)',
+            onTap: _pickImage,
+            highlight: ref.watch(membershipProvider).isPro,
+          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.mocha.withAlpha(160),
+                color: AppPalette.mocha.withAlpha(160),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppTheme.gold.withAlpha(50),
-                ),
+                border: Border.all(color: AppPalette.gold.withAlpha(50)),
               ),
               child: TextField(
-                controller: _controller,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  color: AppTheme.cream,
-                ),
+                controller: _ctrl,
+                style: AppTypography.body(size: 13.5, color: AppPalette.cream),
                 decoration: InputDecoration(
-                  hintText: 'Malzeme veya kategori yaz…',
-                  hintStyle: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    color: AppTheme.dimCream.withAlpha(100),
+                  hintText: 'Malzeme yaz, kategori sor veya görsel sürükle…',
+                  hintStyle: AppTypography.body(
+                    size: 13,
+                    color: AppPalette.dimCream.withAlpha(120),
                   ),
                   border: InputBorder.none,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                 ),
-                onSubmitted: _send,
+                onSubmitted: (_) => _send(),
               ),
             ),
           ),
           const SizedBox(width: 10),
-          _SendButton(
-            sending: _sending,
-            onTap: () => _send(_controller.text),
-          ),
+          _SendBtn(sending: _sending, onTap: _send),
         ],
       ),
     );
   }
 }
 
-// ── Send Button ───────────────────────────────────────────────────────────
-class _SendButton extends StatefulWidget {
-  const _SendButton({required this.sending, required this.onTap});
-  final bool sending;
+// ─── pieces ─────────────────────────────────────────────────────────────────
+class _IconBtn extends StatefulWidget {
+  const _IconBtn({
+    required this.icon,
+    required this.onTap,
+    required this.tooltip,
+    this.highlight = false,
+  });
+  final IconData icon;
   final VoidCallback onTap;
+  final String tooltip;
+  final bool highlight;
 
   @override
-  State<_SendButton> createState() => _SendButtonState();
+  State<_IconBtn> createState() => _IconBtnState();
 }
 
-class _SendButtonState extends State<_SendButton> {
-  bool _hovered = false;
+class _IconBtnState extends State<_IconBtn> {
+  bool _hover = false;
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: widget.tooltip,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: _hover
+                  ? AppPalette.ledCyan.withAlpha(40)
+                  : AppPalette.mocha.withAlpha(140),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: widget.highlight
+                    ? AppPalette.ledCyan.withAlpha(120)
+                    : AppPalette.gold.withAlpha(50),
+              ),
+            ),
+            child: Icon(widget.icon,
+                color: widget.highlight
+                    ? AppPalette.ledCyan
+                    : AppPalette.dimCream.withAlpha(200),
+                size: 20),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
+class _SendBtn extends StatefulWidget {
+  const _SendBtn({required this.sending, required this.onTap});
+  final bool sending;
+  final VoidCallback onTap;
+  @override
+  State<_SendBtn> createState() => _SendBtnState();
+}
+
+class _SendBtnState extends State<_SendBtn> {
+  bool _hover = false;
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
         onTap: widget.sending ? null : widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: const Duration(milliseconds: 160),
           width: 48,
           height: 48,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            color: _hovered && !widget.sending
-                ? AppTheme.gold.withAlpha(230)
-                : AppTheme.gold.withAlpha(200),
-            boxShadow: _hovered && !widget.sending
+            color: _hover && !widget.sending
+                ? AppPalette.gold
+                : AppPalette.gold.withAlpha(220),
+            boxShadow: _hover && !widget.sending
                 ? [
                     BoxShadow(
-                        color: AppTheme.gold.withAlpha(60), blurRadius: 12)
+                        color: AppPalette.gold.withAlpha(80), blurRadius: 14)
                   ]
                 : [],
           ),
@@ -380,23 +529,65 @@ class _SendButtonState extends State<_SendButton> {
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Color(0xFF120B04),
-                    ),
+                        strokeWidth: 2, color: AppPalette.espresso),
                   ),
                 )
-              : const Icon(
-                  Icons.send_rounded,
-                  color: Color(0xFF120B04),
-                  size: 20,
-                ),
+              : const Icon(Icons.send_rounded,
+                  color: AppPalette.espresso, size: 20),
         ),
       ),
     );
   }
 }
 
-// ── Message Bubble ────────────────────────────────────────────────────────
+class _ChipButton extends StatefulWidget {
+  const _ChipButton({required this.label, required this.onTap});
+  final String label;
+  final VoidCallback onTap;
+  @override
+  State<_ChipButton> createState() => _ChipButtonState();
+}
+
+class _ChipButtonState extends State<_ChipButton> {
+  bool _hover = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            color: _hover
+                ? AppPalette.gold.withAlpha(40)
+                : AppPalette.mocha.withAlpha(150),
+            border: Border.all(
+              color: _hover
+                  ? AppPalette.gold.withAlpha(180)
+                  : AppPalette.gold.withAlpha(50),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              widget.label,
+              style: AppTypography.label(
+                size: 11,
+                color: _hover ? AppPalette.cream : AppPalette.dimCream,
+                letterSpacing: 0.8,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _MessageBubble extends StatelessWidget {
   const _MessageBubble({required this.message, this.onDrinkTap});
   final ChatMessage message;
@@ -413,21 +604,44 @@ class _MessageBubble extends StatelessWidget {
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!isUser) _AssistantAvatar(),
+          if (!isUser)
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: AppPalette.aiAccent,
+              ),
+              child: const Icon(Icons.auto_awesome_rounded,
+                  size: 16, color: AppPalette.espresso),
+            ),
           if (!isUser) const SizedBox(width: 10),
           Flexible(
             child: Column(
               crossAxisAlignment:
                   isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
+                if (message.imageBytes != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.memory(
+                        message.imageBytes!,
+                        width: 180,
+                        height: 130,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 Container(
-                  constraints: const BoxConstraints(maxWidth: 520),
+                  constraints: const BoxConstraints(maxWidth: 540),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: isUser
-                        ? AppTheme.gold.withAlpha(30)
-                        : AppTheme.mocha.withAlpha(200),
+                        ? AppPalette.gold.withAlpha(36)
+                        : AppPalette.mocha.withAlpha(200),
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(14),
                       topRight: const Radius.circular(14),
@@ -436,354 +650,106 @@ class _MessageBubble extends StatelessWidget {
                     ),
                     border: Border.all(
                       color: isUser
-                          ? AppTheme.gold.withAlpha(60)
-                          : AppTheme.gold.withAlpha(20),
+                          ? AppPalette.gold.withAlpha(70)
+                          : AppPalette.gold.withAlpha(24),
                     ),
                   ),
-                  child: _RichText(text: message.text, isUser: isUser),
+                  child: Text(
+                    message.text,
+                    style: AppTypography.body(
+                      size: 13.5,
+                      color: AppPalette.cream,
+                      height: 1.45,
+                    ),
+                  ),
                 ),
                 if (onDrinkTap != null) ...[
                   const SizedBox(height: 6),
-                  _DrinkLinkChip(onTap: onDrinkTap!),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0);
-  }
-}
-
-class _RichText extends StatelessWidget {
-  const _RichText({required this.text, required this.isUser});
-  final String text;
-  final bool isUser;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<InlineSpan> spans = [];
-    // Markdown link [Title](id) ve Kalın metin **Text** regex'i
-    final regex = RegExp(r'\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*');
-    int lastIndex = 0;
-
-    for (final match in regex.allMatches(text)) {
-      // Eşleşme öncesindeki düz metni ekle
-      if (match.start > lastIndex) {
-        spans.add(TextSpan(text: text.substring(lastIndex, match.start)));
-      }
-
-      if (match.group(1) != null) {
-        // İçecek Linki Eşleşmesi: [Title](id)
-        final title = match.group(1)!;
-        final id = match.group(2)!;
-        spans.add(
-          WidgetSpan(
-            alignment: PlaceholderAlignment.middle,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: () => context.push('/drink/$id'),
-                child: Text(
-                  title,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.ledCyan,
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppTheme.ledCyan.withAlpha(150),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      } else if (match.group(3) != null) {
-        // Kalın Metin Eşleşmesi: **Text**
-        spans.add(
-          TextSpan(
-            text: match.group(3),
-            style: const TextStyle(fontWeight: FontWeight.w700),
-          ),
-        );
-      }
-      lastIndex = match.end;
-    }
-
-    // Kalan metni ekle
-    if (lastIndex < text.length) {
-      spans.add(TextSpan(text: text.substring(lastIndex)));
-    }
-
-    return Text.rich(
-      TextSpan(
-        style: GoogleFonts.plusJakartaSans(
-          fontSize: 13.5,
-          color: isUser ? AppTheme.cream : AppTheme.dimCream.withAlpha(220),
-          height: 1.6,
-        ),
-        children: spans,
-      ),
-    );
-  }
-}
-
-class _DrinkLinkChip extends StatefulWidget {
-  const _DrinkLinkChip({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  State<_DrinkLinkChip> createState() => _DrinkLinkChipState();
-}
-
-class _DrinkLinkChipState extends State<_DrinkLinkChip> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: _hovered
-                ? AppTheme.gold.withAlpha(30)
-                : AppTheme.gold.withAlpha(15),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppTheme.gold.withAlpha(80)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.open_in_new_rounded, size: 13, color: AppTheme.gold),
-              const SizedBox(width: 6),
-              Text(
-                'Detayı Gör',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.gold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Quick Chip ─────────────────────────────────────────────────────────────
-class _QuickChip extends StatefulWidget {
-  const _QuickChip({required this.label, required this.onTap});
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  State<_QuickChip> createState() => _QuickChipState();
-}
-
-class _QuickChipState extends State<_QuickChip> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          decoration: BoxDecoration(
-            color: _hovered
-                ? AppTheme.mocha.withAlpha(220)
-                : AppTheme.mocha.withAlpha(140),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: _hovered
-                  ? AppTheme.gold.withAlpha(80)
-                  : AppTheme.gold.withAlpha(30),
-            ),
-          ),
-          child: Center(
-            child: Text(
-              widget.label,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: _hovered ? AppTheme.cream : AppTheme.dimCream,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Typing Indicator ──────────────────────────────────────────────────────
-class _TypingIndicator extends StatefulWidget {
-  @override
-  State<_TypingIndicator> createState() => _TypingIndicatorState();
-}
-
-class _TypingIndicatorState extends State<_TypingIndicator>
-    with TickerProviderStateMixin {
-  final List<AnimationController> _controllers = [];
-  final List<Animation<double>> _animations = [];
-
-  @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < 3; i++) {
-      final c = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 500),
-      );
-      _controllers.add(c);
-      _animations.add(Tween<double>(begin: 0, end: -6).animate(
-        CurvedAnimation(parent: c, curve: Curves.easeInOut),
-      ));
-      Future.delayed(Duration(milliseconds: i * 160), () {
-        if (mounted) c.repeat(reverse: true);
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    for (final c in _controllers) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Row(
-        children: [
-          _AssistantAvatar(),
-          const SizedBox(width: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppTheme.mocha.withAlpha(200),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(14),
-                topRight: Radius.circular(14),
-                bottomRight: Radius.circular(14),
-                bottomLeft: Radius.circular(4),
-              ),
-              border: Border.all(color: AppTheme.gold.withAlpha(20)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                3,
-                (i) => AnimatedBuilder(
-                  animation: _animations[i],
-                  builder: (context, _) => Transform.translate(
-                    offset: Offset(0, _animations[i].value),
+                  GestureDetector(
+                    onTap: onDrinkTap,
                     child: Container(
-                      margin: EdgeInsets.only(right: i < 2 ? 4 : 0),
-                      width: 7,
-                      height: 7,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppTheme.gold.withAlpha(180),
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: AppPalette.goldAccent,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.open_in_new_rounded,
+                              size: 14, color: AppPalette.espresso),
+                          const SizedBox(width: 6),
+                          Text('Tarifi Aç',
+                              style: AppTypography.label(
+                                size: 11,
+                                color: AppPalette.espresso,
+                                letterSpacing: 1.2,
+                                weight: FontWeight.w800,
+                              )),
+                        ],
                       ),
                     ),
                   ),
-                ),
-              ),
+                ]
+              ],
             ),
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 240.ms);
   }
 }
 
-// ── Small reusable pieces ─────────────────────────────────────────────────
-class _AssistantAvatar extends StatelessWidget {
+class _TypingIndicator extends StatelessWidget {
+  const _TypingIndicator();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppTheme.ledCyan.withAlpha(25),
-        border: Border.all(color: AppTheme.ledCyan.withAlpha(80)),
-      ),
-      child: const Center(
-        child: Text('✨', style: TextStyle(fontSize: 14)),
-      ),
-    );
-  }
-}
-
-class _LedPulse extends StatefulWidget {
-  @override
-  State<_LedPulse> createState() => _LedPulseState();
-}
-
-class _LedPulseState extends State<_LedPulse>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _c;
-
-  @override
-  void initState() {
-    super.initState();
-    _c = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _c,
-      builder: (_, __) => Row(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14, left: 4),
+      child: Row(
         children: [
           Container(
-            width: 7,
-            height: 7,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppTheme.ledCyan,
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      AppTheme.ledCyan.withAlpha((80 + _c.value * 140).round()),
-                  blurRadius: 8,
-                ),
-              ],
+              gradient: AppPalette.aiAccent,
             ),
+            child: const Icon(Icons.auto_awesome_rounded,
+                color: AppPalette.espresso, size: 16),
           ),
-          const SizedBox(width: 6),
-          Text(
-            'Çevrimiçi',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 11,
-              color: AppTheme.ledCyan.withAlpha((140 + _c.value * 115).round()),
+          const SizedBox(width: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: AppPalette.mocha.withAlpha(180),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < 3; i++)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppPalette.ledCyan,
+                      ),
+                    )
+                        .animate(
+                          onComplete: (c) => c.repeat(reverse: true),
+                          delay: Duration(milliseconds: i * 120),
+                        )
+                        .scale(
+                            begin: const Offset(0.5, 0.5),
+                            end: const Offset(1.2, 1.2),
+                            duration: 480.ms),
+                  )
+              ],
             ),
           ),
         ],
