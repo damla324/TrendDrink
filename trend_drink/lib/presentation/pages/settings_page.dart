@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trenddrink/core/i18n/app_strings.dart';
 import 'package:trenddrink/core/theme/app_palette.dart';
 import 'package:trenddrink/core/theme/app_theme_enhanced.dart';
 import 'package:trenddrink/core/theme/app_typography.dart';
@@ -19,14 +20,15 @@ class SettingsPage extends ConsumerWidget {
     final membership = ref.watch(membershipProvider);
     final variant = ref.watch(themeVariantProvider);
     final themeMode = ref.watch(currentThemeModeProvider);
+    final s = ref.watch(appStringsProvider);
 
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeaderHero(
-            title: 'Ayarlar',
-            subtitle: 'Premium kontrol paneli',
+          SectionHeaderHero(
+            title: s.settingsTitle,
+            subtitle: s.settingsSubtitle,
             height: 170,
           ),
           const SizedBox(height: 26),
@@ -55,7 +57,7 @@ class SettingsPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _SectionTitle('Görünüm'),
+                  _SectionTitle(s.appearance),
                   const SizedBox(height: 14),
                   _ThemeModeRow(themeMode: themeMode),
                   const SizedBox(height: 18),
@@ -74,7 +76,21 @@ class SettingsPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _SectionTitle('Hesap'),
+                  _SectionTitle(s.language),
+                  const SizedBox(height: 14),
+                  _LanguageRow(),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 22),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 36),
+            child: FrostedPanel(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _SectionTitle(s.account),
                   const SizedBox(height: 8),
                   _LinkRow(
                     icon: Icons.person_rounded,
@@ -285,6 +301,51 @@ class _StatsPanel extends StatelessWidget {
   }
 }
 
+class _LanguageRow extends ConsumerWidget {
+  const _LanguageRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lang = ref.watch(languageProvider);
+    final options = [
+      ('tr', '🇹🇷 Türkçe'),
+      ('en', '🇬🇧 English'),
+    ];
+    return Wrap(
+      spacing: 10,
+      children: options.map(((String code, String label) opt) {
+        final selected = lang == opt.$1;
+        return GestureDetector(
+          onTap: () => ref.read(languageProvider.notifier).setLanguage(opt.$1),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: selected
+                  ? AppPalette.gold.withAlpha(30)
+                  : AppPalette.mocha.withAlpha(140),
+              border: Border.all(
+                color: selected
+                    ? AppPalette.gold.withAlpha(180)
+                    : AppPalette.gold.withAlpha(40),
+              ),
+            ),
+            child: Text(
+              opt.$2,
+              style: AppTypography.label(
+                size: 12,
+                color: selected ? AppPalette.gold : AppPalette.dimCream,
+                letterSpacing: 0.6,
+                weight: selected ? FontWeight.w700 : FontWeight.w400,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
 class _ThemeModeRow extends ConsumerWidget {
   const _ThemeModeRow({required this.themeMode});
   final ThemeMode themeMode;
@@ -344,6 +405,36 @@ class _ThemeVariantGrid extends ConsumerWidget {
   const _ThemeVariantGrid({required this.current, required this.isPro});
   final ThemeVariant current;
   final bool isPro;
+
+  LinearGradient _variantGradient(ThemeVariant v) {
+    switch (v) {
+      case ThemeVariant.sunrise:
+        return const LinearGradient(
+            colors: [Color(0xFFFF6B35), Color(0xFFFFD700)]);
+      case ThemeVariant.noir:
+        return const LinearGradient(
+            colors: [Color(0xFF1A1A1A), Color(0xFFD4AF37)]);
+      case ThemeVariant.forest:
+        return const LinearGradient(
+            colors: [Color(0xFF1B4332), Color(0xFF52B788)]);
+      case ThemeVariant.oceanWave:
+        return const LinearGradient(
+            colors: [Color(0xFF0077B6), Color(0xFF48CAE4)]);
+      case ThemeVariant.purpleGradient:
+        return const LinearGradient(
+            colors: [Color(0xFF6A0572), Color(0xFFDA70D6)]);
+      case ThemeVariant.goldLux:
+        return const LinearGradient(
+            colors: [Color(0xFF92710A), Color(0xFFFFD700)]);
+      case ThemeVariant.darkCrimson:
+        return const LinearGradient(
+            colors: [Color(0xFF1A0000), Color(0xFFDC143C)]);
+      case ThemeVariant.matrixGreen:
+        return const LinearGradient(
+            colors: [Color(0xFF001100), Color(0xFF00FF41)]);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(builder: (ctx, c) {
@@ -374,11 +465,18 @@ class _ThemeVariantGrid extends ConsumerWidget {
               child: Row(
                 children: [
                   Container(
-                    width: 22,
-                    height: 22,
+                    width: 24,
+                    height: 24,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppPalette.gold,
+                      borderRadius: BorderRadius.circular(6),
+                      gradient: _variantGradient(v),
+                      boxShadow: selected
+                          ? [
+                              BoxShadow(
+                                  color: AppPalette.gold.withAlpha(80),
+                                  blurRadius: 6)
+                            ]
+                          : [],
                     ),
                   ),
                   const SizedBox(width: 8),

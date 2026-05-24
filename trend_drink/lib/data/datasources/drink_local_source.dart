@@ -39,8 +39,7 @@ class DrinkLocalSource {
         'f\u0131nd\u0131k \u015furubu',
         'buz'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1596041113649-3011c0349899?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/ıced hazelnut mocha.jpg',
       gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
     ),
     DrinkModel(
@@ -68,8 +67,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Buz (1 fincan)\n2. Cold brew (150 ml)\n3. Karamelli s\u00fct (100 ml)\n4. Karamel sos (3 yemek ka\u015f\u0131\u011f\u0131)\n5. \u00c7\u0131rp\u0131lm\u0131\u015f krem (\u015f\u00fcsleme)\n\nYap\u0131l\u0131\u015f:\n1) Barda\u011fa buz ekle\n2) Cold brew ekle\n3) Karamelli s\u00fctu ekle\n4) Karamel sosu kenardan gezdir\n5) Krem \u015fanti ile servis et',
       ingredients: ['buz', 'cold brew', 'karamelli s\u00fct', 'karamel sos'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1580613854894-37517173e659?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/caramel cold brew.jpg',
       gradient: LinearGradient(colors: [Color(0xFFA0522D), Color(0xFFD2B48C)]),
     ),
     DrinkModel(
@@ -96,8 +94,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Espresso (30 ml)\n2. Vanilya \u015furubu (2 yemek ka\u015f\u0131\u011f\u0131)\n3. So\u011fuk s\u00fct (150 ml)\n4. Buz (1 fincan)\n5. \u00c7\u0131rp\u0131lm\u0131\u015f krem (\u015f\u00fcsleme)\n\nYap\u0131l\u0131\u015f:\n1) Espresso ve vanilya \u015furubunu ekle\n2) Buz dolu barda\u011fa d\u00f6k\n3) So\u011fuk s\u00fctu yava\u015f\u00e7a ekle\n4) \u00dczerine krem ekle\n5) Kakao tozu serpiip servis et',
       ingredients: ['espresso', 's\u00fct', 'vanilya', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/vanilla ıced cappuccino.jpg',
       gradient: LinearGradient(colors: [Color(0xFFF5DEB3), Color(0xFFD2B48C)]),
     ),
     DrinkModel(
@@ -123,8 +120,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Espresso (30 ml)\n2. Lavanta \u015furubu (2 yemek ka\u015f\u0131\u011f\u0131)\n3. S\u00fct (150 ml)\n4. Bal (1 \u00e7ay ka\u015f\u0131\u011f\u0131)\n5. Kurutulmu\u015f lavanta (s\u00fcsleme)\n\nYap\u0131l\u0131\u015f:\n1) Espresso ve lavanta \u015furubunu ekle\n2) S\u00fctu 60\u00b0C de isi\u0131t\n3) Yava\u015f\u00e7a ekle\n4) K\u00f6p\u00fcrterek servis et',
       ingredients: ['espresso', 's\u00fct', 'lavanta', 'bal'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1620999516664-946979219468?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/lavender latte.jpg',
       gradient: LinearGradient(colors: [Color(0xFF927FA0), Color(0xFFC9D6FF)]),
     ),
     DrinkModel(
@@ -150,8 +146,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Cold brew (150 ml)\n2. Portakal suyu (100 ml)\n3. Limon suyu (1 \u00e7ay ka\u015f\u0131\u011f\u0131)\n4. S\u00fct (50 ml)\n5. Buz (1 fincan)\n\nYap\u0131l\u0131\u015f:\n1) Buz ekle\n2) Cold brew ekle\n3) Meyve sular\u0131n\u0131 kar\u0131\u015ft\u0131r\n4) S\u00fctu ekle\n5) Portakal dilimi ile s\u00fcsle',
       ingredients: ['cold brew', 'portakal', 'buz', '\u015feker'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1517712981146-06dc73adc36d?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/citrus cold brew.png',
       gradient: LinearGradient(colors: [Color(0xFF0B486B), Color(0xFFF56217)]),
     ),
     DrinkModel(
@@ -177,8 +172,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Cold brew (150 ml)\n2. Pistasya \u015furubu (2 yemek ka\u015f\u0131\u011f\u0131)\n3. So\u011fuk s\u00fct (100 ml)\n4. Buz\n5. Pistasya par\u00e7alar\u0131 (s\u00fcsleme)\n\nYap\u0131l\u0131\u015f:\n1) Buz dolu barda\u011fa cold brew d\u00f6k\n2) \u015eurub ekle\n3) S\u00fctu yava\u015f\u00e7a ekle\n4) Pistasya ile servis et',
       ingredients: ['cold brew', 'pistasya \u015furubu', 's\u00fct', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1621251025068-19e2c6e61f2f?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/pistachio cold brew.jpg',
       gradient: LinearGradient(colors: [Color(0xFF8FBC8F), Color(0xFF4B2C20)]),
     ),
     DrinkModel(
@@ -205,8 +199,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Filtre kahve (30 ml)\n2. Kondense s\u00fct (3 yemek ka\u015f\u0131\u011f\u0131)\n3. Buz (1 fincan)\n4. S\u0131cak su (150 ml)\n\nYap\u0131l\u0131\u015f:\n1) Kondense s\u00fctu barda\u011fa d\u00f6k\n2) Filtre yerle\u015ftir\n3) S\u0131cak suyu yava\u015f\u00e7a d\u00f6k\n4) 3-4 dakika damlamasini bekle\n5) Kar\u0131\u015ft\u0131r\n6) So\u011fuk servis et',
       ingredients: ['filtre kahve', 'kondense s\u00fct', 'buz', 'su'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/vietnamese ıced coffee.jpg',
       gradient: LinearGradient(colors: [Color(0xFF3E2723), Color(0xFF8D6E63)]),
     ),
     DrinkModel(
@@ -233,8 +226,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Vanilya dondurmas\u0131 (2 ka\u015f\u0131k)\n2. Taze demlenmi\u015f espresso\n\nYap\u0131l\u0131\u015f:\n1) Kaseye dondurmayi koy\n2) \u00dczerine sicak espressoyu gezdir',
       ingredients: ['espresso', 'vanilya dondurmasi'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1594631252845-29fc4586c552?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/affogato.jpg',
       gradient: LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFF4A460)]),
     ),
     DrinkModel(
@@ -264,8 +256,7 @@ class DrinkLocalSource {
         'tiramisu \u015furubu',
         'mascarpone'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/tramisu latte.jpg',
       gradient: LinearGradient(colors: [Color(0xFFA0826D), Color(0xFFF5DEB3)]),
     ),
     // ── MATCHA ────────────────────────────────────────────────────────────────
@@ -293,8 +284,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Matcha tozu (1 \u00e7ay ka\u015f\u0131\u011f\u0131)\n2. S\u0131cak su (50 ml)\n3. S\u00fct (150 ml)\n\nYap\u0131l\u0131\u015f:\n1) Matcha tozunu s\u0131cak suyla p\u00fcr\u00fcss\u00fcz olana kadar kar\u0131\u015ft\u0131r\n2) Is\u0131t\u0131lm\u0131\u015f s\u00fctu ekle\n3) K\u00f6p\u00fcrterek s\u0131cak servis et',
       ingredients: ['matcha tozu', 's\u00fct', '\u015feker', 'su'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/photos/matcha.jpg',
       gradient: LinearGradient(colors: [Color(0xFF116E3C), Color(0xFF8FBC8F)]),
     ),
     DrinkModel(
@@ -319,8 +309,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Matcha tozu (1 \u00e7ay ka\u015f\u0131\u011f\u0131)\n2. S\u0131cak su (50 ml)\n3. Buz\n4. So\u011fuk s\u00fct (150 ml)\n\nYap\u0131l\u0131\u015f:\n1) Matcha tozunu suyla a\u00e7\n2) Buz dolu barda\u011fa d\u00f6k\n3) So\u011fuk s\u00fctu ekleyerek servis et',
       ingredients: ['matcha tozu', 's\u00fct', 'buz', 'bal'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1590373190805-4c04221a719c?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/photos/matcha.jpg',
       gradient: LinearGradient(colors: [Color(0xFF3CA55C), Color(0xFF7FB069)]),
     ),
     DrinkModel(
@@ -350,8 +339,7 @@ class DrinkLocalSource {
         's\u00fct',
         'vanilya'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1543255006-d6395b6f1171?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/photos/matcha.jpg',
       gradient: LinearGradient(colors: [Color(0xFF3CA55C), Color(0xFFF5F5DC)]),
     ),
     DrinkModel(
@@ -382,8 +370,7 @@ class DrinkLocalSource {
         'hindistancevizi s\u00fctu',
         'buz'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1551024506-0bccd828d307?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/photos/matcha.jpg',
       gradient: LinearGradient(colors: [Color(0xFF3CA55C), Color(0xFFF7971E)]),
     ),
     DrinkModel(
@@ -408,8 +395,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Matcha\n2. Demlenmis hibiskus \u00e7ay\u0131\n3. Buz\n\nYap\u0131l\u0131\u015f:\n1) Barda\u011f\u0131n alt\u0131na buz ve hibiskus \u00e7ay\u0131n\u0131 koy\n2) \u00dczerine matcha kar\u0131\u015f\u0131m\u0131n\u0131 yava\u015f\u00e7a ekle',
       ingredients: ['matcha tozu', 'hibiskus', 'limon', '\u015feker', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1588631165487-95f782c5f137?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/photos/matcha.jpg',
       gradient: LinearGradient(colors: [Color(0xFF3CA55C), Color(0xFFB31217)]),
     ),
     // ── KOKTEYL ───────────────────────────────────────────────────────────────
@@ -441,8 +427,7 @@ class DrinkLocalSource {
         'kahve lik\u00f6r\u00fc',
         '\u015feker \u015furubu'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1603593786277-22749449f225?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kokteyl/espresso martini.png',
       gradient: LinearGradient(colors: [Color(0xFF2C1E1E), Color(0xFF5A3A3A)]),
     ),
     DrinkModel(
@@ -468,8 +453,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Matcha tozu\n2. S\u0131cak su (50 ml)\n3. Hindistancevizi s\u00fctu (150 ml)\n4. Lime suyu\n5. \u015eeker\n6. Buz\n7. Nane (s\u00fcsleme)\n\nYap\u0131l\u0131\u015f:\n1) Matchay\u0131 s\u0131cak suyla a\u00e7\n2) Hindistancevizi s\u00fctu ekle\n3) Lime ve \u015feker ekle\n4) Buz dolu barda\u011fa d\u00f6k\n5) Nane ile s\u00fcsle',
       ingredients: ['matcha', 'hindistancevizi s\u00fctu', 'lime', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kokteyl/matcha coconut cooler.png',
       gradient: LinearGradient(colors: [Color(0xFF3CA55C), Color(0xFFB5AC49)]),
     ),
     DrinkModel(
@@ -495,8 +479,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. \u00c7ilek (250 g)\n2. Rom (45 ml)\n3. Limon suyu\n4. \u015eeker \u015furubu\n5. Buz\n\nYap\u0131l\u0131\u015f:\n1) Blenderda \u00e7ilekleri koy\n2) Rom, limon, \u015feker ekle\n3) Buzla kar\u0131\u015ft\u0131r\n4) Martini barda\u011f\u0131na d\u00f6k\n5) \u00c7ilek dilimi ile servis et',
       ingredients: ['\u00e7ilek', 'rom', 'limon', '\u015feker', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kokteyl/strawbery daiquiri.png',
       gradient: LinearGradient(colors: [Color(0xFFE91E63), Color(0xFFFF69B4)]),
     ),
     DrinkModel(
@@ -522,8 +505,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Ananas suyu (150 ml)\n2. Hindistancevizi kremi (90 ml)\n3. Rom (45 ml)\n4. Buz\n\nYap\u0131l\u0131\u015f:\n1) T\u00fcm malzemeleri blenderda 40 saniye kar\u0131\u015ft\u0131r\n2) Barda\u011fa d\u00f6k\n3) Ananas dilimi ile servis et',
       ingredients: ['ananas suyu', 'hindistancevizi krem', 'rom', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1587883012610-e3df17d41270?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kokteyl/pina colada.png',
       gradient: LinearGradient(colors: [Color(0xFFFFA500), Color(0xFFFFFACD)]),
     ),
     // ── FROZEN ────────────────────────────────────────────────────────────────
@@ -550,8 +532,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Buz (1 fincan)\n2. S\u00fct (200 ml)\n3. Kakao tozu (2 yemek ka\u015f\u0131\u011f\u0131)\n4. Vanilya ekstresi\n5. \u00c7ikolata par\u00e7alar\u0131\n\nYap\u0131l\u0131\u015f:\n1) T\u00fcm malzemeleri blenderda p\u00fcr\u00fcss\u00fcz olana kadar kar\u0131\u015ft\u0131r\n2) Barda\u011fa d\u00f6k\n3) \u00c7ikolata par\u00e7alar\u0131 ile s\u00fcsle',
       ingredients: ['buz', 's\u00fct', 'kakao tozu', 'vanilya ekstresi'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/frozen/cocoa frozen latte.jpg',
       gradient: LinearGradient(colors: [Color(0xFF20002C), Color(0xFFC58E25)]),
     ),
     DrinkModel(
@@ -572,8 +553,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Ananas\n2. Mango\n3. Nane\n4. Lime\n\nYap\u0131l\u0131\u015f:\n1) T\u00fcm meyveleri ve naneyi buzla blenderda \u00e7ekin\n2) Ferahlatici bir kadehte servis edin',
       ingredients: ['ananas', 'mango', 'nane', 'lime', 'soda', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/frozen/tropical frozen mojito.jpg',
       gradient: LinearGradient(colors: [Color(0xFFFFA500), Color(0xFF90EE90)]),
     ),
     DrinkModel(
@@ -598,8 +578,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Mango (250 g)\n2. Portakal suyu (100 ml)\n3. Zencefil\n4. Limon suyu\n\nYap\u0131l\u0131\u015f:\n1) Blenderda mango koy\n2) Di\u011fer malzemeleri ekle\n3) Yumusak k\u0131vama kadar kar\u0131\u015ft\u0131r\n4) Taze mango dilimiyle servis et',
       ingredients: ['mango', 'portakal suyu', 'zencefil'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1553621042-f6e7609bbcd7?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/frozen/mango sorbet.jpg',
       gradient: LinearGradient(colors: [Color(0xFFFFA500), Color(0xFFFFD700)]),
     ),
     // ── SMOOTHIE ──────────────────────────────────────────────────────────────
@@ -626,8 +605,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. \u00c7ilek (250 g)\n2. Yo\u011furt (150 g)\n3. Fesle\u011fen yapraklar\u0131\n4. Bal\n5. Buz\n\nYap\u0131l\u0131\u015f:\n1) T\u00fcm malzemeleri blenderda p\u00fcr\u00fcss\u00fcz kana kadar kar\u0131\u015ft\u0131r\n2) Hemen so\u011fuk servis et',
       ingredients: ['\u00e7ilek', 'yo\u011furt', 'fesle\u011fen', 'bal'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1543644009-1d206f47094b?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/smoothie/strawberry basil smoothie.jpg',
       gradient: LinearGradient(colors: [Color(0xFFED213A), Color(0xFFFFA500)]),
     ),
     DrinkModel(
@@ -653,8 +631,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Mango\n2. Yo\u011furt (200 g)\n3. So\u011fuk s\u00fct (100 ml)\n4. Tar\u00e7\u0131n\n5. Bal\n6. Buz\n\nYap\u0131l\u0131\u015f:\n1) Mango etini blenderda koy\n2) T\u00fcm malzemeleri ekle\n3) P\u00fcr\u00fcss\u00fcz k\u0131vama kadar kar\u0131\u015ft\u0131r',
       ingredients: ['mango', 'yo\u011furt', 's\u00fct', 'bal'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1594056294711-28562479e491?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/smoothie/mango lassi.jpg',
       gradient: LinearGradient(colors: [Color(0xFFF7971E), Color(0xFFFFD200)]),
     ),
     DrinkModel(
@@ -684,8 +661,7 @@ class DrinkLocalSource {
         'hindistancevizi s\u00fctu',
         'bal'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/smoothie/acai blueberry smoothie.jpg',
       gradient: LinearGradient(colors: [Color(0xFF4B0082), Color(0xFF9370DB)]),
     ),
     // ── SODA ──────────────────────────────────────────────────────────────────
@@ -711,8 +687,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Hibiskus (2 \u00e7ay ka\u015f\u0131\u011f\u0131)\n2. S\u0131cak su (200 ml)\n3. \u015eeker\n4. Limon suyu\n5. Maden suyu\n6. Buz\n\nYap\u0131l\u0131\u015f:\n1) Hibiskusu 5 dk demle\n2) So\u011fut\n3) \u015eeker ve limon ekle\n4) Maden suyu ile servis et',
       ingredients: ['hibiskus', '\u015feker', 'limon suyu', 'maden suyu'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/soda/hibiscus sparkler.jpg',
       gradient: LinearGradient(colors: [Color(0xFFB31217), Color(0xFFFCE38A)]),
     ),
     DrinkModel(
@@ -738,8 +713,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Kombucha (250 ml)\n2. Frambuaz (100 g)\n3. B\u00f6\u011f\u00fcrtlen (100 g)\n4. Buz\n5. Nane\n\nYap\u0131l\u0131\u015f:\n1) Buz dolu barda\u011fa kombucha d\u00f6k\n2) Meyveler ve nane ekle\n3) Hafif kar\u0131\u015ft\u0131r',
       ingredients: ['kombucha', 'frambuaz', 'b\u00f6\u011f\u00fcrtlen', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1594498653385-d5172b532c00?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/soda/berry kombucha.png',
       gradient: LinearGradient(colors: [Color(0xFF000428), Color(0xFF004e92)]),
     ),
     DrinkModel(
@@ -772,8 +746,7 @@ class DrinkLocalSource {
         'nane',
         'buz'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1607623814075-e51df1095968?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/soda/elderflower lemon soda.jpg',
       gradient: LinearGradient(colors: [Color(0xFFE1BEE7), Color(0xFFFCE4EC)]),
     ),
     // ── \u00c7AY ──────────────────────────────────────────────────────────────────
@@ -800,8 +773,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Siyah \u00e7ay\n2. S\u0131cak su (250 ml)\n3. Tar\u00e7\u0131n \u00e7ubu\u011fu\n4. Portakal kabu\u011fu\n5. Bal\n\nYap\u0131l\u0131\u015f:\n1) \u00c7ay\u0131 tar\u00e7\u0131n ve portakal kabu\u011fuyla 5 dk demle\n2) S\u00fcz\n3) Bal ekle\n4) Portakal dilimi ile servis et',
       ingredients: ['\u00e7ay', 'tar\u00e7\u0131n', 'portakal', 'bal'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1576092762740-410023a10526?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/çay/orange spiced tea.jpg',
       gradient: LinearGradient(colors: [Color(0xFFD2691E), Color(0xFFFFA500)]),
     ),
     DrinkModel(
@@ -827,8 +799,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Siyah \u00e7ay\n2. Taze zencefil\n3. \u015eeftali\n\nYap\u0131l\u0131\u015f:\n1) \u00c7ay\u0131 zencefil dilimleriyle demle\n2) Taze \u015feftali dilimleri ekleyerek servis et',
       ingredients: ['\u00e7ay', '\u015feftali', 'zencefil', 'bal'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/çay/peach ginger tea.jpg',
       gradient: LinearGradient(colors: [Color(0xFFFF6F61), Color(0xFFFFB84D)]),
     ),
     // ── F\u0130T ──────────────────────────────────────────────────────────────────
@@ -855,8 +826,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin S\u0131ras\u0131:\n1. Muz (1 adet)\n2. Protein tozu (1 \u00f6l\u00e7ek)\n3. Yo\u011furt (150 g)\n4. So\u011fuk s\u00fct (100 ml)\n5. Bal\n6. Buz\n\nYap\u0131l\u0131\u015f:\n1) T\u00fcm malzemeleri blenderda p\u00fcr\u00fcss\u00fcz k\u0131vama kadar kar\u0131\u015ft\u0131r',
       ingredients: ['muz', 'protein tozu', 'yo\u011furt', 'bal', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1577805947697-89e18249d767?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/fit/protein banana shake.jpg',
       gradient: LinearGradient(colors: [Color(0xFFF3A55C), Color(0xFFFFA500)]),
     ),
     DrinkModel(
@@ -886,8 +856,7 @@ class DrinkLocalSource {
         'limon',
         'buz'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/fit/green detox smoothie.jpg',
       gradient: LinearGradient(colors: [Color(0xFF0B7A75), Color(0xFF71C187)]),
     ),
     DrinkModel(
@@ -918,8 +887,7 @@ class DrinkLocalSource {
         'chia tohumu',
         'yo\u011furt'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1590301157890-4810ed352733?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/fit/berry protein bowl.png',
       gradient: LinearGradient(colors: [Color(0xFFCA1551), Color(0xFFFF6B6B)]),
     ),
     DrinkModel(
@@ -951,8 +919,7 @@ class DrinkLocalSource {
         'protein tozu',
         'bal'
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1626078436897-62846d03f677?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/fit/coconut almond fit.jpg',
       gradient: LinearGradient(colors: [Color(0xFFFFF8DC), Color(0xFFDEB887)]),
     ),
     // Kokteyl Kategorisine Yeni İçecekler
@@ -964,7 +931,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Nane yaprakları (10-12)\n2. Lime (1/2)\n3. Şeker (2 çay kaşığı)\n4. Rom (45 ml)\n5. Soda suyu (100 ml)\n6. Buz (1 fincan)\n\nYapılış:\n1) Bardağa nane yapraklarını koy\n2) Lime parçalarını ekle\n3) Şeker ile hafif ez\n4) Rom dökerek karıştır\n5) Buzla doldurup soda suyu ekle\n6) Nane dalı ve lime dilimi ile servis et',
       ingredients: ['nane', 'lime', 'rom', 'şeker', 'soda', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1559181286-d3fee14d55b7?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kokteyl/mojito.png',
       gradient: LinearGradient(
         colors: [Color(0xFF228B22), Color(0xFF90EE90)],
       ),
@@ -977,7 +944,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Tequila (45 ml)\n2. Triple sec (20 ml)\n3. Lime suyu (25 ml)\n4. Şeker şurubu (15 ml)\n5. Tuz (kenarı için)\n6. Buz\n\nYapılış:\n1) Shakera tequila, triple sec, lime suyu ve şeker şurubunu ekle\n2) Buz ekle ve kuvvetli şakela\n3) Tuzla kaplanmış margarita bardağına dök\n4) Lime dilimi ile servis et',
       ingredients: ['tequila', 'triple sec', 'lime', 'şeker', 'tuz'],
-      imageUrl: 'https://images.unsplash.com/photo-1556742212-5b321f3c261d?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kokteyl/margarita.png',
       gradient: LinearGradient(
         colors: [Color(0xFF228B22), Color(0xFFFFA500)],
       ),
@@ -990,7 +957,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Vodka (45 ml)\n2. Triple sec (20 ml)\n3. Lime suyu (15 ml)\n4. Cranberry suyu (30 ml)\n5. Buz\n6. Portakal kabuğu (susuz)\n\nYapılış:\n1) Shakera tüm malzemeleri buz ile karıştır\n2) Martini bardağına süz\n3) Portakal kabuğu twist ile servis et',
       ingredients: ['vodka', 'triple sec', 'lime', 'cranberry', 'portakal'],
-      imageUrl: 'https://images.unsplash.com/photo-1514432324607-2df86e7f718d?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kokteyl/cosmopolitan.png',
       gradient: LinearGradient(
         colors: [Color(0xFFE91E63), Color(0xFFFFC0CB)],
       ),
@@ -1002,8 +969,16 @@ class DrinkLocalSource {
       description: 'Güçlü ve karışık, seven likörün efsanevi maceraları.',
       preparation:
           'Malzemelerin Sırası:\n1. Beyaz rom (15 ml)\n2. Vodka (15 ml)\n3. Gin (15 ml)\n4. Tequila (15 ml)\n5. Triple sec (15 ml)\n6. Lime suyu (25 ml)\n7. Şeker şurubu (25 ml)\n8. Kola (30 ml)\n9. Buz\n\nYapılış:\n1) Shakera tüm likörleri, lime suyunu ve şeker şurubunu buz ile karıştır\n2) Buz dolu bardağa dök\n3) Üzerine kola ve daha buz ekle\n4) Lime dilimi ile servis et',
-      ingredients: ['rom', 'vodka', 'gin', 'tequila', 'triple sec', 'lime', 'kola'],
-      imageUrl: 'https://images.unsplash.com/photo-1536042904634-2a19c5e36df9?q=80&w=1974&auto=format&fit=crop',
+      ingredients: [
+        'rom',
+        'vodka',
+        'gin',
+        'tequila',
+        'triple sec',
+        'lime',
+        'kola'
+      ],
+      imageUrl: 'Assets/Categories/kokteyl/long ısland ıced tea.png',
       gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFF000000)],
       ),
@@ -1017,7 +992,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Siyah çay (1 poşet)\n2. Chai baharat karışımı (tarçın, karanfil, 1 çay kaşığı)\n3. Sıcak su (250 ml)\n4. Süt (100 ml)\n5. Bal (1 yemek kaşığı)\n\nYapılış:\n1) Çayı baharatla sıcak suyla demlemeye bırak\n2) 5 dakika sonra süt ekle\n3) Bala ekle ve karıştır\n4) Sıcak servis et',
       ingredients: ['çay', 'tarçın', 'karanfil', 'ingeber', 'bal', 'süt'],
-      imageUrl: 'https://images.unsplash.com/photo-1598318906914-b3efc1dfe9eb?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/çay/chai latte.png',
       gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFFA0826D)],
       ),
@@ -1030,7 +1005,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Siyah çay (100 ml)\n2. Yoğun kondense süt (2 yemek kaşığı)\n\nYapılış:\n1) Çayı hazırlayın\n2) İki fincan arasında ileri geri dökerek köpürtün\n3) Bardağa dök ve hemen servis et',
       ingredients: ['çay', 'kondense süt'],
-      imageUrl: 'https://images.unsplash.com/photo-1605352573261-f2d2f23ae65d?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/çay/teh tarik.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFFFFC0CB)],
       ),
@@ -1043,7 +1018,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Siyah çay (200 ml)\n2. Tapioka topları (3 yemek kaşığı)\n3. Şeker şurubu (2 yemek kaşığı)\n4. Süt (50 ml)\n5. Buz (1 fincan)\n\nYapılış:\n1) Tapioka toplarını 15 dakika kaynatıp soğut\n2) Bardağın altına tapioka toplarını koy\n3) Buz dolu bardağa buz ekle\n4) Çay ve sütü ekleyerek servis et',
       ingredients: ['çay', 'tapioka topları', 'şeker', 'süt', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd64b73?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/çay/bubble tea milk.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFFFFC0CB)],
       ),
@@ -1057,7 +1032,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Karpuz (300 g)\n2. Şeker (2 yemek kaşığı)\n3. Limon suyu (1 yemek kaşıği)\n4. Buz (1 fincan)\n\nYapılış:\n1) Karpuzu blenderda koy\n2) Şeker ve limon suyu ekle\n3) Buzla birlikte pürüzsüz kıvama kadar karıştır\n4) Yoğun bir paste oluşsun\n5) Bardağa dök ve kalın pipet ile servis et',
       ingredients: ['karpuz', 'şeker', 'limon', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1569003222316-4da3f63a506d?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/frozen/watermelon slushi.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFFE91E63), Color(0xFF90EE90)],
       ),
@@ -1070,7 +1045,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Çilek (250 g)\n2. Şeker (3 yemek kaşığı)\n3. Su (100 ml)\n4. Limon suyu (1 yemek kaşığı)\n\nYapılış:\n1) Çilekleri ezerek mırra ol\n2) Şeker ve su ile karıştır\n3) Buzluk tepsiye dök\n4) Her 30 dakikada karıştırarak dondurmaya bırak\n5) Kristalize olmuş granita bardağa dök',
       ingredients: ['çilek', 'şeker', 'su', 'limon'],
-      imageUrl: 'https://images.unsplash.com/photo-1541810298000-33eaf8f70f70?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/frozen/strawberry granita.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFFE91E63), Color(0xFFFFA500)],
       ),
@@ -1083,7 +1058,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Taze nane (20 yaprak)\n2. Lime suyu (50 ml)\n3. Şeker şurubu (30 ml)\n4. Su (100 ml)\n5. Buz (1,5 fincan)\n\nYapılış:\n1) Nane yapraklarını blenderda ezin\n2) Lime suyu, şeker şurubu ve su ekle\n3) Buzla birlikte slushi kıvamına kadar karıştır\n4) Kalın pasta olmuşsa bardağa dök\n5) Nane dalı ile servis et',
       ingredients: ['nane', 'lime', 'şeker', 'su', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1585897913619-99739e88e19f?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/frozen/mint lime slushi.png',
       gradient: LinearGradient(
         colors: [Color(0xFF228B22), Color(0xFF90EE90)],
       ),
@@ -1097,7 +1072,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Nar suyu (100 ml)\n2. Zencefil (1 cm parça, rendelenmiş)\n3. Limon suyu (2 çay kaşığı)\n4. Maden suyu (150 ml)\n5. Buz (1 fincan)\n6. Nar taneleri (süsleme)\n\nYapılış:\n1) Nar suyunu zencefil ve limon suyu ile karıştır\n2) Buz dolu bardağa dök\n3) Maden suyu ekle\n4) Hafif karıştır\n5) Nar taneleriyle servis et',
       ingredients: ['nar suyu', 'zencefil', 'limon', 'maden suyu'],
-      imageUrl: 'https://images.unsplash.com/photo-1544568100-847a948585b0?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/soda/pomegranete ginger soda.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFFB31217), Color(0xFFFF6B6B)],
       ),
@@ -1110,7 +1085,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Tutun meyvesi pulpası (3 yemek kaşığı)\n2. Şeker şurubu (2 yemek kaşıği)\n3. Limon suyu (1 yemek kaşığı)\n4. Maden suyu (150 ml)\n5. Buz (1 fincan)\n\nYapılış:\n1) Bardağa passion fruit pulpasını koy\n2) Şeker şurubu ve limon suyu ekle\n3) Buz dolu bardağa dök\n4) Maden suyu ekle\n5) Hafif karıştırarak servis et',
       ingredients: ['tutum meyvesi', 'şeker', 'limon', 'maden suyu'],
-      imageUrl: 'https://images.unsplash.com/photo-1556231669979-95d6773ae296?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/soda/passion fruit soda.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFFFFA500), Color(0xFFFFD700)],
       ),
@@ -1124,7 +1099,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Sıcak espresso (45 ml)\n2. İrlanda viskisi (45 ml)\n3. Şeker (1 yemek kaşığı)\n4. Krem şanti (30 g)\n\nYapılış:\n1) Bardağa espresso ve viskiyi ekle\n2) Şeker ekle ve karıştır\n3) Üzerine krem şanti örtücü tabaka olarak ekle\n4) Sıcak servis et',
       ingredients: ['espresso', 'viski', 'şeker', 'krem'],
-      imageUrl: 'https://images.unsplash.com/photo-1541182286-92d11f0efbf7?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/ıris coffee.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFF3E2723), Color(0xFF8D6E63)],
       ),
@@ -1137,7 +1112,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Espresso (30 ml)\n2. Steamed süt (30 ml)\n3. Süt köpüğü (5 ml)\n\nYapılış:\n1) Bardağa espresso ekle\n2) Eşit miktarda steamed sütü ekle\n3) Üzerine hafif köpük katı ekle\n4) Sıcak servis et',
       ingredients: ['espresso', 'süt'],
-      imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/cortada.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFF8B6F47), Color(0xFFD2B48C)],
       ),
@@ -1151,7 +1126,7 @@ class DrinkLocalSource {
       preparation:
           'Malzemelerin Sırası:\n1. Kivi (2 adet)\n2. Ananas (150 g)\n3. Yoğurt (150 g)\n4. Hindistancevizi sütü (100 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış:\n1) Kivi ve ananaları blenderda koy\n2) Yoğurt ve hindistancevizi sütü ekle\n3) Bal ekle ve pürüzsüz olana kadar karıştır\n4) Ananas dilimi ile servis et',
       ingredients: ['kivi', 'ananas', 'yoğurt', 'hindistancevizi sütü', 'bal'],
-      imageUrl: 'https://images.unsplash.com/photo-1611076857029-d8fb0018d693?q=80&w=1974&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/smoothie/kiwi pineapple smoothie.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFFFFA500), Color(0xFF90EE90)],
       ),
@@ -1163,8 +1138,14 @@ class DrinkLocalSource {
       description: 'Avokado ve çikolata ile kremsi, besleyici smoothie.',
       preparation:
           'Malzemelerin Sırası:\n1. Avokado (1/2)\n2. Kakao tozu (1 yemek kaşığı)\n3. Çikolata protein tozu (1 ölçek)\n4. Almond sütü (200 ml)\n5. Bal (1 yemek kaşığı)\n\nYapılış:\n1) Avokadoyu blenderda koy\n2) Kakao tozu ve protein tozu ekle\n3) Almond sütü ve bal ekle\n4) Pürüzsüz olana kadar çe\n5) Çikolata serpiştirerek servis et',
-      ingredients: ['avokado', 'kakao tozu', 'protein tozu', 'almond sütü', 'bal'],
-      imageUrl: 'https://images.unsplash.com/photo-1591957840635-bfd9d25b90c7?q=80&w=1974&auto=format&fit=crop',
+      ingredients: [
+        'avokado',
+        'kakao tozu',
+        'protein tozu',
+        'almond sütü',
+        'bal'
+      ],
+      imageUrl: 'Assets/Categories/smoothie/avocada chocolate smoothie.jpg',
       gradient: LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFF6B4C2F)],
       ),
@@ -1174,16 +1155,23 @@ class DrinkLocalSource {
       id: 'turkish-coffee',
       title: 'Türk Kahvesi',
       category: 'Kahve',
-      description: 'Geleneksel koyubaşlı Türk kahvesi, sabah enerjisi için ideal.',
-      history: 'Türk kahvesi 16. yüzyılda Osmanlı İmparatorluğu\'na gelmiş ve o günden bu yana bir geleneğe dönüşmüştür.',
+      description:
+          'Geleneksel koyubaşlı Türk kahvesi, sabah enerjisi için ideal.',
+      history:
+          'Türk kahvesi 16. yüzyılda Osmanlı İmparatorluğu\'na gelmiş ve o günden bu yana bir geleneğe dönüşmüştür.',
       temperature: 'Sıcak',
-      pros: ['Yüksek antioksidan içeriği', 'Sosyal bir deneyim', 'Kalp sağlığına iyi'],
+      pros: [
+        'Yüksek antioksidan içeriği',
+        'Sosyal bir deneyim',
+        'Kalp sağlığına iyi'
+      ],
       cons: ['Çok kafein içerir', 'Mide hassasiyeti olanlar için zor'],
       tip: 'Cezve dörtlü kupa ile pişirin, 3 kez kaynatın.',
-      preparation: '1. Kahve (1 çay kaşığı)\n2. Su (1 fincan)\n3. Şeker (istediğiniz)\n\nYapılış: Cezveye su ve kahve ekleyip 3 kez kaynatın.',
+      preparation:
+          '1. Kahve (1 çay kaşığı)\n2. Su (1 fincan)\n3. Şeker (istediğiniz)\n\nYapılış: Cezveye su ve kahve ekleyip 3 kez kaynatın.',
       ingredients: ['kahve', 'su', 'şeker'],
-      imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF2C1810), Color(0xFF3E2723)]),
+      imageUrl: 'Assets/Categories/kahve/türk kahvesi.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['kafein'],
       alternatives: {'şeker': 'honey', 'su': 'sütlü su'},
     ),
@@ -1191,16 +1179,26 @@ class DrinkLocalSource {
       id: 'cortado-coffee',
       title: 'Cortado',
       category: 'Kahve',
-      description: 'Espresso ve süt eşit oranda karışımı, dengeyi mükemmel kılar.',
-      history: 'İspanya\'dan gelen bu kahve türü, espresso ve süt arasında mükemmel dengeyi sunar.',
+      description:
+          'Espresso ve süt eşit oranda karışımı, dengeyi mükemmel kılar.',
+      history:
+          'İspanya\'dan gelen bu kahve türü, espresso ve süt arasında mükemmel dengeyi sunar.',
       temperature: 'Sıcak',
-      pros: ['Dengeli kahve tadı', 'Az kalori (sütlü versiyonda)', 'Orta kafein seviyesi'],
-      cons: ['Süt hassasiyeti olanlar için sorun', 'Az malzeme ile sınırlı tadlar'],
+      pros: [
+        'Dengeli kahve tadı',
+        'Az kalori (sütlü versiyonda)',
+        'Orta kafein seviyesi'
+      ],
+      cons: [
+        'Süt hassasiyeti olanlar için sorun',
+        'Az malzeme ile sınırlı tadlar'
+      ],
       tip: 'Espresso ve sütü 1:1 oranında karıştırın, köpük az olsun.',
-      preparation: '1. Espresso (1 shot, 30 ml)\n2. Sıcak süt (30 ml)\n\nYapılış: Espresso yapın, eşit miktarda sütü dökin.',
+      preparation:
+          '1. Espresso (1 shot, 30 ml)\n2. Sıcak süt (30 ml)\n\nYapılış: Espresso yapın, eşit miktarda sütü dökin.',
       ingredients: ['espresso', 'süt'],
-      imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFA0522D)]),
+      imageUrl: 'Assets/Categories/kahve/cortada.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['kafein', 'süt'],
       alternatives: {'süt': 'vegan süt', 'espresso': 'decaf espresso'},
     ),
@@ -1208,14 +1206,17 @@ class DrinkLocalSource {
       id: 'affogato',
       title: 'Affogato',
       category: 'Kahve',
-      description: 'Vanilla dondurmasının üzerine sıcak espresso dökülerek hazırlanan tatlı içecek.',
-      history: 'İtalya\'dan gelen bu tatlı kahve çeşidi, dondurma ve kahvenin mükemmel kombinasyonudur.',
+      description:
+          'Vanilla dondurmasının üzerine sıcak espresso dökülerek hazırlanan tatlı içecek.',
+      history:
+          'İtalya\'dan gelen bu tatlı kahve çeşidi, dondurma ve kahvenin mükemmel kombinasyonudur.',
       pros: ['Tatlı ve enerji verici', 'Hızlı ve kolay', 'Özel bir tadı var'],
       cons: ['Yüksek kalori', 'Şeker açısından zengin'],
       tip: 'Dondurma soğuk, espresso çok sıcak olmalı kontrast için.',
-      preparation: '1. Vanilla dondurması (2 top)\n2. Espresso (60 ml, sıcak)\n\nYapılış: Fincana dondurma koyup sıcak espresso dökin.',
+      preparation:
+          '1. Vanilla dondurması (2 top)\n2. Espresso (60 ml, sıcak)\n\nYapılış: Fincana dondurma koyup sıcak espresso dökin.',
       ingredients: ['dondurma', 'espresso'],
-      imageUrl: 'https://images.unsplash.com/photo-1517701550927-30cf4ba20d4d?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/affogato.jpg',
       gradient: LinearGradient(colors: [Color(0xFFF5DEB3), Color(0xFF8B4513)]),
       allergens: ['kafein', 'süt', 'şeker'],
       alternatives: {'dondurma': 'vegan dondurma', 'şeker': 'stevia'},
@@ -1226,31 +1227,40 @@ class DrinkLocalSource {
       title: 'Elma Tarçın Çayı',
       category: 'Çay',
       description: 'Elma ve tarçın ile ısıtan rahatlatıcı çay.',
-      history: 'Geleneksel meyveli çaylar, Orta Doğu\'da yüzyıllardır içilmektedir.',
+      history:
+          'Geleneksel meyveli çaylar, Orta Doğu\'da yüzyıllardır içilmektedir.',
       temperature: 'Sıcak',
       pros: ['Soğuk algınlığına iyi', 'Sindirimi iyileştirir', 'Doğal tatı'],
       cons: ['Hassas dişliler için asitli'],
       tip: 'Elmaları küçük parçalar halinde kesin, tarçını az kullanın.',
-      preparation: '1. Elma (1 adet, dilimlenmiş)\n2. Tarçın çubuğu (1)\n3. Sıcak su (200 ml)\n4. Bal (1 çay kaşığı)\n\nYapılış: Suyu kaynatın, elma ve tarçın ekleyin, 5 dk demleyin.',
+      preparation:
+          '1. Elma (1 adet, dilimlenmiş)\n2. Tarçın çubuğu (1)\n3. Sıcak su (200 ml)\n4. Bal (1 çay kaşığı)\n\nYapılış: Suyu kaynatın, elma ve tarçın ekleyin, 5 dk demleyin.',
       ingredients: ['elma', 'tarçın', 'su', 'bal'],
-      imageUrl: 'https://images.unsplash.com/photo-1597318619738-1176f58e8c53?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFDC143C), Color(0xFFA52A2A)]),
+      imageUrl: 'Assets/Categories/çay/elma tarçın çay.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'bal': 'şeker', 'tarçın': 'zencefil'},
     ),
     DrinkModel(
       id: 'hibiscus-tea-cold',
       title: 'Kırmızı Çiçek Çayı (Soğuk)',
       category: 'Çay',
-      description: 'Hibiskus çiçeği ile yapılan, ferah ve antioksidan açısından zengin soğuk çay.',
-      history: 'Mısır\'da geleneksel olarak içilen hibiskus çayı, dünyada popüler hale gelmiştir.',
+      description:
+          'Hibiskus çiçeği ile yapılan, ferah ve antioksidan açısından zengin soğuk çay.',
+      history:
+          'Mısır\'da geleneksel olarak içilen hibiskus çayı, dünyada popüler hale gelmiştir.',
       temperature: 'Soğuk',
-      pros: ['Antioksidan açısından çok zengin', 'Kan basıncını düşürür', 'Kalorisi çok az'],
+      pros: [
+        'Antioksidan açısından çok zengin',
+        'Kan basıncını düşürür',
+        'Kalorisi çok az'
+      ],
       cons: ['Asitli olabilir', 'İlaç etkileşimleri olabilir'],
       tip: 'Soğuk pişirme yöntemi ile 8 saat bekletebilirsiniz.',
-      preparation: '1. Hibiskus çiçekleri (2 çay kaşığı)\n2. Soğuk su (250 ml)\n3. Limon (1/2)\n4. Şeker/bal (isteğe bağlı)\n\nYapılış: Çiçekleri suya koyun, 15 dk bekletin, süzün, limon ekleyin.',
+      preparation:
+          '1. Hibiskus çiçekleri (2 çay kaşığı)\n2. Soğuk su (250 ml)\n3. Limon (1/2)\n4. Şeker/bal (isteğe bağlı)\n\nYapılış: Çiçekleri suya koyun, 15 dk bekletin, süzün, limon ekleyin.',
       ingredients: ['hibiskus', 'su', 'limon'],
-      imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFE91E63), Color(0xFF9C27B0)]),
+      imageUrl: 'Assets/Categories/çay/kırmızı çiçek çayı.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'şeker': 'stevia', 'limon': 'lime'},
     ),
     // ── YENİ SMOOTHIE'LER ─────────────────────────────────────────────────
@@ -1259,15 +1269,31 @@ class DrinkLocalSource {
       title: 'Protein Berry Smoothie',
       category: 'Smoothie',
       description: 'Çoğul meyveler ve protein ile kas geliştirme smoothie\'si.',
-      history: 'Fitness hareketiyle beraber protein smoothieleri popüler hale gelmiştir.',
+      history:
+          'Fitness hareketiyle beraber protein smoothieleri popüler hale gelmiştir.',
       temperature: 'Soğuk',
-      pros: ['Kas gelişimine yardımcı', 'Dolu doyurucu', 'Antoksidanlar içerir'],
-      cons: ['Yüksek protein alımı her zaman iyi değil', 'Sindirimi ağır olabilir'],
+      pros: [
+        'Kas gelişimine yardımcı',
+        'Dolu doyurucu',
+        'Antoksidanlar içerir'
+      ],
+      cons: [
+        'Yüksek protein alımı her zaman iyi değil',
+        'Sindirimi ağır olabilir'
+      ],
       tip: 'Buz eklemeden smoothie daha konsantre olur.',
-      preparation: '1. Karışık meyveler (1 fincan: çilek, böğürtlen, mirtil)\n2. Protein tozu (1 ölçek)\n3. Yunani yoğurdu (150 g)\n4. Almond sütü (200 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış: Tüm malzemeleri blenderda çekin.',
-      ingredients: ['çilek', 'böğürtlen', 'mirtil', 'protein tozu', 'yoğurt', 'almond sütü'],
-      imageUrl: 'https://images.unsplash.com/photo-1579954614171-828bda8d0978?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF8B008B), Color(0xFFFF1493)]),
+      preparation:
+          '1. Karışık meyveler (1 fincan: çilek, böğürtlen, mirtil)\n2. Protein tozu (1 ölçek)\n3. Yunani yoğurdu (150 g)\n4. Almond sütü (200 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış: Tüm malzemeleri blenderda çekin.',
+      ingredients: [
+        'çilek',
+        'böğürtlen',
+        'mirtil',
+        'protein tozu',
+        'yoğurt',
+        'almond sütü'
+      ],
+      imageUrl: 'Assets/Categories/smoothie/protein bery smoothie.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['laktoz (yoğurt)', 'gluten (protein tozu içerebilir)'],
       alternatives: {'yoğurt': 'coconut yogurt', 'almond sütü': 'oat milk'},
     ),
@@ -1276,15 +1302,31 @@ class DrinkLocalSource {
       title: 'Yeşil Detox Smoothie',
       category: 'Smoothie',
       description: 'Yeşil yapraklı sebzeler ile detoksifikasyon smoothie\'si.',
-      history: 'Modern detoks hareketinin bir parçası, sağlık bilinci ile popüler hale gelmiştir.',
+      history:
+          'Modern detoks hareketinin bir parçası, sağlık bilinci ile popüler hale gelmiştir.',
       temperature: 'Soğuk',
-      pros: ['Detoksifikasyon', 'Enerji verici', 'Vitamin ve mineral açısından zengin'],
-      cons: ['Tadı kuvvetli olabilir', 'Yüksek klorofil içeriği sindirime zor gelebilir'],
+      pros: [
+        'Detoksifikasyon',
+        'Enerji verici',
+        'Vitamin ve mineral açısından zengin'
+      ],
+      cons: [
+        'Tadı kuvvetli olabilir',
+        'Yüksek klorofil içeriği sindirime zor gelebilir'
+      ],
       tip: 'Tatlı elma ekleyerek tadını hafifletebilirsiniz.',
-      preparation: '1. Ispanak (1 kasa)\n2. Yaşıl elma (1)\n3. Kıvırcık salata (1/2 kasa)\n4. Limon (1/2)\n5. Zencefil (1 parmak)\n6. Coconut sütü (200 ml)\n7. Su (100 ml)\n\nYapılış: Yaprakları koyun, meyveler ekleyin, sıvı döküp çekin.',
-      ingredients: ['ispanak', 'yeşil elma', 'kıvırcık salata', 'limon', 'zencefil', 'coconut sütü'],
-      imageUrl: 'https://images.unsplash.com/photo-1568270693211-0d3e2dde7217?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF228B22), Color(0xFF90EE90)]),
+      preparation:
+          '1. Ispanak (1 kasa)\n2. Yaşıl elma (1)\n3. Kıvırcık salata (1/2 kasa)\n4. Limon (1/2)\n5. Zencefil (1 parmak)\n6. Coconut sütü (200 ml)\n7. Su (100 ml)\n\nYapılış: Yaprakları koyun, meyveler ekleyin, sıvı döküp çekin.',
+      ingredients: [
+        'ispanak',
+        'yeşil elma',
+        'kıvırcık salata',
+        'limon',
+        'zencefil',
+        'coconut sütü'
+      ],
+      imageUrl: 'Assets/Categories/fit/green detox smoothie.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'coconut sütü': 'almond milk', 'limon': 'lime'},
     ),
     // ── YENİ FİT DRINKS ──────────────────────────────────────────────────
@@ -1292,32 +1334,52 @@ class DrinkLocalSource {
       id: 'electrolyte-coconut-water',
       title: 'Hindistancevizi Suyu Elektrolit',
       category: 'Fit',
-      description: 'Doğal elektrolit kaynağı, antrenmandan sonra yenileme içeceği.',
-      history: 'Hindistancevizi suyu tropik ülkelerde geleneksel içecektir, recent olarak fitness alanında popüler olmuştur.',
+      description:
+          'Doğal elektrolit kaynağı, antrenmandan sonra yenileme içeceği.',
+      history:
+          'Hindistancevizi suyu tropik ülkelerde geleneksel içecektir, recent olarak fitness alanında popüler olmuştur.',
       temperature: 'Soğuk',
-      pros: ['Doğal elektrolit', 'Dehidratasyonu giderir', 'Potasyum açısından zengin'],
-      cons: ['Şeker açısından bazı ticari versiyonlar yüksek', 'Bazı kişilerde mide ağrısı yapabilir'],
+      pros: [
+        'Doğal elektrolit',
+        'Dehidratasyonu giderir',
+        'Potasyum açısından zengin'
+      ],
+      cons: [
+        'Şeker açısından bazı ticari versiyonlar yüksek',
+        'Bazı kişilerde mide ağrısı yapabilir'
+      ],
       tip: 'Taze hindistancevizinden direkt suyu çıkartmak en iyisidir.',
-      preparation: '1. Hindistancevizi suyu (250 ml)\n2. Elektrolit tozu (1 paket)\n3. Limon (1/4)\n4. Buz (1 fincan)\n\nYapılış: Hindistancevizi suyunu buz ile dökerek elektrolit tozu ve limon ekleyin.',
+      preparation:
+          '1. Hindistancevizi suyu (250 ml)\n2. Elektrolit tozu (1 paket)\n3. Limon (1/4)\n4. Buz (1 fincan)\n\nYapılış: Hindistancevizi suyunu buz ile dökerek elektrolit tozu ve limon ekleyin.',
       ingredients: ['hindistancevizi suyu', 'elektrolit tozu', 'limon', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1590954206171-04511e14c0e1?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFA0826D)]),
+      imageUrl: 'Assets/Categories/fit/hindistan cevizi suyu elektrolit.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'hindistancevizi suyu': 'spor içeceği'},
     ),
     DrinkModel(
       id: 'chia-seed-lemon-water',
       title: 'Chia Tohumlu Limonata',
       category: 'Fit',
-      description: 'Chia tohumlu besleyici limonata, metabolizmayı hızlandırıcı.',
-      history: 'Chia tohumu Aztekler tarafından kullanıldı, modern fitness hareketinde popüler hale geldi.',
+      description:
+          'Chia tohumlu besleyici limonata, metabolizmayı hızlandırıcı.',
+      history:
+          'Chia tohumu Aztekler tarafından kullanıldı, modern fitness hareketinde popüler hale geldi.',
       temperature: 'Soğuk',
-      pros: ['Metabolizmayı hızlandırır', 'Dolu doyurucu', 'Omega-3 açısından zengin'],
-      cons: ['Chia tohumları su çekebilir, pişemeden tüketilmeli', 'Bazı kişilerde alerjik reaksiyon'],
+      pros: [
+        'Metabolizmayı hızlandırır',
+        'Dolu doyurucu',
+        'Omega-3 açısından zengin'
+      ],
+      cons: [
+        'Chia tohumları su çekebilir, pişemeden tüketilmeli',
+        'Bazı kişilerde alerjik reaksiyon'
+      ],
       tip: 'Chia tohumlarını önceden 5 dakika su ile nemlendir.',
-      preparation: '1. Su (250 ml)\n2. Limon (1/2)\n3. Chia tohumları (1 çay kaşığı)\n4. Stevia/şeker (isteğe bağlı)\n5. Mint (isteğe bağlı)\n\nYapılış: Chia tohumlarını suya koyup 5 dk beklet, limon ve şeker ekle.',
+      preparation:
+          '1. Su (250 ml)\n2. Limon (1/2)\n3. Chia tohumları (1 çay kaşığı)\n4. Stevia/şeker (isteğe bağlı)\n5. Mint (isteğe bağlı)\n\nYapılış: Chia tohumlarını suya koyup 5 dk beklet, limon ve şeker ekle.',
       ingredients: ['su', 'limon', 'chia tohumları', 'stevia'],
-      imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd63c69?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF32CD32), Color(0xFF90EE90)]),
+      imageUrl: 'Assets/Categories/fit/chia tohumlu limonata.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'stevia': 'bal', 'chia': 'flax tohumu'},
     ),
     // ── YENİ SODAxyz ──────────────────────────────────────────────────────
@@ -1326,15 +1388,21 @@ class DrinkLocalSource {
       title: 'Ev Yapımı Ginger Ale',
       category: 'Soda',
       description: 'Taze zencefil ve limon ile yapılmış soda.',
-      history: 'Ginger Ale İrlanda\'dan gelmiştir, asıl sağlık faydaları için yapılmıştır.',
+      history:
+          'Ginger Ale İrlanda\'dan gelmiştir, asıl sağlık faydaları için yapılmıştır.',
       temperature: 'Soğuk',
-      pros: ['Sindirimi iyileştirir', 'Doğal ingredientler', 'Bulantıya iyi gelir'],
+      pros: [
+        'Sindirimi iyileştirir',
+        'Doğal ingredientler',
+        'Bulantıya iyi gelir'
+      ],
       cons: ['Taze zencefil kolay bulunmayabilir', 'Tadı kuvvetli olabilir'],
       tip: 'Zencefil suyu hafif acı olmadan hazırlanmalı.',
-      preparation: '1. Taze zencefil (100 g, rendelenmesi)\n2. Limon (2)\n3. Şeker (2 çay kaşığı)\n4. Su (500 ml)\n5. Soda suyu (250 ml)\n\nYapılış: Zencefili suya koyup kaynatın, soğutun, limon ekleyin, soda suyu dökin.',
+      preparation:
+          '1. Taze zencefil (100 g, rendelenmesi)\n2. Limon (2)\n3. Şeker (2 çay kaşığı)\n4. Su (500 ml)\n5. Soda suyu (250 ml)\n\nYapılış: Zencefili suya koyup kaynatın, soğutun, limon ekleyin, soda suyu dökin.',
       ingredients: ['zencefil', 'limon', 'şeker', 'su', 'soda suyu'],
-      imageUrl: 'https://images.unsplash.com/photo-1554680629-6b8b3dddb4d0?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
+      imageUrl: 'Assets/Categories/soda/ginger ale.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'şeker': 'stevia', 'zencefil': 'limon'},
     ),
     // ── YENİ KOKTEYL ──────────────────────────────────────────────────────
@@ -1343,15 +1411,21 @@ class DrinkLocalSource {
       title: 'Virgin Mojito',
       category: 'Kokteyl',
       description: 'Alkosüz Mojito, ferah ve yaz içeceği.',
-      history: 'Mojito Küba\'dan gelmiştir, Virgin versiyonu alkol tarafından uzak duranlar için.',
+      history:
+          'Mojito Küba\'dan gelmiştir, Virgin versiyonu alkol tarafından uzak duranlar için.',
       temperature: 'Soğuk',
-      pros: ['Ferah ve enerji verici', 'Hiçbir alkol yok', 'Doğal ingredientler'],
+      pros: [
+        'Ferah ve enerji verici',
+        'Hiçbir alkol yok',
+        'Doğal ingredientler'
+      ],
       cons: ['Şeker açısından yüksek', 'Mint bulunması zorunlu'],
       tip: 'Mint yapraklarını ezmeyin, hafif bastırın sadece.',
-      preparation: '1. Mint yaprakları (8-10)\n2. Lime (1/2)\n3. Şeker (1 çay kaşığı)\n4. Soda suyu (200 ml)\n5. Buz (1 fincan)\n\nYapılış: Bardağa mint koyup hafif bastır, lime sık, şeker ekle, buz dök, soda suyu döküp karıştır.',
+      preparation:
+          '1. Mint yaprakları (8-10)\n2. Lime (1/2)\n3. Şeker (1 çay kaşığı)\n4. Soda suyu (200 ml)\n5. Buz (1 fincan)\n\nYapılış: Bardağa mint koyup hafif bastır, lime sık, şeker ekle, buz dök, soda suyu döküp karıştır.',
       ingredients: ['mint', 'lime', 'şeker', 'soda suyu', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1572902918926-04ec494cd259?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF228B22), Color(0xFF00CED1)]),
+      imageUrl: 'Assets/Categories/kokteyl/virgin mojito.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'şeker': 'stevia', 'soda suyu': 'ginger ale'},
     ),
     DrinkModel(
@@ -1359,15 +1433,21 @@ class DrinkLocalSource {
       title: 'Çilek Passion Fruit Punch',
       category: 'Kokteyl',
       description: 'Çilek ve passion fruit ile tropik punch içeceği.',
-      history: 'Punch içecekleri tropik ülkelerde sosyal etkinliklerde gelenekseldir.',
+      history:
+          'Punch içecekleri tropik ülkelerde sosyal etkinliklerde gelenekseldir.',
       temperature: 'Soğuk',
       pros: ['Tropik tatı', 'Vitamin C açısından zengin', 'Grup için ideal'],
-      cons: ['Şeker açısından yüksek', 'Taze passion fruit maliyeti', 'Prep zamanı gerekli'],
+      cons: [
+        'Şeker açısından yüksek',
+        'Taze passion fruit maliyeti',
+        'Prep zamanı gerekli'
+      ],
       tip: 'Passion fruit suyu taze sıkılmış olmalı.',
-      preparation: '1. Çilek (1 fincan, dilimlenmiş)\n2. Passion fruit (4 adet, suyu)\n3. Oran suyu (1 fincan)\n4. Şurup (2 çay kaşığı)\n5. Buz\n6. Mint (garnish)\n\nYapılış: Çilekleri pureleyin, passion fruit suyu ekleyin, oran suyu ve şurup döküp buz ekleyin.',
+      preparation:
+          '1. Çilek (1 fincan, dilimlenmiş)\n2. Passion fruit (4 adet, suyu)\n3. Oran suyu (1 fincan)\n4. Şurup (2 çay kaşığı)\n5. Buz\n6. Mint (garnish)\n\nYapılış: Çilekleri pureleyin, passion fruit suyu ekleyin, oran suyu ve şurup döküp buz ekleyin.',
       ingredients: ['çilek', 'passion fruit', 'oran suyu', 'şurup'],
-      imageUrl: 'https://images.unsplash.com/photo-1597507784725-e572b0e23cb3?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFF69B4), Color(0xFFFFA500)]),
+      imageUrl: 'Assets/Categories/kokteyl/çilek passion fruit punch.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'passion fruit': 'mango', 'çilek': 'karpuz'},
     ),
     // ── YENİ MATCHA ───────────────────────────────────────────────────────
@@ -1376,14 +1456,19 @@ class DrinkLocalSource {
       title: 'Vegan Matcha Latte',
       category: 'Matcha',
       description: 'Vegan sütü ile yapılmış matcha latte.',
-      history: 'Matcha latte Batı\'da popüler bir trend olmuştur, vegan versiyonu çeşitliliği artırır.',
+      history:
+          'Matcha latte Batı\'da popüler bir trend olmuştur, vegan versiyonu çeşitliliği artırır.',
       temperature: 'Sıcak',
       pros: ['Laktoz-free', 'Antoksidanlar zengin', 'Vegan dostça'],
-      cons: ['Lezzetler süt versiyonundan farklı', 'Bazı vegan sütler daha pahallı'],
+      cons: [
+        'Lezzetler süt versiyonundan farklı',
+        'Bazı vegan sütler daha pahallı'
+      ],
       tip: 'Oat milk en iyi foam yapımı sağlar.',
-      preparation: '1. Matcha tozu (1-2 çay kaşığı)\n2. Sıcak su (50 ml)\n3. Vegan süt (150 ml, ısıtılmış)\n4. Bal (isteğe bağlı)\n\nYapılış: Matcha tozunu sıcak su ile (çorbacı taş öpüştürecek) karıştır, vegan sütü ekle ve ısıt.',
+      preparation:
+          '1. Matcha tozu (1-2 çay kaşığı)\n2. Sıcak su (50 ml)\n3. Vegan süt (150 ml, ısıtılmış)\n4. Bal (isteğe bağlı)\n\nYapılış: Matcha tozunu sıcak su ile (çorbacı taş öpüştürecek) karıştır, vegan sütü ekle ve ısıt.',
       ingredients: ['matcha tozu', 'su', 'vegan süt', 'bal'],
-      imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/photos/matcha.jpg',
       gradient: LinearGradient(colors: [Color(0xFF7CFC00), Color(0xFF32CD32)]),
       alternatives: {'oat milk': 'almond milk', 'bal': 'stevia'},
     ),
@@ -1392,14 +1477,16 @@ class DrinkLocalSource {
       title: 'Soğuk Matcha Limonata',
       category: 'Matcha',
       description: 'Matcha ve limon\'un ferah kombinasyonu.',
-      history: 'Modern matcha tüketiminin yeni bir varyasyonu, yaz içeceği olarak popülerleşti.',
+      history:
+          'Modern matcha tüketiminin yeni bir varyasyonu, yaz içeceği olarak popülerleşti.',
       temperature: 'Soğuk',
       pros: ['Ferah ve enerji verici', 'Antoksidanlar zengin', 'Doğal tatı'],
       cons: ['Limonun tat matcha ile çakışabilir', 'Hazırlama detaylı'],
       tip: 'Matcha suyu ilk olarak soğumaya bırakın, sonra karıştırın.',
-      preparation: '1. Matcha tozu (1 çay kaşığı)\n2. Sıcak su (50 ml)\n3. Limon suyu (sıkılmış, 50 ml)\n4. Şeker şurubu (2 çay kaşığı)\n5. Buz (1 fincan)\n6. Su (100 ml)\n\nYapılış: Matcha\'yı sıcak su ile çekin, soğut, limon ve şurup ekle, buz dökerek sun.',
+      preparation:
+          '1. Matcha tozu (1 çay kaşığı)\n2. Sıcak su (50 ml)\n3. Limon suyu (sıkılmış, 50 ml)\n4. Şeker şurubu (2 çay kaşığı)\n5. Buz (1 fincan)\n6. Su (100 ml)\n\nYapılış: Matcha\'yı sıcak su ile çekin, soğut, limon ve şurup ekle, buz dökerek sun.',
       ingredients: ['matcha tozu', 'su', 'limon', 'şeker şurubu'],
-      imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd63c69?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/photos/matcha.jpg',
       gradient: LinearGradient(colors: [Color(0xFF7CFC00), Color(0xFFFFD700)]),
       alternatives: {'şeker şurubu': 'stevia', 'limon': 'lime'},
     ),
@@ -1409,15 +1496,21 @@ class DrinkLocalSource {
       title: 'Mango Sorbet Frozen',
       category: 'Frozen',
       description: 'Mango ile yapılmış dondurulmuş şerbet içeceği.',
-      history: 'Sorbetler Orta Doğu\'dan gelmiş, buzlu bir serinletme yöntemidir.',
+      history:
+          'Sorbetler Orta Doğu\'dan gelmiş, buzlu bir serinletme yöntemidir.',
       temperature: 'Soğuk',
-      pros: ['Yazlık ferah', 'Doğal meyve tadı', 'Şekersiz versiyonu yapılabilir'],
+      pros: [
+        'Yazlık ferah',
+        'Doğal meyve tadı',
+        'Şekersiz versiyonu yapılabilir'
+      ],
       cons: ['Yüksek kalori (şeker)', 'Mango maliyeti'],
       tip: 'Taze mango en iyi sonuç verir.',
-      preparation: '1. Mango (2 adet, dilimlenmiş)\n2. Şeker (3 çay kaşığı)\n3. Limon (1/2)\n4. Buz\n\nYapılış: Mangolar, şeker ve limonu blenderda dön, buzlu slushi elde et.',
+      preparation:
+          '1. Mango (2 adet, dilimlenmiş)\n2. Şeker (3 çay kaşığı)\n3. Limon (1/2)\n4. Buz\n\nYapılış: Mangolar, şeker ve limonu blenderda dön, buzlu slushi elde et.',
       ingredients: ['mango', 'şeker', 'limon', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1590508831066-41095ee5e1ca?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFA500), Color(0xFFFF6347)]),
+      imageUrl: 'Assets/Categories/frozen/mango frozen.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'mango': 'ananas', 'şeker': 'stevia'},
     ),
     DrinkModel(
@@ -1427,13 +1520,18 @@ class DrinkLocalSource {
       description: 'Karpuz ve mentol ile yapılmış erişmiş buz içeceği.',
       history: 'Yazın yazın en sevilen serinletici içeceklerden biridir.',
       temperature: 'Soğuk',
-      pros: ['Doğal serinlik', 'Hidratasyonu destekler', 'Az kalori (şekersiz)'],
+      pros: [
+        'Doğal serinlik',
+        'Hidratasyonu destekler',
+        'Az kalori (şekersiz)'
+      ],
       cons: ['Sezonluk (yaz)', 'Hazırlama zamanı gerekli'],
       tip: 'Karpuzun tohlumsuz kısmını kullanın.',
-      preparation: '1. Karpuz (3 fincan, küplü)\n2. Mint yaprakları (10)\n3. Limon (1/4)\n4. Şeker (1 çay kaşığı, isteğe bağlı)\n5. Buz\n\nYapılış: Karpuz ve mint\'i blenderda dön, limon ekle, buz dökerek servis et.',
+      preparation:
+          '1. Karpuz (3 fincan, küplü)\n2. Mint yaprakları (10)\n3. Limon (1/4)\n4. Şeker (1 çay kaşığı, isteğe bağlı)\n5. Buz\n\nYapılış: Karpuz ve mint\'i blenderda dön, limon ekle, buz dökerek servis et.',
       ingredients: ['karpuz', 'mint', 'limon', 'şeker'],
-      imageUrl: 'https://images.unsplash.com/photo-1545232822-87f7d564b1eb?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF228B22), Color(0xFFFF6347)]),
+      imageUrl: 'Assets/Categories/frozen/watermelon slushi.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'karpuz': 'ananas', 'mint': 'dill'},
     ),
     // ── EKLENEN POPÜLER İÇECEKLER ──────────────────────────────────────
@@ -1447,10 +1545,11 @@ class DrinkLocalSource {
       pros: ['Antioksidanlar açısından zengin', 'Doğal tat', 'Sağlıklı'],
       cons: ['Çiçek bulunması zorunlu', 'Asitli olabilir'],
       tip: 'Taze hibiskus çiçekleri en iyisidir.',
-      preparation: '1. Hibiskus (3 çiçek)\n2. Limon (2)\n3. Su (500 ml)\n4. Şeker (2 çay kaşığı)\n5. Buz\n\nYapılış: Hibiskusu sıcak suya koyup 10 dk beklet, soğut, limon ekle.',
+      preparation:
+          '1. Hibiskus (3 çiçek)\n2. Limon (2)\n3. Su (500 ml)\n4. Şeker (2 çay kaşığı)\n5. Buz\n\nYapılış: Hibiskusu sıcak suya koyup 10 dk beklet, soğut, limon ekle.',
       ingredients: ['hibiskus', 'limon', 'su', 'şeker'],
-      imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFE91E63), Color(0xFFFF6F00)]),
+      imageUrl: 'Assets/Categories/soda/hibiskus limonata.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'şeker': 'stevia'},
     ),
     DrinkModel(
@@ -1460,13 +1559,18 @@ class DrinkLocalSource {
       description: 'Zerdeçal ve coconut sütü ile anti-inflamatuar içecek.',
       history: 'Geleneksel golden milk\'in modern, soğuk versiyonu.',
       temperature: 'Soğuk',
-      pros: ['Anti-inflamatuar özellikler', 'Bağışıklığı güçlendirir', 'Fırsat enerjisi'],
+      pros: [
+        'Anti-inflamatuar özellikler',
+        'Bağışıklığı güçlendirir',
+        'Fırsat enerjisi'
+      ],
       cons: ['Tadı kuvvetli', 'Bazı kişilerde alerjik reaksiyon'],
       tip: 'Birkaç damla siyah biber hayati!',
-      preparation: '1. Zerdeçal (1/2 çay kaşığı)\n2. Coconut sütü (150 ml)\n3. Bal (1 çay kaşığı)\n4. Siyah biber (birkaç tane)\n5. Buz\n\nYapılış: Zerdeçal ve sıcak biraz suyu karıştır, coconut sütü ve buz ekle.',
+      preparation:
+          '1. Zerdeçal (1/2 çay kaşığı)\n2. Coconut sütü (150 ml)\n3. Bal (1 çay kaşığı)\n4. Siyah biber (birkaç tane)\n5. Buz\n\nYapılış: Zerdeçal ve sıcak biraz suyu karıştır, coconut sütü ve buz ekle.',
       ingredients: ['zerdeçal', 'coconut sütü', 'bal', 'siyah biber'],
-      imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd63c69?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFFFA500)]),
+      imageUrl: 'Assets/Categories/fit/soğuk zerdeçal latte.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'coconut sütü': 'almond milk', 'bal': 'stevia'},
     ),
     DrinkModel(
@@ -1479,10 +1583,11 @@ class DrinkLocalSource {
       pros: ['Doğal şeftali tatı', 'Kalorisi düşük', 'Ferah'],
       cons: ['Taze şeftali sezonluk', 'Hazırlama zamanı gerekli'],
       tip: 'Dondurulmuş şeftali da kullanabilirsiniz.',
-      preparation: '1. Şeftali (2 adet, dilimlenmiş)\n2. Siyah çay (1 çanta)\n3. Sıcak su (300 ml)\n4. Limon (1/4)\n5. Buz\n\nYapılış: Çayı demlendikten sonra şeftaliyi koyun, soğutun, limon ve buz ekleyin.',
+      preparation:
+          '1. Şeftali (2 adet, dilimlenmiş)\n2. Siyah çay (1 çanta)\n3. Sıcak su (300 ml)\n4. Limon (1/4)\n5. Buz\n\nYapılış: Çayı demlendikten sonra şeftaliyi koyun, soğutun, limon ve buz ekleyin.',
       ingredients: ['şeftali', 'çay', 'su', 'limon'],
-      imageUrl: 'https://images.unsplash.com/photo-1597318619738-1176f58e8c53?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFDAB9), Color(0xFFFFA07A)]),
+      imageUrl: 'Assets/Categories/çay/şeftali soğuk çayı.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'şeftali': 'nektarin', 'limon': 'lime'},
     ),
     DrinkModel(
@@ -1492,13 +1597,18 @@ class DrinkLocalSource {
       description: 'Mango ve yoğurt ile yapılmış hint içeceği.',
       history: 'Hindistan\'ın geleneksel soğuk içeceğidir, yazda popülerdir.',
       temperature: 'Soğuk',
-      pros: ['Yoğurt probiyotikler sağlar', 'Mango Vitamin C açısından zengin', 'Doyurucu'],
+      pros: [
+        'Yoğurt probiyotikler sağlar',
+        'Mango Vitamin C açısından zengin',
+        'Doyurucu'
+      ],
       cons: ['Kalori açısından yüksek', 'Laktoz (yoğurttan)'],
       tip: 'Taze mango en iyi sonuç verir.',
-      preparation: '1. Mango (1 fincan, dilimlenmiş)\n2. Yunani yoğurdu (150 g)\n3. Su (100 ml)\n4. Bal (1 çay kaşığı)\n5. Kardamom (birkaç tane)\n\nYapılış: Tüm malzemeleri blenderda çekin, buz ekleyerek servis edin.',
+      preparation:
+          '1. Mango (1 fincan, dilimlenmiş)\n2. Yunani yoğurdu (150 g)\n3. Su (100 ml)\n4. Bal (1 çay kaşığı)\n5. Kardamom (birkaç tane)\n\nYapılış: Tüm malzemeleri blenderda çekin, buz ekleyerek servis edin.',
       ingredients: ['mango', 'yoğurt', 'su', 'bal', 'kardamom'],
-      imageUrl: 'https://images.unsplash.com/photo-1553530666-ba2a8e36cd12?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
+      imageUrl: 'Assets/Categories/smoothie/mango lassi.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['laktoz'],
       alternatives: {'yoğurt': 'coconut yogurt'},
     ),
@@ -1507,15 +1617,17 @@ class DrinkLocalSource {
       title: 'Lavanta Limonata',
       category: 'Soda',
       description: 'Lavanta ve limonun rahatlatıcı kombinasyonu.',
-      history: 'Lavanta şifalı bitkiler arasında bilinen ve içeceklerde kullanılır.',
+      history:
+          'Lavanta şifalı bitkiler arasında bilinen ve içeceklerde kullanılır.',
       temperature: 'Soğuk',
       pros: ['Rahatlatıcı etki', 'Uyku kalitesini iyileştirir', 'Aromatik'],
       cons: ['Lavanta bulunması gerekli', 'Tadı kuvvetli olabilir'],
       tip: 'Kurutulmuş lavantayı filtre ile kullanın.',
-      preparation: '1. Kurutulmuş lavanta (1 çay kaşığı)\n2. Limon (2)\n3. Su (500 ml)\n4. Şeker (2 çay kaşığı)\n5. Buz\n\nYapılış: Lavantayı sıcak suya koyup 10 dk beklet, limon ve şeker ekle, soğut.',
+      preparation:
+          '1. Kurutulmuş lavanta (1 çay kaşığı)\n2. Limon (2)\n3. Su (500 ml)\n4. Şeker (2 çay kaşığı)\n5. Buz\n\nYapılış: Lavantayı sıcak suya koyup 10 dk beklet, limon ve şeker ekle, soğut.',
       ingredients: ['lavanta', 'limon', 'su', 'şeker'],
-      imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFE6E6FA), Color(0xFFDDA0DD)]),
+      imageUrl: 'Assets/Categories/soda/lavanta limonata.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'şeker': 'honey'},
     ),
     DrinkModel(
@@ -1528,10 +1640,11 @@ class DrinkLocalSource {
       pros: ['Tropik tatı', 'Bromelain enzimi içerir', 'Sosyal içecek'],
       cons: ['Şeker açısından yüksek', 'Prep zamanı gerekli'],
       tip: 'Taze ananası keserek kullanın.',
-      preparation: '1. Ananas (2 fincan, dilimlenmiş)\n2. Mint (15 yaprak)\n3. Lime (2)\n4. Şeker şurubu (3 çay kaşığı)\n5. Su (300 ml)\n6. Buz\n\nYapılış: Ananaları blenderda kısa çekin, mint hafif bastır, diğer malzemeleri ekle.',
+      preparation:
+          '1. Ananas (2 fincan, dilimlenmiş)\n2. Mint (15 yaprak)\n3. Lime (2)\n4. Şeker şurubu (3 çay kaşığı)\n5. Su (300 ml)\n6. Buz\n\nYapılış: Ananaları blenderda kısa çekin, mint hafif bastır, diğer malzemeleri ekle.',
       ingredients: ['ananas', 'mint', 'lime', 'şeker'],
-      imageUrl: 'https://images.unsplash.com/photo-1506361197048-46a149213204?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFD700), Color(0xFF228B22)]),
+      imageUrl: 'Assets/Categories/kokteyl/ananas mint punch.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'ananas': 'mango', 'mint': 'basil'},
     ),
     DrinkModel(
@@ -1544,10 +1657,11 @@ class DrinkLocalSource {
       pros: ['Aromatik ve rahatlatıcı', 'Kalorisi çok az', 'Romantik deneyim'],
       cons: ['Gül suyu bulunması gerekli', 'Tadı kişiye bağlı'],
       tip: 'Yüksek kaliteli organik gül suyu kullanın.',
-      preparation: '1. Gül suyu (3 çay kaşığı)\n2. Limon (1)\n3. Su (500 ml)\n4. Şeker (1 çay kaşığı)\n5. Buz\n\nYapılış: Gül suyunu suya koyun, limon ekle, şeker ve buz dökerek karıştırın.',
+      preparation:
+          '1. Gül suyu (3 çay kaşığı)\n2. Limon (1)\n3. Su (500 ml)\n4. Şeker (1 çay kaşığı)\n5. Buz\n\nYapılış: Gül suyunu suya koyun, limon ekle, şeker ve buz dökerek karıştırın.',
       ingredients: ['gül suyu', 'limon', 'su', 'şeker'],
-      imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFB6C1), Color(0xFFDDA0DD)]),
+      imageUrl: 'Assets/Categories/soda/gül suyu soda.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'şeker': 'stevia'},
     ),
     DrinkModel(
@@ -1555,31 +1669,39 @@ class DrinkLocalSource {
       title: 'Berry Acai Içeceği',
       category: 'Smoothie',
       description: 'Acai ve karışık meyvelerle yapılmış besleyici smoothie.',
-      history: 'Acai smoothie bowl trendi dünyadaki sağlık bilinci ile popüler hale geldi.',
+      history:
+          'Acai smoothie bowl trendi dünyadaki sağlık bilinci ile popüler hale geldi.',
       temperature: 'Soğuk',
       pros: ['Antoksidanlar çok zengin', 'Enerji verici', 'Lezzetli'],
       cons: ['Acai bulunması zorunlu', 'Pahalı', 'Maliyeti yüksek'],
       tip: 'Dondurulmuş acai paketleri kullanabilirsiniz.',
-      preparation: '1. Acai (1 paket, dondurulmuş)\n2. Karışık meyveler (1 fincan)\n3. Granola (3 çay kaşığı)\n4. Coconut sütü (150 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış: Acai ve meyveler blenderda kısa çekin, granola üzerine serp.',
+      preparation:
+          '1. Acai (1 paket, dondurulmuş)\n2. Karışık meyveler (1 fincan)\n3. Granola (3 çay kaşığı)\n4. Coconut sütü (150 ml)\n5. Bal (1 çay kaşığı)\n\nYapılış: Acai ve meyveler blenderda kısa çekin, granola üzerine serp.',
       ingredients: ['acai', 'meyveler', 'granola', 'coconut sütü', 'bal'],
-      imageUrl: 'https://images.unsplash.com/photo-1590080876-9ff1e1c9bc1d?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF8B008B), Color(0xFF4169E1)]),
+      imageUrl: 'Assets/Categories/smoothie/acai blueberry smoothie.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'coconut sütü': 'almond milk'},
     ),
     DrinkModel(
       id: 'orange-vanilla-smoothie',
       title: 'Portakal Vanilya Smoothie',
       category: 'Smoothie',
-      description: 'Taze portakal ve vanilya ile yapılmış güne başlama içeceği.',
+      description:
+          'Taze portakal ve vanilya ile yapılmış güne başlama içeceği.',
       history: 'Basit ama etkili bir kombinasyon, kahvaltı klasiğidir.',
       temperature: 'Soğuk',
-      pros: ['Vitamin C açısından zengin', 'Doğal şeker içerir', 'Basit ve hızlı'],
+      pros: [
+        'Vitamin C açısından zengin',
+        'Doğal şeker içerir',
+        'Basit ve hızlı'
+      ],
       cons: ['Portakal suyu yapılması gerekli', 'Posa içerir'],
       tip: 'Taze portakal sıkı daha iyi olur.',
-      preparation: '1. Portakal (3 adet, sıkılmış)\n2. Vanilya yoğurdu (150 g)\n3. Buz (1/2 fincan)\n4. Bal (1 çay kaşığı)\n\nYapılış: Portakal suyunu yoğurt ile karıştır, buz ekleyip çekin.',
+      preparation:
+          '1. Portakal (3 adet, sıkılmış)\n2. Vanilya yoğurdu (150 g)\n3. Buz (1/2 fincan)\n4. Bal (1 çay kaşığı)\n\nYapılış: Portakal suyunu yoğurt ile karıştır, buz ekleyip çekin.',
       ingredients: ['portakal', 'yoğurt', 'buz', 'bal'],
-      imageUrl: 'https://images.unsplash.com/photo-1579954614171-828bda8d0978?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFA500), Color(0xFFFFE4B5)]),
+      imageUrl: 'Assets/Categories/smoothie/portakal vaniya smoothie.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['laktoz'],
       alternatives: {'yoğurt': 'coconut cream'},
     ),
@@ -1593,10 +1715,11 @@ class DrinkLocalSource {
       pros: ['Antoksidanlar çok zengin', 'Kalp sağlığına iyi', 'Doğal tat'],
       cons: ['Taze nar bulmak zor', 'Prep zamanı gerekli'],
       tip: 'Çayı ilk demlendikten sonra meyveler ekleyin.',
-      preparation: '1. Yeşil çay (1 çanta)\n2. Nar (1 fincan suyu)\n3. Mirtil (1/2 fincan)\n4. Su (250 ml)\n5. Limon (1/4)\n\nYapılış: Çayı demlendikten sonra nar suyu ve mirtil ekle, soğut.',
+      preparation:
+          '1. Yeşil çay (1 çanta)\n2. Nar (1 fincan suyu)\n3. Mirtil (1/2 fincan)\n4. Su (250 ml)\n5. Limon (1/4)\n\nYapılış: Çayı demlendikten sonra nar suyu ve mirtil ekle, soğut.',
       ingredients: ['çay', 'nar', 'mirtil', 'su', 'limon'],
-      imageUrl: 'https://images.unsplash.com/photo-1597318619738-1176f58e8c53?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFDC143C), Color(0xFF4B0082)]),
+      imageUrl: 'Assets/Categories/çay/nar mirtil çayı.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'mirtil': 'çilek'},
     ),
     // ── YENİ EKLENEN POPÜLER İÇECEKLER ──────────────────────────────────
@@ -1604,16 +1727,23 @@ class DrinkLocalSource {
       id: 'hot-chocolate-deluxe',
       title: 'Lüks Sıcak Çikolata',
       category: 'Kahve',
-      description: 'Kıyılmış çikolata ve marshmallow ile hazırlanan zengin sıcak çikolata.',
-      history: 'Sıcak çikolata 16. yüzyılda İspanyol saraylarında asilzadelerin içeceği idi.',
+      description:
+          'Kıyılmış çikolata ve marshmallow ile hazırlanan zengin sıcak çikolata.',
+      history:
+          'Sıcak çikolata 16. yüzyılda İspanyol saraylarında asilzadelerin içeceği idi.',
       temperature: 'Sıcak',
-      pros: ['Fenilletilmemiş (mood enhancer)', 'Antoksidanlar zengin', 'Rahatlatıcı'],
+      pros: [
+        'Fenilletilmemiş (mood enhancer)',
+        'Antoksidanlar zengin',
+        'Rahatlatıcı'
+      ],
       cons: ['Yüksek kalori', 'Şeker açısından yüksek', 'Kafein içerir'],
       tip: 'Süt açılı ruh hallerinde ideal. Gerçek çikolata kullanın.',
-      preparation: '1. Koyu çikolata (50 g, kıyılmış)\n2. Tam yağlı süt (200 ml)\n3. Marshmallow (20 g)\n4. Vanilya (birkaç damla)\n5. Tatlı biber (çimdik)\n\nYapılış: Sütü ısıtın, çikolatayı ekleyin, pürüzsüz olana kadar karıştırın, marshmallow üstüne koyun.',
+      preparation:
+          '1. Koyu çikolata (50 g, kıyılmış)\n2. Tam yağlı süt (200 ml)\n3. Marshmallow (20 g)\n4. Vanilya (birkaç damla)\n5. Tatlı biber (çimdik)\n\nYapılış: Sütü ısıtın, çikolatayı ekleyin, pürüzsüz olana kadar karıştırın, marshmallow üstüne koyun.',
       ingredients: ['çikolata', 'süt', 'marshmallow', 'vanilya'],
-      imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF5C4033), Color(0xFF8B6F47)]),
+      imageUrl: 'Assets/Categories/kahve/sıcak çikolata.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['laktoz', 'gluten (marshmallow)'],
       alternatives: {'marshmallow': 'whipped cream'},
     ),
@@ -1622,31 +1752,40 @@ class DrinkLocalSource {
       title: 'Kivi Limon Smoothie',
       category: 'Smoothie',
       description: 'Taze kivi ve limon ile yapılmış canlı yeşil smoothie.',
-      history: 'Kivi Yeni Zelanda\'dan gelmiş, modern smoothie kültürüyle popüler olmuştur.',
+      history:
+          'Kivi Yeni Zelanda\'dan gelmiş, modern smoothie kültürüyle popüler olmuştur.',
       temperature: 'Soğuk',
-      pros: ['Vitamin C açısından çok zengin', 'Sindiriyi kolaylaştırır', 'Enerji verici'],
+      pros: [
+        'Vitamin C açısından çok zengin',
+        'Sindiriyi kolaylaştırır',
+        'Enerji verici'
+      ],
       cons: ['Kivi pahalı', 'Taze bulunması gerekli'],
       tip: 'Tam olgunlaşmış kivi kullanın.',
-      preparation: '1. Kivi (4 adet, dilimlenmiş)\n2. Limon (1/2)\n3. Çiçek pekmezi (1 çay kaşığı)\n4. Barley rumba (100 ml)\n5. Buz (1/2 fincan)\n\nYapılış: Tüm malzemeleri blenderda pürüzsüz olana kadar çekin.',
+      preparation:
+          '1. Kivi (4 adet, dilimlenmiş)\n2. Limon (1/2)\n3. Çiçek pekmezi (1 çay kaşığı)\n4. Barley rumba (100 ml)\n5. Buz (1/2 fincan)\n\nYapılış: Tüm malzemeleri blenderda pürüzsüz olana kadar çekin.',
       ingredients: ['kivi', 'limon', 'pekmez', 'barley rumba', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1607623814075-e51df1095968?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF32CD32), Color(0xFFFFD700)]),
+      imageUrl: 'Assets/Categories/smoothie/kivi limon smoothie.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'barley rumba': 'almond milk'},
     ),
     DrinkModel(
       id: 'rooibos-honey-tea',
       title: 'Rooibos Bal Çayı',
       category: 'Çay',
-      description: 'Güney Afrika\'nın kırmızı çayı rooibos ve balın kombinasyonu.',
-      history: 'Rooibos, Güney Afrika\'nın Xhosa halkı tarafından binlerce yıldır kullanılmaktadır.',
+      description:
+          'Güney Afrika\'nın kırmızı çayı rooibos ve balın kombinasyonu.',
+      history:
+          'Rooibos, Güney Afrika\'nın Xhosa halkı tarafından binlerce yıldır kullanılmaktadır.',
       temperature: 'Sıcak',
       pros: ['Kafein içermez', 'Mineral zengin', 'Uyku engeli yok'],
       cons: ['Farklı bir tat profili', 'Bulunması nadir'],
       tip: 'Akşam saatlerinde uyku kalitesini artırır.',
-      preparation: '1. Rooibos çayı (1 çanta)\n2. Sıcak su (250 ml)\n3. Bal (1 yemek kaşığı)\n4. Limoncu cilantro (isteğe bağlı)\n\nYapılış: Çayı 5-7 dk demlendikten sonra balı ekleyip karıştırın.',
+      preparation:
+          '1. Rooibos çayı (1 çanta)\n2. Sıcak su (250 ml)\n3. Bal (1 yemek kaşığı)\n4. Limoncu cilantro (isteğe bağlı)\n\nYapılış: Çayı 5-7 dk demlendikten sonra balı ekleyip karıştırın.',
       ingredients: ['rooibos', 'su', 'bal', 'limon'],
-      imageUrl: 'https://images.unsplash.com/photo-1576092762740-410023a10526?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFCD5C5C), Color(0xFFBDB76B)]),
+      imageUrl: 'Assets/Categories/çay/rooibos bal çayı.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'bal': 'stevia'},
     ),
     DrinkModel(
@@ -1659,26 +1798,34 @@ class DrinkLocalSource {
       pros: ['Hidratasyonu destekler', 'Düşük kalori', 'Elektroliti dengeler'],
       cons: ['Sezonluk (yaz)', 'Taze kavun bulunması gerekli'],
       tip: 'Olgun kavun seçin, tadı daha tatlı olur.',
-      preparation: '1. Kavun (3 fincan, küplü)\n2. Limon (1)\n3. Nane (5 yaprak)\n4. Su (150 ml)\n5. Buz\n\nYapılış: Kavun, limon ve mintı blenderda dön, buz ekleyip servis et.',
+      preparation:
+          '1. Kavun (3 fincan, küplü)\n2. Limon (1)\n3. Nane (5 yaprak)\n4. Su (150 ml)\n5. Buz\n\nYapılış: Kavun, limon ve mintı blenderda dön, buz ekleyip servis et.',
       ingredients: ['kavun', 'limon', 'nane', 'su', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1570537254185-ac00b89f2241?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFD700), Color(0xFF90EE90)]),
+      imageUrl: 'Assets/Categories/frozen/kavun frozen.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'kavun': 'mango'},
     ),
     DrinkModel(
       id: 'espresso-coconut-cream',
       title: 'Espresso Hindistancevizi Kremi',
       category: 'Kahve',
-      description: 'Güçlü espresso ile hindistancevizi kremi ve şeker tadının buluşması.',
+      description:
+          'Güçlü espresso ile hindistancevizi kremi ve şeker tadının buluşması.',
       history: 'Filipin ve Tayland\'da popüler olan kahve çeşidi.',
       temperature: 'Sıcak',
-      pros: ['Hindistancevizi yağları sağlıklı', 'Yavaş enerji salınımı', 'Kremamsı tat'],
+      pros: [
+        'Hindistancevizi yağları sağlıklı',
+        'Yavaş enerji salınımı',
+        'Kremamsı tat'
+      ],
       cons: ['Kalori yüksek', 'Hindistancevizi kremi bulunması zorunlu'],
-      tip: 'Hindistancevizi kremi tabaka tabaka oluşturur, güzel görüntü sağlar.',
-      preparation: '1. Espresso (60 ml)\n2. Hindistancevizi kremi (30 ml)\n3. Sıcak süt (100 ml)\n4. Şeker (1 çay kaşığı)\n\nYapılış: Bardağa hindistancevizi kremini koyun, sıcak espresso ekleyin, üstten sütü yavaşça döküp karıştırın.',
+      tip:
+          'Hindistancevizi kremi tabaka tabaka oluşturur, güzel görüntü sağlar.',
+      preparation:
+          '1. Espresso (60 ml)\n2. Hindistancevizi kremi (30 ml)\n3. Sıcak süt (100 ml)\n4. Şeker (1 çay kaşığı)\n\nYapılış: Bardağa hindistancevizi kremini koyun, sıcak espresso ekleyin, üstten sütü yavaşça döküp karıştırın.',
       ingredients: ['espresso', 'hindistancevizi kremi', 'süt', 'şeker'],
-      imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF8B4513), Color(0xFFFFE4B5)]),
+      imageUrl: 'Assets/Categories/kahve/espresso hindistan cevizi kremi.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['kafein'],
       alternatives: {'hindistancevizi kremi': 'oat cream'},
     ),
@@ -1687,15 +1834,21 @@ class DrinkLocalSource {
       title: 'Açaı Ejder Meyve Smoothie',
       category: 'Smoothie',
       description: 'Açaı ve ejder meyvesi ile renkli, besleyici smoothie bowl.',
-      history: 'Dragon fruit dünyada wellness trends ile birlikte popüler olmuştur.',
+      history:
+          'Dragon fruit dünyada wellness trends ile birlikte popüler olmuştur.',
       temperature: 'Soğuk',
-      pros: ['Antoksidanlar çok zengin', 'Düşük kalori', 'Vitaminler açısından başarılı'],
+      pros: [
+        'Antoksidanlar çok zengin',
+        'Düşük kalori',
+        'Vitaminler açısından başarılı'
+      ],
       cons: ['Ejder meyve pahalı', 'Dondurulmuş burada tercih'],
       tip: 'Renkli bir görüntü için üste granola serpiştirebilirsiniz.',
-      preparation: '1. Açaı paket (100 g)\n2. Ejder meyvesi (1 adet, dilimlenmiş)\n3. Elma (1/2)\n4. Coconut sütü (150 ml)\n5. Granola (3 çay kaşığı)\n\nYapılış: Açaı, ejder meyvesi ve elmayı blenderda dön, coconut sütü ekle, granola ile servis et.',
+      preparation:
+          '1. Açaı paket (100 g)\n2. Ejder meyvesi (1 adet, dilimlenmiş)\n3. Elma (1/2)\n4. Coconut sütü (150 ml)\n5. Granola (3 çay kaşığı)\n\nYapılış: Açaı, ejder meyvesi ve elmayı blenderda dön, coconut sütü ekle, granola ile servis et.',
       ingredients: ['açaı', 'ejder meyvesi', 'elma', 'coconut sütü', 'granola'],
-      imageUrl: 'https://images.unsplash.com/photo-1590080876-1b91c7c62ba5?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF8B008B), Color(0xFF1E90FF)]),
+      imageUrl: 'Assets/Categories/smoothie/ejder meyve smoothie.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       alternatives: {'coconut sütü': 'almond milk'},
     ),
     DrinkModel(
@@ -1705,13 +1858,19 @@ class DrinkLocalSource {
       description: 'Kahverengi şeker şurubu ile yapılmış tatlı soğuk latte.',
       history: 'Taiwanese bubble tea kültüründen esinlenmiş modern trend.',
       temperature: 'Soğuk',
-      pros: ['Kahverengi şeker doğal tat', 'Ferah ve tatlı denge', 'Popüler trend'],
+      pros: [
+        'Kahverengi şeker doğal tat',
+        'Ferah ve tatlı denge',
+        'Popüler trend'
+      ],
       cons: ['Şeker açısından yüksek', 'Kahverengi şeker bulunması zorunlu'],
-      tip: 'Bardağın dibinde kahverengi şeker birikmesi normal, güzel görüntü yaratır.',
-      preparation: '1. Kahverengi şeker (2 çay kaşığı)\n2. Sıcak su (1 çay kaşığı)\n3. Espresso (30 ml)\n4. Soğuk süt (150 ml)\n5. Buz (1 fincan)\n\nYapılış: Kahverengi şekeri suyla özelleştir, bardağa koy, espresso ve soğuk sütü ekle, buz dök.',
+      tip:
+          'Bardağın dibinde kahverengi şeker birikmesi normal, güzel görüntü yaratır.',
+      preparation:
+          '1. Kahverengi şeker (2 çay kaşığı)\n2. Sıcak su (1 çay kaşığı)\n3. Espresso (30 ml)\n4. Soğuk süt (150 ml)\n5. Buz (1 fincan)\n\nYapılış: Kahverengi şekeri suyla özelleştir, bardağa koy, espresso ve soğuk sütü ekle, buz dök.',
       ingredients: ['kahverengi şeker', 'espresso', 'süt', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFA0826D), Color(0xFFD2B48C)]),
+      imageUrl: 'Assets/Categories/kahve/soğuk kahverengi şeker latte.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['kafein', 'laktoz'],
       alternatives: {'süt': 'vegan milk'},
     ),
@@ -1719,16 +1878,25 @@ class DrinkLocalSource {
       id: 'ginger-turmeric-shot',
       title: 'Zencefil Zerdeçal Şotu',
       category: 'Fit',
-      description: 'Güçlü ve sağlıklı zencefil ve zerdeçal karışımı, güne başlama içeceği.',
+      description:
+          'Güçlü ve sağlıklı zencefil ve zerdeçal karışımı, güne başlama içeceği.',
       history: 'Geleneksel Ayurveda tıbbından esinlenen modern sağlık trendi.',
       temperature: 'Sıcak',
-      pros: ['Anti-inflamatuar güçlü', 'İçeriğin soğuk algınlığına çok iyi', 'Sindirim kolaylaştırır'],
-      cons: ['Tadı çok kuvvetli', 'Mide hassasiyeti olan kişilere zor gelebilir'],
+      pros: [
+        'Anti-inflamatuar güçlü',
+        'İçeriğin soğuk algınlığına çok iyi',
+        'Sindirim kolaylaştırır'
+      ],
+      cons: [
+        'Tadı çok kuvvetli',
+        'Mide hassasiyeti olan kişilere zor gelebilir'
+      ],
       tip: 'Sabah açık karına içince daha etkili olur.',
-      preparation: '1. Taze zencefil (2 cm)\n2. Zerdeçal (1 çay kaşığı)\n3. Siyah biber (çimdik)\n4. Limon (1/4)\n5. Sıcak su (50 ml)\n\nYapılış: Zencefili rendele, zerdeçal ve biber ekle, sıcak suyla ısıt, limon sık, tek yudumda iç.',
+      preparation:
+          '1. Taze zencefil (2 cm)\n2. Zerdeçal (1 çay kaşığı)\n3. Siyah biber (çimdik)\n4. Limon (1/4)\n5. Sıcak su (50 ml)\n\nYapılış: Zencefili rendele, zerdeçal ve biber ekle, sıcak suyla ısıt, limon sık, tek yudumda iç.',
       ingredients: ['zencefil', 'zerdeçal', 'siyah biber', 'limon'],
-      imageUrl: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd63c69?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFFF6347)]),
+      imageUrl: 'Assets/Categories/fit/zencefil zerdeçal shot.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
     ),
     DrinkModel(
       id: 'elderflower-spritzer',
@@ -1744,8 +1912,7 @@ class DrinkLocalSource {
       preparation:
           '1. Elderflower şurubu (30 ml)\n2. Soda suyu (150 ml)\n3. Limon suyu (10 ml)\n4. Buz\n\nYapılış:\n1) Bardağa buz koyun\n2) Elderflower şurubunu ve limon suyunu ekleyin\n3) Soda suyunu yavaşça döküp karıştırın',
       ingredients: ['elderflower şurubu', 'soda suyu', 'limon', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/soda/elderflower spritzer.jpg',
       gradient: LinearGradient(colors: [Color(0xFFE8EAF6), Color(0xFFB3E5FC)]),
     ),
     DrinkModel(
@@ -1756,14 +1923,20 @@ class DrinkLocalSource {
       history:
           'Siyah susam, Doğu Asya mutfağında tatlı ve içecek tariflerinde uzun zamandır tercih edilir.',
       temperature: 'Sıcak',
-      pros: ['Besleyici yağlar içerir', 'Aromatik bir tat sunar', 'Farklı bir latte alternatifi'],
-      cons: ['Susam alerjisi olanlar için uygun değil', 'Yoğun kıvamı herkes sevmez'],
+      pros: [
+        'Besleyici yağlar içerir',
+        'Aromatik bir tat sunar',
+        'Farklı bir latte alternatifi'
+      ],
+      cons: [
+        'Susam alerjisi olanlar için uygun değil',
+        'Yoğun kıvamı herkes sevmez'
+      ],
       tip: 'Süt köpüğünü hafif tutun, üzerinde susam serpin.',
       preparation:
           '1. Siyah susam ezmesi (1 yemek kaşığı)\n2. Süt (200 ml)\n3. Şeker/honey (1 çay kaşığı)\n\nYapılış:\n1) Susam ezmesini az miktar sıcak sütte ezin\n2) Kalan sütü ısıtıp ekleyin\n3) Tatlandırıcıyı karıştırıp servis edin',
       ingredients: ['siyah susam', 'süt', 'şeker'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1562440499-64b3605ee1b4?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/black sessame latte.jpg',
       gradient: LinearGradient(colors: [Color(0xFF4E342E), Color(0xFFBCAAA4)]),
     ),
     DrinkModel(
@@ -1780,8 +1953,7 @@ class DrinkLocalSource {
       preparation:
           '1. Yeşil çay poşeti (1)\n2. Sıcak su (200 ml)\n3. Mango suyu (100 ml)\n4. Buz\n\nYapılış:\n1) Yeşil çayı demlendirin ve soğutun\n2) Mango suyunu ekleyip buzla servis edin',
       ingredients: ['yeşil çay', 'mango suyu', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1524594168175-8c5834d9178f?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/çay/mango green tea.png',
       gradient: LinearGradient(colors: [Color(0xFF7CB342), Color(0xFFFFEB3B)]),
     ),
     DrinkModel(
@@ -1798,8 +1970,7 @@ class DrinkLocalSource {
       preparation:
           '1. Yunan yoğurdu (150 g)\n2. Karışık kırmızı meyveler (1 fincan)\n3. Ballı şurup (1 çay kaşığı)\n4. Buz\n\nYapılış:\n1) Tüm malzemeleri blenderda pürüzsüz olana kadar çekin',
       ingredients: ['yoğurt', 'çilek', 'böğürtlen', 'bal', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/smoothie/greek yogurt berry smoothie.jpg',
       gradient: LinearGradient(colors: [Color(0xFFBA68C8), Color(0xFFFFCDD2)]),
     ),
     DrinkModel(
@@ -1810,14 +1981,17 @@ class DrinkLocalSource {
       history:
           'Baharatlı elma suyu, soğuk kış günlerinde Avrupa ve Amerika’da sevilen bir gelenektir.',
       temperature: 'Sıcak',
-      pros: ['Rahatlatıcı bir aroma', 'Bağışıklık sistemini destekler', 'Kış için ideal'],
+      pros: [
+        'Rahatlatıcı bir aroma',
+        'Bağışıklık sistemini destekler',
+        'Kış için ideal'
+      ],
       cons: ['Şeker içerir', 'Bazı baharatlar hassas mideye neden olabilir'],
       tip: 'Tarçın çubuğu ile servis edin.',
       preparation:
           '1. Elma suyu (200 ml)\n2. Tarçın çubuğu (1)\n3. Karanfil (3 adet)\n4. Portakal kabuğu\n\nYapılış:\n1) Tüm malzemeleri 10 dk kaynatın\n2) Süzüp sıcak servis edin',
       ingredients: ['elma suyu', 'tarçın', 'karanfil', 'portakal kabuğu'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1514361892638-1c1a9ad0c532?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/çay/spiced apple cider.png',
       gradient: LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFD84315)]),
     ),
     DrinkModel(
@@ -1834,8 +2008,7 @@ class DrinkLocalSource {
       preparation:
           '1. Salatalık (yarım, dilimlenmiş)\n2. Taze nane (5-6 yaprak)\n3. Su (300 ml)\n4. Limon dilimi\n\nYapılış:\n1) Malzemeleri suya ekleyin\n2) 1 saat buzdolabında bekletip servis edin',
       ingredients: ['salatalık', 'nane', 'su', 'limon'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/fit/cucumber mint water.jpg',
       gradient: LinearGradient(colors: [Color(0xFF81C784), Color(0xFFB2FF59)]),
     ),
     DrinkModel(
@@ -1847,13 +2020,15 @@ class DrinkLocalSource {
           'Mocktail kültürü, alkol yerine aromatik karışımlar sunarak herkes için keyifli içecekler yaratır.',
       temperature: 'Soğuk',
       pros: ['Alkolsüz', 'Renkli ve eğlenceli', 'Yaz için ideal'],
-      cons: ['Mavi tonlu katkı maddeleri içerebilir', 'Çocuklar için tatlı olabilir'],
+      cons: [
+        'Mavi tonlu katkı maddeleri içerebilir',
+        'Çocuklar için tatlı olabilir'
+      ],
       tip: 'Garnitür olarak kiraz kullanın.',
       preparation:
           '1. Ananas suyu (100 ml)\n2. Lime suyu (15 ml)\n3. Mavi şurup (10 ml)\n4. Soda suyu (100 ml)\n5. Buz\n\nYapılış:\n1) Tüm sıvıları karıştırın\n2) Bardağa buz ekleyip servis edin',
       ingredients: ['ananas suyu', 'lime', 'mavi şurup', 'soda suyu', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kokteyl/blue lagoon mocktail.png',
       gradient: LinearGradient(colors: [Color(0xFF03A9F4), Color(0xFF81D4FA)]),
     ),
     DrinkModel(
@@ -1865,13 +2040,15 @@ class DrinkLocalSource {
           'Pumpkin spice latte, son yıllarda sonbahar cafelerinin simgesi haline geldi.',
       temperature: 'Sıcak',
       pros: ['Mevsimsel tatlı aroma', 'Rahatlatıcı', 'Kahve ile uyumlu'],
-      cons: ['Şeker içeriği yüksek olabilir', 'Balkabağı aroması herkesin tercihi değil'],
+      cons: [
+        'Şeker içeriği yüksek olabilir',
+        'Balkabağı aroması herkesin tercihi değil'
+      ],
       tip: 'Tarçın serpiştirerek servis edin.',
       preparation:
           '1. Espresso (30 ml)\n2. Balkabağı püresi (1 yemek kaşığı)\n3. Balkabağı baharatı (1 çay kaşığı)\n4. Süt (200 ml)\n5. Vanilya şurubu (1 çay kaşığı)\n\nYapılış:\n1) Espressoyu hazırlayın\n2) Balkabağı püresi ve baharatları sütle ısıtın\n3) Espressoya ekleyip karıştırın',
       ingredients: ['espresso', 'balkabağı püresi', 'süt', 'tarçın', 'vanilya'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/pumpkin spice latte.jpg',
       gradient: LinearGradient(colors: [Color(0xFFFFA726), Color(0xFFEF6C00)]),
     ),
     DrinkModel(
@@ -1888,44 +2065,56 @@ class DrinkLocalSource {
       preparation:
           '1. Cold brew (150 ml)\n2. Karamel şurubu (2 çay kaşığı)\n3. Tarçın (bir tutam)\n4. Buz\n5. Süt (50 ml)\n\nYapılış:\n1) Bardağa buz koyun\n2) Cold brew ekleyin\n3) Karamel şurubu ve tarçını ekleyin\n4) Sütü ilave edin\n5) Karıştırarak servis edin',
       ingredients: ['cold brew', 'karamel şurubu', 'tarçın', 'buz', 'süt'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/kahve/spiced caramel cold brew.jpg',
       gradient: LinearGradient(colors: [Color(0xFF5D4037), Color(0xFFFFD54F)]),
     ),
     DrinkModel(
       id: 'blueberry-elderflower-soda',
       title: 'Blueberry Elderflower Soda',
       category: 'Soda',
-      description: 'Yaban mersini ve ağaçkakışı şurubu ile hafif ve ferahlatıcı soda.',
+      description:
+          'Yaban mersini ve ağaçkakışı şurubu ile hafif ve ferahlatıcı soda.',
       history:
           'Ağaçkakışı şurubu 19. yüzyıldan beri Avrupa içeceklerinde kullanılır; yaban mersini ile birleşimi modern soda trendidir.',
       temperature: 'Soğuk',
       pros: ['Doğal antioksidanlar', 'Düşük kalori', 'Göz alıcı renk'],
-      cons: ['Ağaçkakışı şurubu bulmak zor olabilir', 'Hafif şekerli tadı herkese hitap etmeyebilir'],
+      cons: [
+        'Ağaçkakışı şurubu bulmak zor olabilir',
+        'Hafif şekerli tadı herkese hitap etmeyebilir'
+      ],
       tip: 'Taze nane yaprağıyla servis edin.',
       preparation:
           '1. Ağaçkakışı şurubu (20 ml)\n2. Yaban mersini (50 g)\n3. Limon suyu (10 ml)\n4. Soda suyu (150 ml)\n5. Buz\n\nYapılış:\n1) Yaban mersinlerini hafifçe ezin\n2) Şurup ve limon suyunu ekleyin\n3) Soda suyunu ilave edin\n4) Buz ekleyerek servis edin',
-      ingredients: ['ağaçkakışı şurubu', 'yaban mersini', 'limon', 'soda suyu', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1500336624523-d727130c3328?q=80&w=800&auto=format&fit=crop',
+      ingredients: [
+        'ağaçkakışı şurubu',
+        'yaban mersini',
+        'limon',
+        'soda suyu',
+        'buz'
+      ],
+      imageUrl: 'Assets/Categories/soda/blueberry elderflower soda.jpg',
       gradient: LinearGradient(colors: [Color(0xFF283593), Color(0xFF7C4DFF)]),
     ),
     DrinkModel(
       id: 'almond-matcha-protein-smoothie',
       title: 'Almond Matcha Protein Smoothie',
       category: 'Smoothie',
-      description: 'Matcha, badem sütü ve protein tozu ile besleyici bir smoothie.',
+      description:
+          'Matcha, badem sütü ve protein tozu ile besleyici bir smoothie.',
       history:
           'Matcha smoothie konsepti, sağlıklı yaşam ve protein içeriklerinin buluşmasıyla fitness kafe menülerinde yaygınlaştı.',
       temperature: 'Soğuk',
-      pros: ['Yüksek protein', 'L-theanine ile dengeli enerji', 'Vegan alternatifli'],
+      pros: [
+        'Yüksek protein',
+        'L-theanine ile dengeli enerji',
+        'Vegan alternatifli'
+      ],
       cons: ['Matcha pahalı olabilir', 'Bazı kişiler için yoğun tatlı'],
       tip: 'Oat milk veya badem sütü ile hafif bir kıvam elde edin.',
       preparation:
           '1. Matcha tozu (1 çay kaşığı)\n2. Badem sütü (200 ml)\n3. Vanilyalı protein tozu (1 ölçek)\n4. Muz (1/2)\n5. Buz\n\nYapılış:\n1) Tüm malzemeleri blenderda pürüzsüz olana kadar karıştır\n2) Hemen servis et',
       ingredients: ['matcha tozu', 'badem sütü', 'protein tozu', 'muz', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1532634726-8b9fb99825cf?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/smoothie/almond matchaprotein smoothie.jpg',
       gradient: LinearGradient(colors: [Color(0xFF7B1FA2), Color(0xFF4A148C)]),
     ),
     DrinkModel(
@@ -1937,13 +2126,15 @@ class DrinkLocalSource {
           'Meyveli çaylara soda ekleme trendi, batı café kültüründe son yıllarda hızla yayıldı.',
       temperature: 'Soğuk',
       pros: ['Ferahlatıcı', 'Düşük kalori', 'Doğal meyve aroması'],
-      cons: ['Soda karbonasyonu bazılarını rahatsız edebilir', 'Tat yoğunluğu meyveye bağlı'],
+      cons: [
+        'Soda karbonasyonu bazılarını rahatsız edebilir',
+        'Tat yoğunluğu meyveye bağlı'
+      ],
       tip: 'Soğuk demleme elma çayı kullanırsanız acılığı azaltır.',
       preparation:
           '1. Demlenmiş elma çayı (150 ml)\n2. Elma suyu (50 ml)\n3. Soda suyu (100 ml)\n4. Limon dilimi\n5. Buz\n\nYapılış:\n1) Bardağa buz koy\n2) Elma çayı ve elma suyunu ekle\n3) Soda suyunu ilave et\n4) Limon dilimi ile servis et',
       ingredients: ['elma çayı', 'elma suyu', 'soda suyu', 'limon', 'buz'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/çay/sparkling apple tea.jpg',
       gradient: LinearGradient(colors: [Color(0xFFFFA000), Color(0xFFFFEB3B)]),
     ),
     DrinkModel(
@@ -1960,8 +2151,7 @@ class DrinkLocalSource {
       preparation:
           '1. Taze zencefil (30 g)\n2. Limon suyu (15 ml)\n3. Bal (1 çay kaşığı)\n4. Su (50 ml)\n\nYapılış:\n1) Zencefili rendeleyin ve suyla blenderda çekin\n2) Limon suyu ve bal ekleyin\n3) Süzerek küçük bir bardakta servis edin',
       ingredients: ['zencefil', 'limon', 'bal', 'su'],
-      imageUrl:
-          'https://images.unsplash.com/photo-1508154048109-de555266b2f0?q=80&w=800&auto=format&fit=crop',
+      imageUrl: 'Assets/Categories/fit/raw ginder shot.jpg',
       gradient: LinearGradient(colors: [Color(0xFFFF8A65), Color(0xFFFF7043)]),
     ),
     DrinkModel(
@@ -1972,11 +2162,13 @@ class DrinkLocalSource {
       temperature: 'Soğuk',
       pros: ['Sıfır şeker', 'Düşük kalori', 'C vitamini deposu'],
       cons: ['Stevia tadı herkesin damak zevkine uymayabilir'],
-      tip: 'Taze nane yaprakları ile servis edildiğinde ferahlığı ikiye katlanır.',
-      preparation: '1. 2 adet limonun suyu\n2. 500ml su\n3. 1 çay kaşığı stevia\n4. Buz\n\nYapılış: Limon suyunu su ve stevia ile karıştırın, buz ekleyin.',
+      tip:
+          'Taze nane yaprakları ile servis edildiğinde ferahlığı ikiye katlanır.',
+      preparation:
+          '1. 2 adet limonun suyu\n2. 500ml su\n3. 1 çay kaşığı stevia\n4. Buz\n\nYapılış: Limon suyunu su ve stevia ile karıştırın, buz ekleyin.',
       ingredients: ['limon', 'su', 'stevia', 'nane'],
-      imageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFFFF176), Color(0xFFFFEB3B)]),
+      imageUrl: 'Assets/Categories/soda/stevia limonata.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: [],
       alternatives: {},
     ),
@@ -1984,15 +2176,18 @@ class DrinkLocalSource {
       id: 'oat-milk-iced-latte',
       title: 'Yulaf Sütlü Soğuk Latte',
       category: 'Kahve',
-      description: 'Süt (laktoz) içermeyen, yulaf sütünün kremsi dokusuyla hazırlanan latte.',
+      description:
+          'Süt (laktoz) içermeyen, yulaf sütünün kremsi dokusuyla hazırlanan latte.',
       temperature: 'Soğuk',
       pros: ['Vegan dostu', 'Laktozsuz', 'Doğal yulaf tatlılığı'],
       cons: ['Kafein içerir'],
-      tip: 'Yulaf sütünü çalkalayarak eklerseniz daha köpüklü bir doku elde edersiniz.',
-      preparation: '1. 1 shot espresso\n2. 200ml yulaf sütü\n3. Buz\n\nYapılış: Bardağa buz ve yulaf sütünü koyun, üzerine espressoyu yavaşça dökün.',
+      tip:
+          'Yulaf sütünü çalkalayarak eklerseniz daha köpüklü bir doku elde edersiniz.',
+      preparation:
+          '1. 1 shot espresso\n2. 200ml yulaf sütü\n3. Buz\n\nYapılış: Bardağa buz ve yulaf sütünü koyun, üzerine espressoyu yavaşça dökün.',
       ingredients: ['espresso', 'yulaf sütü', 'buz'],
-      imageUrl: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFFD7CCC8), Color(0xFFA1887F)]),
+      imageUrl: 'Assets/Categories/kahve/yulaf sütlü soğuk latte.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['kafein'],
       alternatives: {'kafein': 'decaf espresso'},
     ),
@@ -2005,10 +2200,11 @@ class DrinkLocalSource {
       pros: ['Uzun süre tokluk sağlar', 'Odaklanmayı artırır', 'Şekersiz'],
       cons: ['Yüksek yağ oranı', 'Alışık olmayanlar için ağır gelebilir'],
       tip: 'Hindistancevizi yağı yerine MCT yağı da kullanabilirsiniz.',
-      preparation: '1. 1 kupa filtre kahve\n2. 1 tatlı kaşığı tuzsuz tereyağı\n3. 1 tatlı kaşığı hindistancevizi yağı\n\nYapılış: Tüm malzemeleri blenderda köpürene kadar 30 saniye çekin.',
+      preparation:
+          '1. 1 kupa filtre kahve\n2. 1 tatlı kaşığı tuzsuz tereyağı\n3. 1 tatlı kaşığı hindistancevizi yağı\n\nYapılış: Tüm malzemeleri blenderda köpürene kadar 30 saniye çekin.',
       ingredients: ['kahve', 'tereyağı', 'hindistancevizi yağı'],
-      imageUrl: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF3E2723), Color(0xFF5D4037)]),
+      imageUrl: 'Assets/Categories/kahve/ketto bulletproof kahve.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['kafein', 'süt (tereyağı)'],
       alternatives: {'tereyağı': 'vegan tereyağı'},
     ),
@@ -2016,15 +2212,18 @@ class DrinkLocalSource {
       id: 'detox-green-tea-no-sugar',
       title: 'Detoks Yeşil Çay',
       category: 'Çay',
-      description: 'Şekersiz, ödem attıran ve metabolizma hızlandıran bitki çayı.',
+      description:
+          'Şekersiz, ödem attıran ve metabolizma hızlandıran bitki çayı.',
       temperature: 'Sıcak',
       pros: ['Antioksidan zengini', 'Şekersiz', 'Detoks etkili'],
       cons: ['Hamilelerin tüketimi öncesi danışması önerilir'],
-      tip: 'İçine bir adet çubuk tarçın atarak doğal bir tatlılık verebilirsiniz.',
-      preparation: '1. Yeşil çay\n2. Bir dilim taze zencefil\n3. Çeyrek limon\n\nYapılış: Yeşil çayı zencefil ile demleyin, süzdükten sonra limon ekleyin.',
+      tip:
+          'İçine bir adet çubuk tarçın atarak doğal bir tatlılık verebilirsiniz.',
+      preparation:
+          '1. Yeşil çay\n2. Bir dilim taze zencefil\n3. Çeyrek limon\n\nYapılış: Yeşil çayı zencefil ile demleyin, süzdükten sonra limon ekleyin.',
       ingredients: ['yeşil çay', 'zencefil', 'limon'],
-      imageUrl: 'https://images.unsplash.com/photo-1524594168175-8c5834d9178f?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF81C784), Color(0xFF4CAF50)]),
+      imageUrl: 'Assets/Categories/çay/detoks yeşil çay.png',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: [],
       alternatives: {},
     ),
@@ -2036,11 +2235,13 @@ class DrinkLocalSource {
       temperature: 'Sıcak',
       pros: ['Sıfır kalori', 'Net kahve aroması', 'Hızlı hazırlama'],
       cons: ['Sert tadı herkese hitap etmeyebilir'],
-      tip: 'Yumuşak içim için çekirdeklerin orta kavrulmuş olmasını tercih edin.',
-      preparation: '1. Double shot espresso\n2. Sıcak su\n\nYapılış: Espressonun üzerine sıcak su ekleyerek servis edin.',
+      tip:
+          'Yumuşak içim için çekirdeklerin orta kavrulmuş olmasını tercih edin.',
+      preparation:
+          '1. Double shot espresso\n2. Sıcak su\n\nYapılış: Espressonun üzerine sıcak su ekleyerek servis edin.',
       ingredients: ['espresso', 'su'],
-      imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop',
-      gradient: LinearGradient(colors: [Color(0xFF212121), Color(0xFF424242)]),
+      imageUrl: 'Assets/Categories/kahve/americano.jpg',
+      gradient: LinearGradient(colors: [Color(0xFF4B2C20), Color(0xFF8B4513)]),
       allergens: ['kafein'],
       alternatives: {'kafein': 'decaf espresso'},
     ),

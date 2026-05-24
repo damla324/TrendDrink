@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trenddrink/core/theme/app_palette.dart';
 import 'package:trenddrink/core/widgets/custom_title_bar.dart';
+import 'package:trenddrink/presentation/widgets/floating_chatbot.dart';
 import 'package:trenddrink/presentation/widgets/left_sidebar.dart';
 
 /// Tüm sayfaları saran ana iskelet:
@@ -59,6 +60,12 @@ class ShellPage extends StatelessWidget {
                           ),
                         ],
                       ),
+                // Floating chatbot — always on top
+                const Positioned(
+                  bottom: 24,
+                  right: 24,
+                  child: FloatingChatbot(),
+                ),
               ],
             ),
           ),

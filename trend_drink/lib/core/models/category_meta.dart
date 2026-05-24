@@ -17,7 +17,7 @@ const List<CategoryMeta> kCategories = [
   CategoryMeta(
     name: 'Kahve',
     emoji: '☕',
-    imageUrl: 'Assets/photos/kahve.jpg',
+    imageUrl: 'Assets/Categories/kahve/türk kahvesi.jpg',
     accentColor: Color(0xFF8B4513),
   ),
   CategoryMeta(
@@ -29,37 +29,37 @@ const List<CategoryMeta> kCategories = [
   CategoryMeta(
     name: 'Frozen',
     emoji: '🧊',
-    imageUrl: 'Assets/photos/frozen.jpg',
+    imageUrl: 'Assets/Categories/frozen/watermelon slushi.jpg',
     accentColor: Color(0xFF00BCD4),
   ),
   CategoryMeta(
     name: 'Kokteyl',
     emoji: '🍹',
-    imageUrl: 'Assets/photos/kokteyl.jpg',
+    imageUrl: 'Assets/Categories/kokteyl/pina colada.png',
     accentColor: Color(0xFFE91E63),
   ),
   CategoryMeta(
     name: 'Smoothie',
     emoji: '🥤',
-    imageUrl: 'Assets/photos/smothe.jpg', // Belirttiğiniz isim: smothe.jpg
+    imageUrl: 'Assets/Categories/smoothie/acai blueberry smoothie.jpg',
     accentColor: Color(0xFF8BC34A),
   ),
   CategoryMeta(
     name: 'Çay',
     emoji: '🫖',
-    imageUrl: 'Assets/photos/çay.jpg',
+    imageUrl: 'Assets/Categories/çay/chai latte.png',
     accentColor: Color(0xFF9C27B0),
   ),
   CategoryMeta(
     name: 'Soda',
     emoji: '🫧',
-    imageUrl: 'Assets/photos/soda.jpg',
+    imageUrl: 'Assets/Categories/soda/hibiscus sparkler.jpg',
     accentColor: Color(0xFFFFC107),
   ),
   CategoryMeta(
     name: 'Fit',
     emoji: '💪',
-    imageUrl: 'Assets/photos/fit.jpg',
+    imageUrl: 'Assets/Categories/fit/green detox smoothie.jpg',
     accentColor: Color(0xFF4CAF50),
   ),
 ];

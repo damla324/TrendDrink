@@ -17,12 +17,21 @@ class DrinkCard extends StatelessWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: CachedNetworkImage(
-                imageUrl: drink.imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(color: Colors.black12),
-                errorWidget: (context, url, error) => Container(color: Colors.black26),
-              ),
+              child: drink.imageUrl.startsWith('http')
+                  ? CachedNetworkImage(
+                      imageUrl: drink.imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          Container(color: Colors.black12),
+                      errorWidget: (context, url, error) =>
+                          Container(color: Colors.black26),
+                    )
+                  : Image.asset(
+                      drink.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stack) =>
+                          Container(color: Colors.black26),
+                    ),
             ),
             Positioned.fill(
               child: DecoratedBox(
@@ -43,7 +52,10 @@ class DrinkCard extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [drink.gradient.colors.first.withOpacity(0.28), drink.gradient.colors.last.withOpacity(0.18)],
+                    colors: [
+                      drink.gradient.colors.first.withOpacity(0.28),
+                      drink.gradient.colors.last.withOpacity(0.18)
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -60,16 +72,18 @@ class DrinkCard extends StatelessWidget {
                       backgroundColor: Colors.white24,
                       label: Text(
                         drink.category.toUpperCase(),
-                        style: const TextStyle(color: Colors.white, letterSpacing: 0.6),
+                        style: const TextStyle(
+                            color: Colors.white, letterSpacing: 0.6),
                       ),
                     ),
                     const Spacer(),
                     Text(
                       drink.title,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -89,7 +103,8 @@ class DrinkCard extends StatelessWidget {
                           .map(
                             (name) => Chip(
                               backgroundColor: Colors.white24,
-                              label: Text(name, style: const TextStyle(color: Colors.white)),
+                              label: Text(name,
+                                  style: const TextStyle(color: Colors.white)),
                             ),
                           )
                           .toList(),

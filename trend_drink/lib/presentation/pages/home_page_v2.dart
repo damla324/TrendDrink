@@ -126,47 +126,68 @@ class HomePageV2 extends ConsumerWidget {
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(16)),
-                                child: CachedNetworkImage(
-                                  imageUrl: d.imageUrl,
-                                  fit: BoxFit.cover,
-                                  placeholder: (_, __) => Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          AppPalette.mocha.withAlpha(200),
-                                          AppPalette.espresso.withAlpha(220),
-                                        ],
-                                      ),
-                                    ),
-                                    child: const Center(
-                                      child: SizedBox(
-                                        width: 22,
-                                        height: 22,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: AppPalette.gold,
+                                child: d.imageUrl.startsWith('http')
+                                    ? CachedNetworkImage(
+                                        imageUrl: d.imageUrl,
+                                        fit: BoxFit.cover,
+                                        placeholder: (_, __) => Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                AppPalette.mocha.withAlpha(200),
+                                                AppPalette.espresso
+                                                    .withAlpha(220),
+                                              ],
+                                            ),
+                                          ),
+                                          child: const Center(
+                                            child: SizedBox(
+                                              width: 22,
+                                              height: 22,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: AppPalette.gold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        errorWidget: (_, __, ___) => Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                AppPalette.mocha,
+                                                AppPalette.cocoa,
+                                              ],
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.local_cafe_rounded,
+                                            color: AppPalette.gold,
+                                            size: 30,
+                                          ),
+                                        ),
+                                      )
+                                    : Image.asset(
+                                        d.imageUrl,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) => Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                AppPalette.mocha,
+                                                AppPalette.cocoa,
+                                              ],
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.local_cafe_rounded,
+                                            color: AppPalette.gold,
+                                            size: 30,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  errorWidget: (_, __, ___) => Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          AppPalette.mocha,
-                                          AppPalette.cocoa,
-                                        ],
-                                      ),
-                                    ),
-                                    child: const Icon(
-                                      Icons.local_cafe_rounded,
-                                      color: AppPalette.gold,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
                               ),
                             ),
                             Padding(

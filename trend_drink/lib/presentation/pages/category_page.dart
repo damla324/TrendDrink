@@ -153,46 +153,65 @@ class _DrinkCardState extends State<_DrinkCard> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: widget.drink.imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                AppPalette.mocha.withAlpha(220),
-                                AppPalette.espresso.withAlpha(240),
-                              ],
-                            ),
-                          ),
-                          child: const Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppPalette.gold,
+                      widget.drink.imageUrl.startsWith('http')
+                          ? CachedNetworkImage(
+                              imageUrl: widget.drink.imageUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (_, __) => Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      AppPalette.mocha.withAlpha(220),
+                                      AppPalette.espresso.withAlpha(240),
+                                    ],
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppPalette.gold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (_, __, ___) => Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      widget.accent.withAlpha(60),
+                                      AppPalette.mocha,
+                                    ],
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Icon(Icons.local_cafe_rounded,
+                                      color: AppPalette.gold, size: 36),
+                                ),
+                              ),
+                            )
+                          : Image.asset(
+                              widget.drink.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      widget.accent.withAlpha(60),
+                                      AppPalette.mocha,
+                                    ],
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Icon(Icons.local_cafe_rounded,
+                                      color: AppPalette.gold, size: 36),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                widget.accent.withAlpha(60),
-                                AppPalette.mocha,
-                              ],
-                            ),
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.local_cafe_rounded,
-                                color: AppPalette.gold, size: 36),
-                          ),
-                        ),
-                      ),
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(

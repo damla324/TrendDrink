@@ -37,3 +37,10 @@ flutter:
   assets:
     - Assets/photo/
     - Assets/photos/
+    - Assets/Categories/çay/
+    - Assets/Categories/fit/
+    - Assets/Categories/frozen/
+    - Assets/Categories/kahve/
+    - Assets/Categories/kokteyl/
+    - Assets/Categories/smoothie/
+    - Assets/Categories/soda/
