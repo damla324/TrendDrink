@@ -66,12 +66,6 @@ class _LeftSidebarState extends ConsumerState<LeftSidebar>
       isAi: true,
     ),
     const _NavEntry(
-      icon: Icons.chat_rounded,
-      label: 'Sohbet Ava',
-      route: '/chat',
-      isAi: true,
-    ),
-    const _NavEntry(
       icon: Icons.settings_rounded,
       label: 'Ayarlar',
       route: '/settings',
