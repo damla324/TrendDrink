@@ -11,6 +11,10 @@ final assistantProvider =
         AssistantNotifier.new);
 
 class AssistantNotifier extends Notifier<List<ChatMessage>> {
+  static const String _userFirstName = 'Damla';
+  static const String _userLastName = 'Yalçın';
+  static const String _ownerName = 'Damla Yalçın';
+
   late final DrinkRepository _repository;
 
   @override
@@ -20,14 +24,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       ChatMessage(
         id: 'welcome',
         text:
-            'Merhaba! 👋 Ben İçecek AI, TrendDrink\'in arkadaş gibi asistanı.\n\n'
-            'Ben sadece içecek önerisi yapmıyorum, seninle sohbet etmeyi de severim! 😊\n\n'
-            'Örneğin:\n'
-            '• "Merhaba! Nasılsın?" gibi yazabilirsin\n'
-            '• "Elimde muz ve süt var" diyebilirsin\n'
-            '• "Bugün nasıl geçti?" sorabilirsin\n'
-            '• Fotoğraf yükleyebilirsin (✨ Pro özelliği)\n\n'
-            'Nelerin hakkında konuşmak istersin? 🍹',
+            'Merhaba! 👋 Ben İçecek AI. Sana hem sohbet arkadaşı olmak hem de en doğru içecekleri önermek için buradayım. 😊\n\n'
+            'Seni Damla Yalçın olarak tanıyorum; bu nedenle konuşmalarımız daha samimi olabilir.\n\n'
+            'Bana şöyle sorular sorabilirsin:\n'
+            '• "Merhaba! Nasılsın?"\n'
+            '• "Elimde muz ve süt var"\n'
+            '• "Bugün nasıl geçti?"\n'
+            '• "Kurucum kim?"\n\n'
+            'Hazırsan başlayalım. Şu anda hangi içeceğe bakalım?',
         author: ChatAuthor.assistant,
       ),
     ];
@@ -91,8 +95,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final title = _findByTitle(drinks, lower);
     if (title != null) {
       return _msg(
-        'Ah, [${title.title}](${title.id})! Çok güzel bir seçim! 😋 '
-        'Tam olarak bunu önerirdim sana. Detaylı tarifi aşağıdaki butondan görebilirsin.',
+        'Ah, [${title.title}](${title.id}) çok iyi bir seçim. 😋 '
+        'Buna ben de kesinlikle onay veririm. Detayı aşağıdaki butondan hemen açabilirsin.',
         drinkId: title.id,
       );
     }
@@ -104,9 +108,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       final top = byIng.take(3).toList();
       final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
       return _msg(
-        'Vay be! Şu malzemeleri kullanarak çok güzel şeyler yapabiliriz! 😊\n\n'
-        'Sana en uygun 3 tarif: $names\n\n'
-        'Aşağıdaki butondan ilkinin detayını açabilirsin. Hangisi daha çekici geliyor?',
+        'Elindeki malzemelere bakınca bu seçenekler çok uygun: $names\n\n'
+        'Bunlardan biri tam olarak aradığın lezzete yakın olabilir. İlkini açmak için aşağıya tıklayabilirsin.',
         drinkId: top.first.id,
       );
     }
@@ -117,9 +120,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       final top = byCat.take(3).toList();
       final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
       return _msg(
-        'Ah, bu kategorini seviyor musun? 😋 Ben de! '
-        'Sana en beğeneceğim 3 seçenek: $names\n\n'
-        'Aşağıdaki butonlardan ilkinin detayını açabilirsin. Hangisi ilgini çekti?',
+        'Bu kategorideki en iyi 3 seçeneğim: $names\n\n'
+        'Her biri kendi tarzında lezzetli. Hangi tarifi öncelikle inceleyelim?',
         drinkId: top.first.id,
       );
     }
@@ -129,55 +131,58 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final top = shuffled.take(3).toList();
     final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
     return _msg(
-      'Hmmm, tamamen yakalayamadım ama bana inan, bu 3 tarifin herhangi biri seni hayal kırıklığına uğratmaz! 🌟\n\n$names\n\n'
-      'Daha kesin yanıt almak istersen "malzeme: muz, süt" ya da "kategorisi: kahve" gibi yazabilirsin. '
-      'Anlaşıldı mı? 😊',
+      'Tam olarak hangi içeceği istediğini anlamadım ama bu 3 tarif iyi bir başlangıç olabilir: $names\n\n'
+      'Eğer daha net bir öneri istersen, bana malzemelerini söyle ya da bir kategori belirtebilirsin. 😊',
       drinkId: top.first.id,
     );
   }
 
   ChatMessage? _handleSocial(String lower) {
-    // Selamlamalar - samimi yanıtlar
+    // Selamlamalar - samimi ama doğal
     if (lower.contains('merhaba') || lower.contains('selam') || lower.contains('merhba')) {
       return _msg(
-        'Merhaba! 👋 Çok iyi ki yazıyorsun. Bugün nasıl geçiyor sana? '
-        'Hangi tür bir içecek ile sana keyif verebilirim? 🍹',
+        'Merhaba! 👋 Çok güzel yazmışsın. Bugün nasıl hissediyorsun? '
+        'Şu an canın ne çekiyor, tatlı mı yoksa ferahlatıcı mı?',
       );
     }
 
-    // Sağlık/Durum sorguları
+    // Sağlık / durum sorguları
     if (lower.contains('nasils') || lower.contains('iyi misin') || 
         lower.contains('naber') || lower.contains('iyimisin') ||
         lower.contains('nasilsin')) {
       return _msg(
-        'Çok iyiyim teşekkür edersin! 😊 Seninle konuşmak her zaman güzel. '
-        'Peki sen nasılsın? Bugün sana ne gibi bir içecek hoş gelir? '
-        'Serinletici mi, yoksa sıcak mı tercih edersin?',
+        'İyiyim, teşekkür ederim. 😊 Sen nasılsın? Bugün hangi içecek seni daha iyi hissettirir, birlikte bulalım.',
       );
     }
 
     // Teşekkür
     if (lower.contains('tesekkur') || lower.contains('sagol') || lower.contains('thanks')) {
       return _msg(
-        'Rica ederim! 😊 Afiyet olsun. Başka bir şey istersen lütfen söyle. ☕',
+        'Ne demek, memnun oldum. ☕ Başka bir şey arıyorsan hemen söyle, birlikte deneyebiliriz.',
       );
     }
 
-    // Nasıl gitti (içecek deneme sonrası)
+    // Olumlu geribildirim
     if (lower.contains('guzel') || lower.contains('lezzetli') || 
         lower.contains('afiyetolsun') || lower.contains('hosgeldi')) {
       return _msg(
-        'Vay be! Çok sevindim! 🎉 Umarım gerçekten damak tadına hitap etmiştir. '
-        'Eğer başka bir şey denemek istersen, ben buradayım! '
-        'Ne gibi bir lezzet daha denemek istersin?',
+        'Beğenmene çok sevindim. 🎉 Şimdi istersen farklı bir tarif deneyebiliriz ya da aynı tarza benzer bir içecek bulabilirim.',
       );
     }
 
-    // Genel sohbet
+    // Genel sohbet ifadesi
     if (lower.contains('ben') || lower.contains('ben de') || lower.contains('ben biraz')) {
       return _msg(
-        'Anlıyorum! Anlatır mısın biraz daha? Ben gerçekten merak ediyorum. '
-        'Belki seninle uygun bir içecek kombinasyonu bulabilirim. 😊',
+        'Anladım, dinliyorum. Bana biraz daha anlatmak ister misin? '
+        'Hangi tatları sevdiğini bilirsem sana daha iyi bir öneri sunabilirim.',
+      );
+    }
+
+    // Kurucu sorusu
+    if (lower.contains('kurucum kim') || lower.contains('senin kurucun kim') || lower.contains('kurucu kim')) {
+      return _msg(
+        'Kurucum sensin, $_ownerName. TrendDrink\'i sen kurdun ve bu yüzden seni biliyorum. '
+        'Şimdi istersen birlikte ne içeceğine karar verelim, Damla.',
       );
     }
 
