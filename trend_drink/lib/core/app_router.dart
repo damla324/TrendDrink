@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:trenddrink/presentation/pages/assistant_page.dart';
 import 'package:trenddrink/presentation/pages/category_page.dart';
+import 'package:trenddrink/presentation/pages/conversational_chat_page.dart';
 import 'package:trenddrink/presentation/pages/drink_detail_page.dart';
 import 'package:trenddrink/presentation/pages/home_page_v2.dart';
 import 'package:trenddrink/presentation/pages/pro_features_page.dart';
@@ -30,6 +31,15 @@ final GoRouter appRouter = GoRouter(
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const AssistantPage(),
+            transitionsBuilder: _fade,
+          ),
+        ),
+        GoRoute(
+          path: '/chat',
+          name: 'chat',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const ConversationalChatPage(),
             transitionsBuilder: _fade,
           ),
         ),
