@@ -24,14 +24,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       ChatMessage(
         id: 'welcome',
         text:
-            'Merhaba! 👋 Ben İçecek AI. Sana hem sohbet arkadaşı olmak hem de en doğru içecekleri önermek için buradayım. 😊\n\n'
-            'Seni Damla Yalçın olarak tanıyorum; bu nedenle konuşmalarımız daha samimi olabilir.\n\n'
-            'Bana şöyle sorular sorabilirsin:\n'
-            '• "Merhaba! Nasılsın?"\n'
-            '• "Elimde muz ve süt var"\n'
-            '• "Bugün nasıl geçti?"\n'
-            '• "Kurucum kim?"\n\n'
-            'Hazırsan başlayalım. Şu anda hangi içeceğe bakalım?',
+            'Merhaba! 👋 Ben senin kişisel içecek yapay zekânım. Seni daha iyi tanıyabilmek için ismini öğrenebilir miyim? '
+            'Ya da istersen doğrudan önerilere geçebiliriz.\n\n'
+            'Mooduna göre sana özel seçenekler sunabilirim, elimdeki malzemelere en uygun içeceği bulabilirim ve istediğin tarifin adım adım tarifini verebilirim.\n\n'
+            'Ne şekilde başlamak istersin? İstersen önce adını söyle, istersen malzemelerini paylaş, istersen de ruh halini anlat.',
         author: ChatAuthor.assistant,
       ),
     ];
@@ -88,7 +84,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // 1) Sosyal
-    final social = _handleSocial(lower);
+    final social = _handleSocial(lower, drinks);
     if (social != null) return social;
 
     // 2) Başlık eşleşmesi
@@ -137,12 +133,12 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     );
   }
 
-  ChatMessage? _handleSocial(String lower) {
+  ChatMessage? _handleSocial(String lower, List<DrinkModel> drinks) {
     // Selamlamalar - samimi ama doğal
     if (lower.contains('merhaba') || lower.contains('selam') || lower.contains('merhba')) {
       return _msg(
-        'Merhaba! 👋 Çok güzel yazmışsın. Bugün nasıl hissediyorsun? '
-        'Şu an canın ne çekiyor, tatlı mı yoksa ferahlatıcı mı?',
+        'Aaa merhaba! 👋 Çok sevindim seni görmek. Bugün nasıl hissediyorsun? '
+        'Canın ne çekiyor, tatlı mı yoksa ferahlatıcı mı?',
       );
     }
 
@@ -151,7 +147,22 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         lower.contains('naber') || lower.contains('iyimisin') ||
         lower.contains('nasilsin')) {
       return _msg(
-        'İyiyim, teşekkür ederim. 😊 Sen nasılsın? Bugün hangi içecek seni daha iyi hissettirir, birlikte bulalım.',
+        'İyiyim, teşekkür ederim. 😊 Sen nasılsın? Bugün hangi içecek seni daha iyi hissettirir, beraber bulalım.',
+      );
+    }
+
+    // Duygu ifadeleri - moral ihtiyacı
+    if (lower.contains('hiç halim yok') || lower.contains('halim yok') ||
+        lower.contains('çok üzgünüm') || lower.contains('üzgünüm') ||
+        lower.contains('mutsuzum') || lower.contains('moralsiz') ||
+        lower.contains('bugün hiç')) {
+      final suggestions = drinks.take(3).toList();
+      final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
+      return _msg(
+        'Öyle mi... çok üzüldüm bunu duyduğuma. 😔 Sana moral verebilecek birkaç içecek biliyorum: $names\n\n'
+        'Senin için özel olarak görmek istediğin bir içecek var mı? '
+        'Umarım bu seçimler bugünündeki mutsuzluğu biraz olsun hafifletir.',
+        drinkId: suggestions.first.id,
       );
     }
 
