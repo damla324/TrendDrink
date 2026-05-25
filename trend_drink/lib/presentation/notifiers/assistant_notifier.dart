@@ -59,6 +59,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       {bool hasImage = false}) async {
     final drinks = await _repository.fetchAllDrinks();
     final lower = _normalize(query);
+    final preferences = _parsePreferences(lower);
 
     // Görsel destekli akış (multimodal placeholder + pratik öneri).
     if (hasImage) {
@@ -88,7 +89,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (social != null) return social;
 
     // 2) Başlık eşleşmesi
-    final title = _findByTitle(drinks, lower);
+    final title = _findByTitle(drinks, lower, preferences);
     if (title != null) {
       return _msg(
         'Ah, [${title.title}](${title.id}) çok iyi bir seçim. 😋 '
@@ -98,8 +99,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // 3) Malzeme
-    final tokens = _extractIngredientTokens(lower);
-    final byIng = _findByIngredients(drinks, tokens);
+    final tokens = _extractIngredientTokens(lower, preferences);
+    final byIng = _findByIngredients(drinks, tokens, preferences);
     if (byIng.isNotEmpty) {
       final top = byIng.take(3).toList();
       final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
@@ -110,19 +111,45 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       );
     }
 
+    if (preferences.hasAny) {
+      final prefOnly = _findByPreferences(drinks, preferences);
+      if (prefOnly.isNotEmpty) {
+        final top = prefOnly.take(3).toList();
+        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+        return _msg(
+          '${preferences.description()} isteğini anladım. Sana uygun seçenekler: $names\n\n'
+          'Bu içecekler, talebindeki sınırlamaları göz önünde bulundurarak seçildi.',
+          drinkId: top.first.id,
+        );
+      }
+    }
+
     // 4) Kategori
-    final byCat = _findByCategory(drinks, lower);
+    final byCat = _findByCategory(drinks, lower, preferences);
     if (byCat.isNotEmpty) {
       final top = byCat.take(3).toList();
       final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
       return _msg(
-        'Bu kategorideki en iyi 3 seçeneğim: $names\n\n'
+        'Bu kategoriye uygun 3 seçeneğim: $names\n\n'
         'Her biri kendi tarzında lezzetli. Hangi tarifi öncelikle inceleyelim?',
         drinkId: top.first.id,
       );
     }
 
     // 5) Fallback - Daha samimi yanıt
+    if (preferences.hasAny) {
+      final prefOnly = _findByPreferences(drinks, preferences);
+      if (prefOnly.isNotEmpty) {
+        final top = prefOnly.take(3).toList();
+        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+        return _msg(
+          '${preferences.description()} isteğini dikkate aldım. Sana uygun olabilecek seçenekler: $names\n\n'
+          'Bu tariflerde talep ettiğin sınırlamaları gözettim.',
+          drinkId: top.first.id,
+        );
+      }
+    }
+
     final shuffled = [...drinks]..shuffle();
     final top = shuffled.take(3).toList();
     final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
@@ -137,8 +164,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // Selamlamalar - samimi ama doğal
     if (lower.contains('merhaba') || lower.contains('selam') || lower.contains('merhba')) {
       return _msg(
-        'Aaa merhaba! 👋 Çok sevindim seni görmek. Bugün nasıl hissediyorsun? '
-        'Canın ne çekiyor, tatlı mı yoksa ferahlatıcı mı?',
+        'Merhaba! 👋 Seni görmek gerçekten güzel. Bugün nasıl hissediyorsun? '
+        'Doğrudan bir içecek önerisi de isteyebilirsin.',
       );
     }
 
@@ -216,8 +243,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       .replaceAll('ğ', 'g')
       .replaceAll('ü', 'u');
 
-  DrinkModel? _findByTitle(List<DrinkModel> drinks, String lower) {
+  DrinkModel? _findByTitle(
+      List<DrinkModel> drinks, String lower, _DrinkPreferences preferences) {
     for (final d in drinks) {
+      if (preferences.violates(d)) continue;
       if (_normalize(d.title).contains(lower) && lower.length > 2) {
         return d;
       }
@@ -225,7 +254,26 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     return null;
   }
 
-  List<String> _extractIngredientTokens(String lower) {
+  _DrinkPreferences _parsePreferences(String lower) {
+    final avoidCoffee = lower.contains('kahvesiz') ||
+        lower.contains('kahve yok') ||
+        lower.contains('kahve olmas') ||
+        lower.contains('kahve olmadan') ||
+        lower.contains('kahve istemiyorum') ||
+        lower.contains('kahve icmem');
+    final avoidSugar = lower.contains('sekersiz') ||
+        lower.contains('seker yok') ||
+        lower.contains('seker olmas') ||
+        lower.contains('seker olmadan') ||
+        lower.contains('seker istemiyorum');
+    return _DrinkPreferences(
+      avoidCoffee: avoidCoffee,
+      avoidSugar: avoidSugar,
+    );
+  }
+
+  List<String> _extractIngredientTokens(
+      String lower, _DrinkPreferences preferences) {
     const keywords = [
       'muz',
       'sut',
@@ -253,14 +301,22 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       'badem',
       'findik'
     ];
-    return keywords.where((k) => lower.contains(k)).toList();
+    final tokens = keywords.where((k) => lower.contains(k)).toList();
+    if (preferences.avoidCoffee) {
+      tokens.remove('kahve');
+    }
+    if (preferences.avoidSugar) {
+      tokens.remove('seker');
+    }
+    return tokens;
   }
 
-  List<DrinkModel> _findByIngredients(
-      List<DrinkModel> drinks, List<String> tokens) {
+  List<DrinkModel> _findByIngredients(List<DrinkModel> drinks,
+      List<String> tokens, _DrinkPreferences preferences) {
     if (tokens.isEmpty) return [];
     final scored = <(DrinkModel, int)>[];
     for (final d in drinks) {
+      if (preferences.violates(d)) continue;
       var score = 0;
       final ingNormalized = d.ingredients.map((i) => _normalize(i)).join(' ');
       for (final t in tokens) {
@@ -272,7 +328,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     return scored.map((e) => e.$1).toList();
   }
 
-  List<DrinkModel> _findByCategory(List<DrinkModel> drinks, String lower) {
+  List<DrinkModel> _findByPreferences(
+      List<DrinkModel> drinks, _DrinkPreferences preferences) {
+    return drinks.where((d) => !preferences.violates(d)).toList();
+  }
+
+  List<DrinkModel> _findByCategory(
+      List<DrinkModel> drinks, String lower, _DrinkPreferences preferences) {
     const map = {
       'kahve': 'Kahve',
       'matcha': 'Matcha',
@@ -285,9 +347,49 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     };
     for (final entry in map.entries) {
       if (lower.contains(entry.key)) {
+        if (preferences.avoidCoffee && entry.key == 'kahve') {
+          continue;
+        }
         return drinks.where((d) => d.category == entry.value).toList();
       }
     }
     return [];
   }
+}
+
+class _DrinkPreferences {
+  final bool avoidCoffee;
+  final bool avoidSugar;
+
+  const _DrinkPreferences({
+    required this.avoidCoffee,
+    required this.avoidSugar,
+  });
+
+  bool get hasAny => avoidCoffee || avoidSugar;
+
+  bool violates(DrinkModel drink) {
+    final ingredients = drink.ingredients
+        .map((i) => _normalize(i))
+        .join(' ');
+    if (avoidCoffee && ingredients.contains('kahve')) return true;
+    if (avoidSugar && ingredients.contains('seker')) return true;
+    return false;
+  }
+
+  String description() {
+    if (avoidCoffee && avoidSugar) return 'Kahvesiz ve şekersiz';
+    if (avoidCoffee) return 'Kahvesiz';
+    if (avoidSugar) return 'Şekersiz';
+    return '';
+  }
+
+  String _normalize(String s) => s
+      .toLowerCase()
+      .replaceAll('ı', 'i')
+      .replaceAll('ö', 'o')
+      .replaceAll('ç', 'c')
+      .replaceAll('ş', 's')
+      .replaceAll('ğ', 'g')
+      .replaceAll('ü', 'u');
 }
