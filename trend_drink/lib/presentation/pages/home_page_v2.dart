@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trenddrink/core/models/category_meta.dart';
 import 'package:trenddrink/core/theme/app_palette.dart';
 import 'package:trenddrink/core/theme/app_typography.dart';
-import 'package:trenddrink/core/widgets/frosted_panel.dart';
 import 'package:trenddrink/core/widgets/glow_box.dart';
-import 'package:trenddrink/core/widgets/section_header_hero.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
 
 /// Ana sayfa – modern karelaj. Büyük HD kategori kutuları + hover glow.
@@ -22,10 +21,30 @@ class HomePageV2 extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeaderHero(
-            title: 'TrendDrink',
-            subtitle: 'Lezzet, sanat ve teknolojinin buluştuğu içecek atölyen.',
-            height: 180,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(36, 28, 36, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'TrendDrink',
+                  style: AppTypography.display(
+                    size: 32,
+                    color: AppPalette.cream,
+                    letterSpacing: 1.2,
+                    weight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Lezzet, sanat ve teknolojinin buluştuğu içecek atölyen.',
+                  style: AppTypography.body(
+                    size: 13,
+                    color: AppPalette.dimCream.withAlpha(180),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 26),
           Padding(
@@ -88,143 +107,18 @@ class HomePageV2 extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 36),
-            child: drinksAsync.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.all(40),
-                child: Center(
-                    child: CircularProgressIndicator(color: AppPalette.gold)),
-              ),
-              error: (e, _) => Text('Hata: $e',
-                  style: AppTypography.body(color: AppPalette.danger)),
-              data: (drinks) {
-                final featured = drinks.take(8).toList();
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: featured.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemBuilder: (_, i) {
-                    final d = featured[i];
-                    return GlowBox(
-                      onTap: () => context.go('/drink/${d.id}'),
-                      radius: 16,
-                      child: FrostedPanel(
-                        padding: const EdgeInsets.all(0),
-                        radius: 16,
-                        alpha: 100,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(16)),
-                                child: d.imageUrl.startsWith('http')
-                                    ? CachedNetworkImage(
-                                        imageUrl: d.imageUrl,
-                                        fit: BoxFit.cover,
-                                        placeholder: (_, __) => Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                AppPalette.mocha.withAlpha(200),
-                                                AppPalette.espresso
-                                                    .withAlpha(220),
-                                              ],
-                                            ),
-                                          ),
-                                          child: const Center(
-                                            child: SizedBox(
-                                              width: 22,
-                                              height: 22,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: AppPalette.gold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        errorWidget: (_, __, ___) => Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                AppPalette.mocha,
-                                                AppPalette.cocoa,
-                                              ],
-                                            ),
-                                          ),
-                                          child: const Icon(
-                                            Icons.local_cafe_rounded,
-                                            color: AppPalette.gold,
-                                            size: 30,
-                                          ),
-                                        ),
-                                      )
-                                    : Image.asset(
-                                        d.imageUrl,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                AppPalette.mocha,
-                                                AppPalette.cocoa,
-                                              ],
-                                            ),
-                                          ),
-                                          child: const Icon(
-                                            Icons.local_cafe_rounded,
-                                            color: AppPalette.gold,
-                                            size: 30,
-                                          ),
-                                        ),
-                                      ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    d.title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppTypography.label(
-                                      size: 12,
-                                      color: AppPalette.cream,
-                                      letterSpacing: 0.4,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 3),
-                                  Text(
-                                    d.category,
-                                    style: AppTypography.body(
-                                      size: 10,
-                                      color: AppPalette.gold.withAlpha(200),
-                                      letterSpacing: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+          drinksAsync.when(
+            loading: () => const Padding(
+              padding: EdgeInsets.all(40),
+              child: Center(
+                  child: CircularProgressIndicator(color: AppPalette.gold)),
             ),
+            error: (e, _) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 36),
+              child: Text('Hata: $e',
+                  style: AppTypography.body(color: AppPalette.danger)),
+            ),
+            data: (drinks) => _FeaturedSection(drinks: drinks.toList()),
           ),
           const SizedBox(height: 50),
         ],
@@ -316,6 +210,205 @@ class _CategoryTile extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Featured Section — infinite auto-scroll horizontal ────────────────────────
+const double _kFeaturedCardWidth = 180.0;
+const double _kFeaturedCardSpacing = 14.0;
+
+class _FeaturedSection extends StatefulWidget {
+  const _FeaturedSection({required this.drinks});
+  final List drinks;
+
+  @override
+  State<_FeaturedSection> createState() => _FeaturedSectionState();
+}
+
+class _FeaturedSectionState extends State<_FeaturedSection>
+    with SingleTickerProviderStateMixin {
+  late final ScrollController _sc;
+  Ticker? _ticker;
+  bool _paused = false;
+  Duration? _lastTick;
+
+  static const double _pxPerMs = 0.05;
+
+  @override
+  void initState() {
+    super.initState();
+    _sc = ScrollController();
+    _ticker = createTicker(_onTick)..start();
+  }
+
+  void _onTick(Duration elapsed) {
+    if (_paused || !_sc.hasClients) return;
+    _lastTick ??= elapsed;
+    final dt = (elapsed - _lastTick!).inMilliseconds.toDouble();
+    _lastTick = elapsed;
+    if (!_sc.position.hasContentDimensions) return;
+    final max = _sc.position.maxScrollExtent;
+    if (max <= 0) return;
+    final next = _sc.offset + dt * _pxPerMs;
+    _sc.jumpTo(next > max ? 0 : next);
+  }
+
+  @override
+  void dispose() {
+    _ticker?.dispose();
+    _sc.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => _paused = true,
+      onExit: (_) => _paused = false,
+      child: SizedBox(
+        height: 240,
+        child: ListView.separated(
+          controller: _sc,
+          scrollDirection: Axis.horizontal,
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 36),
+          itemCount: widget.drinks.length * 100,
+          separatorBuilder: (_, __) =>
+              const SizedBox(width: _kFeaturedCardSpacing),
+          itemBuilder: (_, i) {
+            final d = widget.drinks[i % widget.drinks.length];
+            return _FeaturedCard(drink: d);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _FeaturedCard extends StatefulWidget {
+  const _FeaturedCard({required this.drink});
+  final dynamic drink;
+
+  @override
+  State<_FeaturedCard> createState() => _FeaturedCardState();
+}
+
+class _FeaturedCardState extends State<_FeaturedCard> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final d = widget.drink;
+    return GestureDetector(
+      onTap: () => context.go('/drink/${d.id}'),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+          width: _kFeaturedCardWidth,
+          transform: _hovered
+              ? (Matrix4.identity()..translate(0.0, -6.0))
+              : Matrix4.identity(),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                AnimatedScale(
+                  scale: _hovered ? 1.06 : 1.0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutCubic,
+                  child: d.imageUrl.startsWith('http')
+                      ? CachedNetworkImage(
+                          imageUrl: d.imageUrl as String,
+                          fit: BoxFit.cover,
+                          errorWidget: (_, __, ___) => Container(
+                            decoration: BoxDecoration(gradient: d.gradient),
+                          ),
+                        )
+                      : Image.asset(
+                          d.imageUrl as String,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            decoration: BoxDecoration(gradient: d.gradient),
+                          ),
+                        ),
+                ),
+                // Bottom gradient overlay
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withAlpha(210),
+                      ],
+                    ),
+                  ),
+                ),
+                // Category + title
+                Positioned(
+                  bottom: 10,
+                  left: 10,
+                  right: 10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppPalette.gold.withAlpha(40),
+                          borderRadius: BorderRadius.circular(6),
+                          border:
+                              Border.all(color: AppPalette.gold.withAlpha(100)),
+                        ),
+                        child: Text(
+                          (d.category as String).toUpperCase(),
+                          style: AppTypography.label(
+                            size: 8,
+                            color: AppPalette.cream,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        d.title as String,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.label(
+                          size: 12,
+                          color: AppPalette.cream,
+                          letterSpacing: 0.3,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Hover glow border
+                if (_hovered)
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppPalette.gold.withAlpha(160),
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );

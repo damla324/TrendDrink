@@ -22,7 +22,8 @@ class _ChatbotOpenNotifier extends Notifier<bool> {
 
 /// Floating chatbot bubble — add to ShellPage Stack as a Positioned widget.
 class FloatingChatbot extends ConsumerStatefulWidget {
-  const FloatingChatbot({super.key});
+  const FloatingChatbot({super.key, this.onDrag});
+  final GestureDragUpdateCallback? onDrag;
 
   @override
   ConsumerState<FloatingChatbot> createState() => _FloatingChatbotState();
@@ -97,6 +98,7 @@ class _FloatingChatbotState extends ConsumerState<FloatingChatbot>
           pulseCtrl: _pulseCtrl,
           isOpen: isOpen,
           onTap: () => ref.read(_chatbotOpenProvider.notifier).toggle(),
+          onDragUpdate: widget.onDrag,
         ),
       ],
     );
@@ -365,10 +367,12 @@ class _LedButton extends StatefulWidget {
     required this.pulseCtrl,
     required this.isOpen,
     required this.onTap,
+    this.onDragUpdate,
   });
   final AnimationController pulseCtrl;
   final bool isOpen;
   final VoidCallback onTap;
+  final GestureDragUpdateCallback? onDragUpdate;
   @override
   State<_LedButton> createState() => _LedButtonState();
 }
@@ -384,6 +388,7 @@ class _LedButtonState extends State<_LedButton> {
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
+        onPanUpdate: widget.onDragUpdate,
         child: AnimatedBuilder(
           animation: widget.pulseCtrl,
           builder: (_, child) {

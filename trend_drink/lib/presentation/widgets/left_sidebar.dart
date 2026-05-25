@@ -255,7 +255,7 @@ class _SidebarItemState extends State<_SidebarItem> {
   @override
   Widget build(BuildContext context) {
     // Sidebar genişlediği anda tüm etiketler doğrudan görünür.
-    final showLabel = widget.railExpanded;
+    // showLabel is now driven by LayoutBuilder constraints inside each item
     final Color iconColor = widget.entry.isAi
         ? AppPalette.ledCyan
         : widget.isActive
@@ -282,60 +282,62 @@ class _SidebarItemState extends State<_SidebarItem> {
               onTap: widget.onTap,
               child: widget.entry.isAi
                   ? _buildAiTile(iconColor)
-                  : AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: bgColor,
-                        borderRadius: BorderRadius.circular(14),
-                        border: widget.isActive
-                            ? Border.all(color: AppPalette.gold.withAlpha(70))
-                            : null,
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: AppPalette.sidebarCollapsedWidth - 24,
-                            child: Icon(widget.entry.icon,
-                                size: 26, color: iconColor),
-                          ),
-                          if (showLabel)
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Text(
-                                  widget.entry.label,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppTypography.label(
-                                    size: 12.5,
-                                    color: iconColor,
-                                    letterSpacing: 0.8,
-                                    weight: widget.isActive
-                                        ? FontWeight.w700
-                                        : FontWeight.w600,
+                  : LayoutBuilder(builder: (ctx, constraints) {
+                      final showLabel = constraints.maxWidth >
+                          AppPalette.sidebarCollapsedWidth + 30;
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: bgColor,
+                          borderRadius: BorderRadius.circular(14),
+                          border: widget.isActive
+                              ? Border.all(color: AppPalette.gold.withAlpha(70))
+                              : null,
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: AppPalette.sidebarCollapsedWidth - 24,
+                              child: Icon(widget.entry.icon,
+                                  size: 34, color: iconColor),
+                            ),
+                            if (showLabel)
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: Text(
+                                    widget.entry.label,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTypography.label(
+                                      size: 12.5,
+                                      color: iconColor,
+                                      letterSpacing: 0.8,
+                                      weight: widget.isActive
+                                          ? FontWeight.w700
+                                          : FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          if (widget.railExpanded &&
-                              widget.entry.children.isNotEmpty &&
-                              showLabel)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: AnimatedRotation(
-                                duration: const Duration(milliseconds: 200),
-                                turns: widget.isExpanded ? 0.5 : 0,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  size: 16,
-                                  color: AppPalette.dimCream.withAlpha(160),
+                            if (showLabel && widget.entry.children.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: AnimatedRotation(
+                                  duration: const Duration(milliseconds: 200),
+                                  turns: widget.isExpanded ? 0.5 : 0,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    size: 16,
+                                    color: AppPalette.dimCream.withAlpha(160),
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                    ),
+                          ],
+                        ),
+                      );
+                    }),
             ),
           ),
           if (widget.entry.children.isNotEmpty)
@@ -395,7 +397,7 @@ class _SidebarItemState extends State<_SidebarItem> {
             children: [
               SizedBox(
                 width: AppPalette.sidebarCollapsedWidth - 24,
-                child: Icon(widget.entry.icon, size: 26, color: iconColor),
+                child: Icon(widget.entry.icon, size: 34, color: iconColor),
               ),
               if (widget.railExpanded)
                 Expanded(
@@ -556,7 +558,7 @@ class _MembershipCard extends ConsumerWidget {
               children: [
                 Icon(
                   isPro ? Icons.workspace_premium_rounded : Icons.bolt_rounded,
-                  size: 22,
+                  size: 28,
                   color: isPro ? AppPalette.espresso : AppPalette.gold,
                 ),
                 if (railExpanded) ...[
@@ -637,7 +639,7 @@ class _AboutButtonState extends State<_AboutButton> {
                 SizedBox(
                   width: AppPalette.sidebarCollapsedWidth - 24,
                   child:
-                      Icon(Icons.info_outline_rounded, size: 22, color: color),
+                      Icon(Icons.info_outline_rounded, size: 28, color: color),
                 ),
                 if (widget.railExpanded)
                   Expanded(

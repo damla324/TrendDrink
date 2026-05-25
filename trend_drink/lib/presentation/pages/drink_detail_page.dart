@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -44,7 +45,7 @@ class DrinkDetailPage extends ConsumerWidget {
           }
           final related = drinks
               .where((d) => d.category == drink.category && d.id != drink.id)
-              .take(6)
+              .take(20)
               .toList();
           return _DrinkDetailContent(drink: drink, related: related);
         },
@@ -82,132 +83,152 @@ class _DrinkDetailContent extends StatelessWidget {
 }
 
 // ── Hero Section ──────────────────────────────────────────────────────────────
-class _HeroSection extends StatelessWidget {
+class _HeroSection extends StatefulWidget {
   const _HeroSection({required this.drink});
   final DrinkModel drink;
+
+  @override
+  State<_HeroSection> createState() => _HeroSectionState();
+}
+
+class _HeroSectionState extends State<_HeroSection> {
+  bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
     final isDesktop = w >= 768;
 
-    return SizedBox(
-      height: isDesktop ? 420.0 : 340.0,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          _buildImage(),
-          // Bottom-only fade (let top of image breathe)
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: const [0.0, 0.30, 0.70, 1.0],
-                colors: [
-                  Colors.transparent,
-                  Colors.transparent,
-                  AppPalette.obsidian.withAlpha(140),
-                  AppPalette.obsidian.withAlpha(250),
-                ],
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: SizedBox(
+        height: isDesktop ? 420.0 : 340.0,
+        child: ClipRect(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              AnimatedScale(
+                scale: _hovered ? 1.06 : 1.0,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeOutCubic,
+                child: _buildImage(),
               ),
-            ),
-          ),
-          // Floating back + AI nav
-          Positioned(
-            top: 16,
-            left: 16,
-            right: 16,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _GlassNavButton(
-                  icon: Icons.arrow_back_rounded,
-                  onTap: () =>
-                      context.canPop() ? context.pop() : context.go('/'),
-                ),
-                _AiChip(drinkTitle: drink.title),
-              ],
-            ),
-          ),
-          // Title block at bottom
-          Positioned(
-            bottom: 28,
-            left: isDesktop ? 48 : 20,
-            right: isDesktop ? 48 : 20,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 6,
-                  children: [
-                    _TemperatureBadge(temperature: drink.temperature),
-                    _CategoryBadge(category: drink.category),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  drink.title,
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: isDesktop ? 40 : 28,
-                    fontWeight: FontWeight.w700,
-                    color: AppPalette.cream,
-                    height: 1.15,
-                    shadows: [
-                      Shadow(
-                          color: Colors.black.withAlpha(220), blurRadius: 18),
+              // Bottom-only fade (let top of image breathe)
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.0, 0.30, 0.70, 1.0],
+                    colors: [
+                      Colors.transparent,
+                      Colors.transparent,
+                      AppPalette.obsidian.withAlpha(140),
+                      AppPalette.obsidian.withAlpha(250),
                     ],
                   ),
-                ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.05),
-                const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withAlpha(80),
-                        borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              // Floating back + AI nav
+              Positioned(
+                top: 16,
+                left: 16,
+                right: 16,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _GlassNavButton(
+                      icon: Icons.arrow_back_rounded,
+                      onTap: () =>
+                          context.canPop() ? context.pop() : context.go('/'),
+                    ),
+                    _AiChip(drinkTitle: widget.drink.title),
+                  ],
+                ),
+              ),
+              // Title block at bottom
+              Positioned(
+                bottom: 28,
+                left: isDesktop ? 48 : 20,
+                right: isDesktop ? 48 : 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      children: [
+                        _TemperatureBadge(
+                            temperature: widget.drink.temperature),
+                        _CategoryBadge(category: widget.drink.category),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      widget.drink.title,
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: isDesktop ? 40 : 28,
+                        fontWeight: FontWeight.w700,
+                        color: AppPalette.cream,
+                        height: 1.15,
+                        shadows: [
+                          Shadow(
+                              color: Colors.black.withAlpha(220),
+                              blurRadius: 18),
+                        ],
                       ),
-                      child: Text(
-                        drink.description,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12.5,
-                          color: AppPalette.dimCream.withAlpha(230),
-                          height: 1.5,
+                    ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.05),
+                    const SizedBox(height: 10),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withAlpha(80),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            widget.drink.description,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12.5,
+                              color: AppPalette.dimCream.withAlpha(230),
+                              height: 1.5,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ).animate().fadeIn(duration: 600.ms, delay: 80.ms),
-              ],
-            ),
+                    ).animate().fadeIn(duration: 600.ms, delay: 80.ms),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildImage() {
-    final url = drink.imageUrl;
+    final url = widget.drink.imageUrl;
     if (!url.startsWith('http')) {
       return Image.asset(
         url,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
-            Container(decoration: BoxDecoration(gradient: drink.gradient)),
+        errorBuilder: (_, __, ___) => Container(
+            decoration: BoxDecoration(gradient: widget.drink.gradient)),
       );
     }
     return CachedNetworkImage(
       imageUrl: url,
       fit: BoxFit.cover,
       placeholder: (_, __) =>
-          Container(decoration: BoxDecoration(gradient: drink.gradient)),
+          Container(decoration: BoxDecoration(gradient: widget.drink.gradient)),
       errorWidget: (_, __, ___) =>
-          Container(decoration: BoxDecoration(gradient: drink.gradient)),
+          Container(decoration: BoxDecoration(gradient: widget.drink.gradient)),
     );
   }
 }
@@ -363,19 +384,65 @@ class _SuggestionChipState extends State<_SuggestionChip> {
 }
 
 // ── Related Drinks ────────────────────────────────────────────────────────────
-class _RelatedDrinks extends StatelessWidget {
+class _RelatedDrinks extends StatefulWidget {
   const _RelatedDrinks({required this.drinks});
   final List<DrinkModel> drinks;
 
   @override
+  State<_RelatedDrinks> createState() => _RelatedDrinksState();
+}
+
+class _RelatedDrinksState extends State<_RelatedDrinks>
+    with SingleTickerProviderStateMixin {
+  late final ScrollController _sc;
+  Ticker? _ticker;
+  bool _paused = false;
+  Duration? _lastTick;
+
+  static const double _pxPerMs = 0.04;
+
+  @override
+  void initState() {
+    super.initState();
+    _sc = ScrollController();
+    _ticker = createTicker(_onTick)..start();
+  }
+
+  void _onTick(Duration elapsed) {
+    if (_paused || !_sc.hasClients) return;
+    _lastTick ??= elapsed;
+    final dt = (elapsed - _lastTick!).inMilliseconds.toDouble();
+    _lastTick = elapsed;
+    if (!_sc.position.hasContentDimensions) return;
+    final max = _sc.position.maxScrollExtent;
+    if (max <= 0) return;
+    final next = _sc.offset + dt * _pxPerMs;
+    _sc.jumpTo(next > max ? 0 : next);
+  }
+
+  @override
+  void dispose() {
+    _ticker?.dispose();
+    _sc.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 148,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: drinks.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (_, i) => _RelatedCard(drink: drinks[i]),
+    return MouseRegion(
+      onEnter: (_) => _paused = true,
+      onExit: (_) => _paused = false,
+      child: SizedBox(
+        height: 148,
+        child: ListView.separated(
+          controller: _sc,
+          scrollDirection: Axis.horizontal,
+          physics: const ClampingScrollPhysics(),
+          itemCount: widget.drinks.length * 100,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (_, i) =>
+              _RelatedCard(drink: widget.drinks[i % widget.drinks.length]),
+        ),
       ),
     ).animate().fadeIn(duration: 500.ms, delay: 150.ms);
   }
@@ -526,7 +593,7 @@ class _ProsCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: const Color(0xFF0D2818).withAlpha(170),
+            color: const Color(0xFF0D2818).withAlpha(60),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: accent.withAlpha(60)),
           ),
@@ -568,7 +635,7 @@ class _ConsCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A0A0A).withAlpha(170),
+            color: const Color(0xFF1A0A0A).withAlpha(60),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: accent.withAlpha(60)),
           ),
@@ -648,7 +715,7 @@ class _PreparationCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppPalette.cocoa.withAlpha(150),
+            color: AppPalette.cocoa.withAlpha(50),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppPalette.gold.withAlpha(30)),
           ),

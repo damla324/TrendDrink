@@ -11,13 +11,22 @@ import 'package:trenddrink/presentation/widgets/left_sidebar.dart';
 ///   │   ├─ LeftSidebar (rail, hover-expand)
 ///   │   └─ Expanded(child) — sayfa içeriği transparan zemin üzerinde
 ///   └─ backgroundH.png arka planda hafif transparan
-class ShellPage extends StatelessWidget {
+class ShellPage extends StatefulWidget {
   const ShellPage({super.key, required this.child});
   final Widget child;
 
   @override
+  State<ShellPage> createState() => _ShellPageState();
+}
+
+class _ShellPageState extends State<ShellPage> {
+  double _chatRight = 24;
+  double _chatBottom = 24;
+
+  @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.sizeOf(context).width < 768;
+    final size = MediaQuery.sizeOf(context);
+    final isMobile = size.width < 768;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
@@ -51,20 +60,29 @@ class ShellPage extends StatelessWidget {
                 ),
                 // Foreground: sidebar + child
                 isMobile
-                    ? _MobileLayout(child: child)
+                    ? _MobileLayout(child: widget.child)
                     : Row(
                         children: [
                           const LeftSidebar(),
                           Expanded(
-                            child: ClipRect(child: child),
+                            child: ClipRect(child: widget.child),
                           ),
                         ],
                       ),
-                // Floating chatbot — always on top
-                const Positioned(
-                  bottom: 24,
-                  right: 24,
-                  child: FloatingChatbot(),
+                // Floating chatbot — draggable
+                Positioned(
+                  right: _chatRight,
+                  bottom: _chatBottom,
+                  child: FloatingChatbot(
+                    onDrag: (d) {
+                      setState(() {
+                        _chatRight = (_chatRight - d.delta.dx)
+                            .clamp(8.0, size.width - 90);
+                        _chatBottom = (_chatBottom - d.delta.dy)
+                            .clamp(8.0, size.height - 90);
+                      });
+                    },
+                  ),
                 ),
               ],
             ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:trenddrink/core/theme/app_palette.dart';
 import 'package:trenddrink/core/theme/app_typography.dart';
-import 'package:trenddrink/core/widgets/frosted_panel.dart';
 
 Future<void> showTrendDrinkAbout(BuildContext context) async {
   final info = await PackageInfo.fromPlatform().catchError(
@@ -33,10 +32,20 @@ Future<void> showTrendDrinkAbout(BuildContext context) async {
               constraints: const BoxConstraints(maxWidth: 460),
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: FrostedPanel(
+                child: Container(
                   padding: const EdgeInsets.all(28),
-                  alpha: 220,
-                  blur: 28,
+                  decoration: BoxDecoration(
+                    color: AppPalette.obsidian.withAlpha(248),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppPalette.gold.withAlpha(50)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(160),
+                        blurRadius: 40,
+                        spreadRadius: 4,
+                      ),
+                    ],
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
