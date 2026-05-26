@@ -84,15 +84,20 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       );
     }
 
-    // 1) Sosyal
+    // 2) Saf Sosyal (Sadece selam verme vb.)
     final social = _handleSocial(lower, drinks);
-    if (social != null) return social;
+    if (social != null && emotionalIntro == null) return social;
 
-    // 2) Başlık eşleşmesi
+    // 3) Başlık eşleşmesi
     final title = _findByTitle(drinks, lower, preferences);
     if (title != null) {
+      String responseText = '';
+      if (emotionalIntro != null) {
+        responseText += '$emotionalIntro\n\n';
+      }
+      
       return _msg(
-        'Ah, [${title.title}](${title.id}) çok iyi bir seçim. 😋 '
+        '${responseText}Kesinlikle katılıyorum, [${title.title}](${title.id}) harika bir seçim. 😋 '
         'Buna ben de kesinlikle onay veririm. Detayı aşağıdaki butondan hemen açabilirsin.',
         drinkId: title.id,
       );
@@ -104,8 +109,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (byIng.isNotEmpty) {
       final top = byIng.take(3).toList();
       final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+      
+      String responseText = '';
+      if (emotionalIntro != null) {
+        responseText += '$emotionalIntro\n\n';
+      }
       return _msg(
-        'Elindeki malzemelere bakınca bu seçenekler çok uygun: $names\n\n'
+        '${responseText}Elindeki malzemeleri ve modunu düşündüğümde şu seçenekler seni çok memnun edecek: $names\n\n'
         'Bunlardan biri tam olarak aradığın lezzete yakın olabilir. İlkini açmak için aşağıya tıklayabilirsin.',
         drinkId: top.first.id,
       );
@@ -116,8 +126,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       if (prefOnly.isNotEmpty) {
         final top = prefOnly.take(3).toList();
         final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+        
+        String responseText = '';
+        if (emotionalIntro != null) {
+          responseText += '$emotionalIntro\n\n';
+        }
         return _msg(
-          '${preferences.description()} isteğini anladım. Sana uygun seçenekler: $names\n\n'
+          '${responseText}İstediğin o ${preferences.description()} tadı yakalamak için şu tarifleri seçtim: $names\n\n'
           'Bu içecekler, talebindeki sınırlamaları göz önünde bulundurarak seçildi.',
           drinkId: top.first.id,
         );
@@ -129,8 +144,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (byCat.isNotEmpty) {
       final top = byCat.take(3).toList();
       final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+      
+      String responseText = '';
+      if (emotionalIntro != null) {
+        responseText += '$emotionalIntro\n\n';
+      }
       return _msg(
-        'Bu kategoriye uygun 3 seçeneğim: $names\n\n'
+        '${responseText}Aradığın bu kategoride sana en çok hitap edecek 3 önerim var: $names\n\n'
         'Her biri kendi tarzında lezzetli. Hangi tarifi öncelikle inceleyelim?',
         drinkId: top.first.id,
       );
@@ -153,11 +173,64 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final shuffled = [...drinks]..shuffle();
     final top = shuffled.take(3).toList();
     final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+    
+    if (emotionalIntro != null) {
+      return _msg(
+        '$emotionalIntro\n\nŞu an için aklıma gelen en iyi seçenekler şunlar: $names. '
+        'Belki de bu tariflerden biri ruh halini değiştirmeye yardımcı olur.',
+        drinkId: top.first.id,
+      );
+    }
+
     return _msg(
       'Tam olarak hangi içeceği istediğini anlamadım ama bu 3 tarif iyi bir başlangıç olabilir: $names\n\n'
       'Eğer daha net bir öneri istersen, bana malzemelerini söyle ya da bir kategori belirtebilirsin. 😊',
       drinkId: top.first.id,
     );
+  }
+
+  /// Kullanıcının duygusal durumunu analiz eder ve uygun bir giriş metni oluşturur.
+  String? _generateEmotionalIntro(String lower, _DrinkPreferences prefs) {
+    // Kötü gün, yorgunluk, mutsuzluk (Internet feedback tabanlı samimi yaklaşımlar)
+    if (lower.contains('kotu bir gun') || lower.contains('mutsuzum') || 
+        lower.contains('yorgun') || lower.contains('canim sikkin') || 
+        lower.contains('moralim bozuk')) {
+      
+      if (prefs.isHard) {
+        return 'Bugünün tüm yorgunluğunu ve negatif enerjisini üzerinden atacak sert bir kahvenin yerini hiçbir şey tutamaz, inan bana. 😌 '
+               'Zihnini berraklaştıracak ve sana yeniden güç verecek o sade dokunuşu beraber hazırlayalım.';
+      }
+      if (prefs.preferredTemp == 'sicak') {
+        return 'İnan bana, sıcak bir içecek sadece damak tadına değil, ruhuna da iyi gelecek. ☕ '
+               'Günün tüm yorgunluğunu o ilk yudumla beraber arkanda bırakabilirsin.';
+      }
+      return 'Bazen her şey üst üste gelir ama doğru bir içecek modunu bir anda değiştirebilir. ✨ '
+             'Sana biraz nefes aldıracak, içini ferahlatacak seçenekleri hemen hazırladım.';
+    }
+
+    // Mutluluk, enerji, kutlama
+    if (lower.contains('mutlu') || lower.contains('enerjik') || 
+        lower.contains('harika') || lower.contains('keyifli') || 
+        lower.contains('sevincli')) {
+      return 'Bu harika enerjin bana da bulaştı! 🎉 Mutluluğunu ikiye katlayacak, '
+             'damaklarında festival havası yaratacak efsane önerilerim var.';
+    }
+
+    // Düşünceli, sakin, rahatlama
+    if (lower.contains('dusunceli') || lower.contains('sakin') || 
+        lower.contains('dinlenmek') || lower.contains('rahatlamak')) {
+      return 'Şu an ihtiyacın olan şey tam bir huzur anı... 🧘‍♂️ '
+             'Düşüncelerine eşlik edecek, seni dinginleştirecek en zarif tarifleri senin için seçtim.';
+    }
+
+    // Odaklanma, çalışma
+    if (lower.contains('calisiy') || lower.contains('ders') || 
+        lower.contains('odaklan')) {
+      return 'Verimliliğini zirveye taşıma vakti! 🚀 Zihnini açacak, seni diri tutacak '
+             've konsantrasyonunu artıracak o yakıtı şimdi bulacağız.';
+    }
+
+    return null;
   }
 
   ChatMessage? _handleSocial(String lower, List<DrinkModel> drinks) {
@@ -266,9 +339,49 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         lower.contains('seker olmas') ||
         lower.contains('seker olmadan') ||
         lower.contains('seker istemiyorum');
+    
+    // Sert/Sade/Yoğun
+    final isHard = lower.contains('sert') || 
+        lower.contains('sade') || 
+        lower.contains('sek') || 
+        lower.contains('yogun') || 
+        lower.contains('americano') || 
+        lower.contains('espresso');
+
+    // Eğlenceli/Tatlı/Süslü
+    final isFun = lower.contains('eglenceli') || 
+        lower.contains('tatli') || 
+        lower.contains('suslu') || 
+        lower.contains('karisik') || 
+        lower.contains('renkli');
+
+    // Yapımı kolay
+    final isEasy = lower.contains('kolay') || 
+        lower.contains('pratik') || 
+        lower.contains('hizli') || 
+        lower.contains('ugrastirmasin') ||
+        lower.contains('basit');
+
+    final isCoffeeRequested = lower.contains('kahve') || lower.contains('coffee');
+
+    // Sıcaklık tercihleri için anahtar kelime grupları
+    final isHot = lower.contains('sicak') || 
+        lower.contains('isitan') || 
+        lower.contains('sicacik') || 
+        lower.contains('kaynar');
+    final isCold = lower.contains('soguk') || 
+        lower.contains('ferah') || 
+        lower.contains('buzlu') || 
+        lower.contains('serin');
+
     return _DrinkPreferences(
       avoidCoffee: avoidCoffee,
       avoidSugar: avoidSugar,
+      preferredTemp: (isHot && !isCold) ? 'sicak' : (isCold && !isHot ? 'soguk' : null),
+      isHard: isHard,
+      isFun: isFun,
+      isEasy: isEasy,
+      isCoffeeRequested: isCoffeeRequested,
     );
   }
 
@@ -360,13 +473,23 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 class _DrinkPreferences {
   final bool avoidCoffee;
   final bool avoidSugar;
+  final String? preferredTemp; // 'sicak' veya 'soguk'
+  final bool isHard;
+  final bool isFun;
+  final bool isEasy;
+  final bool isCoffeeRequested;
 
   const _DrinkPreferences({
     required this.avoidCoffee,
     required this.avoidSugar,
+    this.preferredTemp,
+    this.isHard = false,
+    this.isFun = false,
+    this.isEasy = false,
+    this.isCoffeeRequested = false,
   });
 
-  bool get hasAny => avoidCoffee || avoidSugar;
+  bool get hasAny => avoidCoffee || avoidSugar || preferredTemp != null || isHard || isFun || isEasy || isCoffeeRequested;
 
   bool violates(DrinkModel drink) {
     final ingredients = drink.ingredients
@@ -374,14 +497,28 @@ class _DrinkPreferences {
         .join(' ');
     if (avoidCoffee && ingredients.contains('kahve')) return true;
     if (avoidSugar && ingredients.contains('seker')) return true;
+    
+    // Sıcaklık filtresi
+    if (preferredTemp != null) {
+      final drinkTemp = _normalize(drink.temperature);
+      if (drinkTemp != preferredTemp) return true;
+    }
+
     return false;
   }
 
   String description() {
-    if (avoidCoffee && avoidSugar) return 'Kahvesiz ve şekersiz';
-    if (avoidCoffee) return 'Kahvesiz';
-    if (avoidSugar) return 'Şekersiz';
-    return '';
+    final parts = <String>[];
+    if (preferredTemp == 'sicak') parts.add('Sıcak');
+    if (preferredTemp == 'soguk') parts.add('Soğuk');
+    if (avoidCoffee) parts.add('Kahvesiz');
+    if (avoidSugar) parts.add('Şekersiz');
+    if (isHard) parts.add('Sert ve Sade');
+    if (isFun) parts.add('Eğlenceli ve Tatlı');
+    if (isEasy) parts.add('Pratik');
+    if (isCoffeeRequested) parts.add('Kahveli');
+    
+    return parts.join(' ve ');
   }
 
   String _normalize(String s) => s
