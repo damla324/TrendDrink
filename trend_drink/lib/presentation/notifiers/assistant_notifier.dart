@@ -337,17 +337,52 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   }
 
   _DrinkPreferences _parsePreferences(String lower) {
-    final avoidCoffee = lower.contains('kahvesiz') ||
-        lower.contains('kahve yok') ||
-        lower.contains('kahve olmas') ||
-        lower.contains('kahve olmadan') ||
-        lower.contains('kahve istemiyorum') ||
-        lower.contains('kahve icmem');
-    final avoidSugar = lower.contains('sekersiz') ||
-        lower.contains('seker yok') ||
-        lower.contains('seker olmas') ||
-        lower.contains('seker olmadan') ||
-        lower.contains('seker istemiyorum');
+    final avoided = <String>{};
+
+    // 1. ADIM: Tanımlı Malzemeler ve Olumsuzluk Belirteçleri
+    // Tariflerde en sık geçen ana malzemeler
+    const baseIngredients = [
+      'sut', 'seker', 'kahve', 'bal', 'buz', 'nane', 'vanilya', 'tarcin',
+      'zencefil', 'elma', 'cilek', 'muz', 'cikolata', 'kakao', 'findik', 'badem'
+    ];
+
+    // Türkçe olumsuzluk ekleri, alerji ifadeleri ve semantik redler
+    final negationMarkers = [
+      'siz', 'suz', // Ekler: -siz, -sız, -suz, -süz (normalize hali)
+      'yok', 'olmas', 'olmadan', 'istemiyorum', 'icmem', 'icemiyorum',
+      'tuketemiyorum', 'alerji', 'hassasiyet', 'cikar', 'koyma', 'dokunuyor',
+      'yasak', 'kullanma', 'bulunmasin', 'tuketmiyorum'
+    ];
+
+    // 2. ADIM: Dilbilgisel ve Bağlamsal Analiz
+    for (final ing in baseIngredients) {
+      // Doğrudan ek eşleşmesi: "sekersiz", "sutsuz"
+      if (lower.contains('${ing}siz') || lower.contains('${ing}suz')) {
+        avoided.add(ing);
+        continue;
+      }
+
+      // Cümle yapısı eşleşmesi: "sute alerjim var", "seker koyma"
+      final index = lower.indexOf(ing);
+      if (index != -1) {
+        // Malzemeden sonraki 30 karakterlik pencereyi (bağlamı) tara
+        final contextWindow = lower.substring(index, (index + 30).clamp(0, lower.length));
+        for (final neg in negationMarkers) {
+          if (contextWindow.contains(neg)) {
+            avoided.add(ing);
+            break;
+          }
+        }
+      }
+    }
+
+    // 3. ADIM: Eş Anlamlı ve İlişkili Kavram Analizi (Synonyms)
+    if (lower.contains('laktoz') && (lower.contains('siz') || lower.contains('yok') || lower.contains('alerji') || lower.contains('hassas'))) {
+      avoided.add('sut');
+    }
+    if (lower.contains('diyet') || lower.contains('formda') || lower.contains('fit') || lower.contains('kilo')) {
+      avoided.add('seker');
+    }
     
     // Sert/Sade/Yoğun
     final isHard = lower.contains('sert') || 
@@ -384,8 +419,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         lower.contains('serin');
 
     return _DrinkPreferences(
-      avoidCoffee: avoidCoffee,
-      avoidSugar: avoidSugar,
+      avoidedIngredients: avoided,
       preferredTemp: (isHot && !isCold) ? 'sicak' : (isCold && !isHot ? 'soguk' : null),
       isHard: isHard,
       isFun: isFun,
@@ -423,14 +457,12 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       'badem',
       'findik'
     ];
-    final tokens = keywords.where((k) => lower.contains(k)).toList();
-    if (preferences.avoidCoffee) {
-      tokens.remove('kahve');
-    }
-    if (preferences.avoidSugar) {
-      tokens.remove('seker');
-    }
-    return tokens;
+
+    // Kullanıcının özellikle kaçındığı malzemeleri öneri havuzundan çıkar
+    return keywords
+        .where((k) => lower.contains(k))
+        .where((k) => !preferences.avoidedIngredients.contains(k))
+        .toList();
   }
 
   List<DrinkModel> _findByIngredients(List<DrinkModel> drinks,
@@ -480,8 +512,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 }
 
 class _DrinkPreferences {
-  final bool avoidCoffee;
-  final bool avoidSugar;
+  final Set<String> avoidedIngredients;
   final String? preferredTemp; // 'sicak' veya 'soguk'
   final bool isHard;
   final bool isFun;
@@ -489,8 +520,7 @@ class _DrinkPreferences {
   final bool isCoffeeRequested;
 
   const _DrinkPreferences({
-    required this.avoidCoffee,
-    required this.avoidSugar,
+    this.avoidedIngredients = const {},
     this.preferredTemp,
     this.isHard = false,
     this.isFun = false,
@@ -498,14 +528,19 @@ class _DrinkPreferences {
     this.isCoffeeRequested = false,
   });
 
-  bool get hasAny => avoidCoffee || avoidSugar || preferredTemp != null || isHard || isFun || isEasy || isCoffeeRequested;
+  bool get avoidCoffee => avoidedIngredients.contains('kahve');
+  bool get avoidSugar => avoidedIngredients.contains('seker');
+
+  bool get hasAny => avoidedIngredients.isNotEmpty || preferredTemp != null || isHard || isFun || isEasy || isCoffeeRequested;
 
   bool violates(DrinkModel drink) {
-    final ingredients = drink.ingredients
+    final ingredientsStr = drink.ingredients
         .map((i) => _normalize(i))
         .join(' ');
-    if (avoidCoffee && ingredients.contains('kahve')) return true;
-    if (avoidSugar && ingredients.contains('seker')) return true;
+
+    for (final avoided in avoidedIngredients) {
+      if (ingredientsStr.contains(avoided)) return true;
+    }
     
     // Sıcaklık filtresi
     if (preferredTemp != null) {
@@ -520,8 +555,14 @@ class _DrinkPreferences {
     final parts = <String>[];
     if (preferredTemp == 'sicak') parts.add('Sıcak');
     if (preferredTemp == 'soguk') parts.add('Soğuk');
-    if (avoidCoffee) parts.add('Kahvesiz');
-    if (avoidSugar) parts.add('Şekersiz');
+
+    for (final ingredient in avoidedIngredients) {
+      final label = ingredient == 'seker' ? 'Şeker' : 
+                    ingredient == 'sut' ? 'Süt' : 
+                    ingredient == 'kahve' ? 'Kahve' : ingredient;
+      parts.add('$label içermeyen');
+    }
+
     if (isHard) parts.add('Sert ve Sade');
     if (isFun) parts.add('Eğlenceli ve Tatlı');
     if (isEasy) parts.add('Pratik');
