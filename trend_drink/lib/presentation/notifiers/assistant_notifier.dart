@@ -201,9 +201,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   /// Kullanıcının duygusal durumunu analiz eder ve uygun bir giriş metni oluşturur.
   String? _generateEmotionalIntro(String lower, _DrinkPreferences prefs) {
     // Kötü gün, yorgunluk, mutsuzluk (Internet feedback tabanlı samimi yaklaşımlar)
-    if (lower.contains('kotu bir gun') || lower.contains('mutsuzum') || 
-        lower.contains('yorgun') || lower.contains('canim sikkin') || 
-        lower.contains('moralim bozuk')) {
+    if (_fuzzyQuery(lower, 'mutsuzum') || _fuzzyQuery(lower, 'yorgun') || 
+        _fuzzyQuery(lower, 'moralsiz') || _fuzzyQuery(lower, 'kotu') || 
+        lower.contains('canim sikkin')) {
       
       if (prefs.isHard) {
         return 'Bugünün tüm yorgunluğunu ve negatif enerjisini üzerinden atacak sert bir kahvenin yerini hiçbir şey tutamaz, inan bana. 😌 '
@@ -218,23 +218,22 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // Mutluluk, enerji, kutlama
-    if (lower.contains('mutlu') || lower.contains('enerjik') || 
-        lower.contains('harika') || lower.contains('keyifli') || 
-        lower.contains('sevincli')) {
+    if (_fuzzyQuery(lower, 'mutlu') || _fuzzyQuery(lower, 'enerjik') || 
+        _fuzzyQuery(lower, 'harika') || _fuzzyQuery(lower, 'keyifli')) {
       return 'Bu harika enerjin bana da bulaştı! 🎉 Mutluluğunu ikiye katlayacak, '
              'damaklarında festival havası yaratacak efsane önerilerim var.';
     }
 
     // Düşünceli, sakin, rahatlama
-    if (lower.contains('dusunceli') || lower.contains('sakin') || 
-        lower.contains('dinlenmek') || lower.contains('rahatlamak')) {
+    if (_fuzzyQuery(lower, 'sakin') || _fuzzyQuery(lower, 'rahatlamak') || 
+        _fuzzyQuery(lower, 'dinlenmek')) {
       return 'Şu an ihtiyacın olan şey tam bir huzur anı... 🧘‍♂️ '
              'Düşüncelerine eşlik edecek, seni dinginleştirecek en zarif tarifleri senin için seçtim.';
     }
 
     // Odaklanma, çalışma
-    if (lower.contains('calisiy') || lower.contains('ders') || 
-        lower.contains('odaklan')) {
+    if (_fuzzyQuery(lower, 'calisiyorum') || _fuzzyQuery(lower, 'ders') || 
+        _fuzzyQuery(lower, 'odaklanma')) {
       return 'Verimliliğini zirveye taşıma vakti! 🚀 Zihnini açacak, seni diri tutacak '
              've konsantrasyonunu artıracak o yakıtı şimdi bulacağız.';
     }
@@ -243,19 +242,30 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   }
 
   ChatMessage? _handleSocial(String lower, List<DrinkModel> drinks) {
-    // İsim tanıma ve öğrenme (Gelişmiş regex ile)
-    final nameMatch = RegExp(r'(?:adim|ismim|ismim\s+benim)\s+([a-zA-ZçığöşüÇİĞÖŞÜ]+)').firstMatch(lower);
-    if (nameMatch != null) {
-      final detected = nameMatch.group(1)!;
-      _userName = detected[0].toUpperCase() + detected.substring(1);
-      return _msg(
-        'Tanıştığımıza çok memnun oldum $_userName! 😊 Artık seni isminle tanıyorum. '
-        'Bugün senin için harika bir içecek bulalım. Ne içmek istersin?',
-      );
+    final tokens = lower.split(RegExp(r'\s+'));
+
+    // 1. İsim tanıma (Fuzzy: adim, ismim vb. yakalar)
+    int nameKeywordIndex = -1;
+    for (int i = 0; i < tokens.length; i++) {
+      if (_fuzzyMatch(tokens[i], 'adim') || _fuzzyMatch(tokens[i], 'ismim')) {
+        nameKeywordIndex = i;
+        break;
+      }
+    }
+
+    if (nameKeywordIndex != -1 && nameKeywordIndex + 1 < tokens.length) {
+      final detected = tokens[nameKeywordIndex + 1];
+      if (detected.length > 2) {
+        _userName = detected[0].toUpperCase() + detected.substring(1);
+        return _msg(
+          'Tanıştığımıza çok memnun oldum $_userName! 😊 Artık seni isminle tanıyorum. '
+          'Bugün senin için harika bir içecek bulalım. Ne içmek istersin?',
+        );
+      }
     }
 
     // Selamlamalar - samimi ama doğal
-    if (lower.contains('merhaba') || lower.contains('selam') || lower.contains('merhba')) {
+    if (_fuzzyQuery(lower, 'merhaba') || _fuzzyQuery(lower, 'selam')) {
       if (_userName != null) {
         return _msg('Merhaba $_userName! 👋 Seni tekrar görmek ne güzel. Bugün modun nasıl?');
       }
@@ -267,9 +277,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // Sağlık / durum sorguları
-    if (lower.contains('nasils') || lower.contains('iyi misin') || 
-        lower.contains('naber') || lower.contains('iyimisin') ||
-        lower.contains('nasilsin')) {
+    if (_fuzzyQuery(lower, 'nasilsin') || _fuzzyQuery(lower, 'naber') || 
+        _fuzzyQuery(lower, 'iyisin')) {
       if (_userName != null) {
         return _msg('Harikayım $_userName, sorduğun için teşekkürler! 😊 Senin için lezzetli bir şeyler bulmaya hazırım. Sen nasılsın?');
       }
@@ -279,10 +288,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // Duygu ifadeleri - moral ihtiyacı
-    if (lower.contains('hiç halim yok') || lower.contains('halim yok') ||
-        lower.contains('çok üzgünüm') || lower.contains('üzgünüm') ||
-        lower.contains('mutsuzum') || lower.contains('moralsiz') ||
-        lower.contains('bugün hiç')) {
+    if (_fuzzyQuery(lower, 'mutsuzum') || _fuzzyQuery(lower, 'uzgunum') || 
+        _fuzzyQuery(lower, 'moralsiz') || lower.contains('halim yok')) {
       final suggestions = drinks.take(3).toList();
       final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
       final address = _userName ?? 'dostum';
@@ -295,7 +302,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // Teşekkür
-    if (lower.contains('tesekkur') || lower.contains('sagol') || lower.contains('thanks')) {
+    if (_fuzzyQuery(lower, 'tesekkur') || _fuzzyQuery(lower, 'sagol')) {
       return _msg(
         'Ne demek, memnun oldum. ☕ Başka bir şey arıyorsan hemen söyle, birlikte deneyebiliriz.',
       );
@@ -318,7 +325,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // Kurucu sorusu
-    if (lower.contains('kurucum kim') || lower.contains('senin kurucun kim') || lower.contains('kurucu kim')) {
+    if (_fuzzyQuery(lower, 'kurucum') || _fuzzyQuery(lower, 'kurucu')) {
       final boss = _userName ?? 'Damla Yalçın';
       return _msg(
         'Kurucum sensin, $boss. TrendDrink\'i senin vizyonunla geliştirdik. '
@@ -327,6 +334,40 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     return null;
+  }
+
+  /// İki kelime arasındaki benzerliği hesaplar (Levenshtein Mesafesi)
+  int _levenshtein(String s, String t) {
+    if (s == t) return 0;
+    if (s.isEmpty) return t.length;
+    if (t.isEmpty) return s.length;
+    List<int> v0 = List<int>.generate(t.length + 1, (i) => i);
+    List<int> v1 = List.filled(t.length + 1, 0);
+    for (int i = 0; i < s.length; i++) {
+      v1[0] = i + 1;
+      for (int j = 0; j < t.length; j++) {
+        int cost = (s[i] == t[j]) ? 0 : 1;
+        v1[j + 1] = [v1[j] + 1, v0[j + 1] + 1, v0[j] + cost].reduce((a, b) => a < b ? a : b);
+      }
+      for (int j = 0; j < v0.length; j++) v0[j] = v1[j];
+    }
+    return v0[t.length];
+  }
+
+  bool _fuzzyMatch(String word, String target, {double threshold = 0.75}) {
+    if (word.contains(target)) return true;
+    if (word.length < 3) return word == target;
+    final distance = _levenshtein(word, target);
+    final score = 1.0 - (distance / (word.length > target.length ? word.length : target.length));
+    return score >= threshold;
+  }
+
+  bool _fuzzyQuery(String query, String target, {double threshold = 0.75}) {
+    final tokens = query.split(RegExp(r'\s+'));
+    for (final token in tokens) {
+      if (_fuzzyMatch(token, target, threshold: threshold)) return true;
+    }
+    return false;
   }
 
   ChatMessage _msg(String text, {String? drinkId}) => ChatMessage(
@@ -359,48 +400,53 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   _DrinkPreferences _parsePreferences(String lower) {
     final avoided = <String>{};
 
-    // 1. ADIM: Tanımlı Malzemeler ve Olumsuzluk Belirteçleri
-    // Tariflerde en sık geçen ana malzemeler
     const baseIngredients = [
       'sut', 'seker', 'kahve', 'bal', 'buz', 'nane', 'vanilya', 'tarcin',
       'zencefil', 'elma', 'cilek', 'muz', 'cikolata', 'kakao', 'findik', 'badem'
     ];
-
-    // Türkçe olumsuzluk ekleri, alerji ifadeleri ve semantik redler
     final negationMarkers = [
-      'siz', 'suz', // Ekler: -siz, -sız, -suz, -süz (normalize hali)
-      'yok', 'olmas', 'olmadan', 'istemiyorum', 'icmem', 'icemiyorum',
-      'tuketemiyorum', 'alerji', 'hassasiyet', 'cikar', 'koyma', 'dokunuyor',
-      'yasak', 'kullanma', 'bulunmasin', 'tuketmiyorum'
+      'yok', 'olmasin', 'olmadan', 'istemiyorum', 'icmiyorum', 'icemiyorum',
+      'tuketemiyorum', 'alerjim', 'hassasiyet', 'cikar', 'koyma', 'dokunuyor',
+      'yasak', 'kullanma', 'bulunmasin'
     ];
 
-    // 2. ADIM: Dilbilgisel ve Bağlamsal Analiz
-    for (final ing in baseIngredients) {
-      // Doğrudan ek eşleşmesi: "sekersiz", "sutsuz"
-      if (lower.contains('${ing}siz') || lower.contains('${ing}suz')) {
-        avoided.add(ing);
-        continue;
-      }
+    final tokens = lower.split(RegExp(r'\s+'));
 
-      // Cümle yapısı eşleşmesi: "sute alerjim var", "seker koyma"
-      final index = lower.indexOf(ing);
-      if (index != -1) {
-        // Malzemeden sonraki 30 karakterlik pencereyi (bağlamı) tara
-        final contextWindow = lower.substring(index, (index + 30).clamp(0, lower.length));
-        for (final neg in negationMarkers) {
-          if (contextWindow.contains(neg)) {
-            avoided.add(ing);
-            break;
+    for (final ing in baseIngredients) {
+      for (final token in tokens) {
+        // 1. Ek kontrolü (Suffix matching)
+        if (token.startsWith(ing) && (token.endsWith('siz') || token.endsWith('suz'))) {
+          avoided.add(ing);
+          break;
+        }
+
+        // 2. Fuzzy kelime ve bağlam kontrolü
+        if (_fuzzyMatch(token, ing)) {
+          final tokenIndex = tokens.indexOf(token);
+          bool isNegated = false;
+
+          // Kelimenin hemen sonrasındaki 2 kelimeye bak (örn: "seker olmasun")
+          for (int j = tokenIndex + 1; j <= tokenIndex + 2 && j < tokens.length; j++) {
+            for (final neg in negationMarkers) {
+              if (_fuzzyMatch(tokens[j], neg)) {
+                isNegated = true;
+                break;
+              }
+            }
+            if (isNegated) break;
           }
+          
+          if (isNegated) avoided.add(ing);
+          break;
         }
       }
     }
 
-    // 3. ADIM: Eş Anlamlı ve İlişkili Kavram Analizi (Synonyms)
-    if (lower.contains('laktoz') && (lower.contains('siz') || lower.contains('yok') || lower.contains('alerji') || lower.contains('hassas'))) {
+    // 3. ADIM: Eş Anlamlı ve İlişkili Kavram Analizi (Synonyms) - Fuzzy destekli
+    if (_fuzzyQuery(lower, 'laktoz') && (_fuzzyQuery(lower, 'yok') || _fuzzyQuery(lower, 'alerjim') || _fuzzyQuery(lower, 'hassas'))) {
       avoided.add('sut');
     }
-    if (lower.contains('diyet') || lower.contains('formda') || lower.contains('fit') || lower.contains('kilo')) {
+    if (_fuzzyQuery(lower, 'diyet') || _fuzzyQuery(lower, 'formda') || _fuzzyQuery(lower, 'kilo')) {
       avoided.add('seker');
     }
     
