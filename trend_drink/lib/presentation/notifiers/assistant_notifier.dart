@@ -63,9 +63,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     // Görsel destekli akış (multimodal placeholder + pratik öneri).
     if (hasImage) {
-      final tokens = _extractIngredientTokens(lower);
+      final tokens = _extractIngredientTokens(lower, preferences);
       if (tokens.isNotEmpty) {
-        final byIng = _findByIngredients(drinks, tokens);
+        final byIng = _findByIngredients(drinks, tokens, preferences);
         if (byIng.isNotEmpty) {
           final top = byIng.take(3).toList();
           final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
