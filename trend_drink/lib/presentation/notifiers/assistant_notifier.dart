@@ -58,11 +58,44 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final drinks = await _repository.fetchAllDrinks();
     final lower = _normalize(query);
     final preferences = _parsePreferences(lower);
-    
+
     // İsim prefix'i (Eğer isim biliniyorsa cümle başına ekler)
     final namePrefix = _userName != null ? '$_userName, ' : '';
 
-    // 1) Duygu ve Durum Analizi (Giriş cümlesi için)
+    // 1) Spesifik İçecek Tespiti (Öncelikli Analiz)
+    final titleMatch = _findByTitle(drinks, lower, preferences);
+    if (titleMatch != null) {
+      final isIndecisive = lower.contains('kararsiz') ||
+          lower.contains('ne dersin') ||
+          lower.contains('nasil olur') ||
+          lower.contains('fikrin ne') ||
+          lower.contains('tavsiye eder misin');
+
+      if (isIndecisive) {
+        final benefits = titleMatch.pros.isNotEmpty
+            ? titleMatch.pros.take(2).join(' ve ')
+            : 'modunu yükseltecek harika özellikleri';
+
+        return _msg(
+          '${namePrefix}Bugün için harika bir tercih! ${titleMatch.title} gerçekten çok yerinde bir karar. 🌟\n\n'
+          '${titleMatch.title}, $benefits gibi etkileriyle seni çok iyi hissettirecektir. '
+          'Bence kesinlikle denemelisin, seçimlerin her zamanki gibi çok klas. 😎\n\n'
+          'İşte senin için hazırladığım o nefis tarif:\n\n'
+          '${titleMatch.preparation}\n\n'
+          'Zevkli seçimlerinle her zaman fark yaratıyorsun, afiyet olsun!',
+          drinkId: titleMatch.id,
+        );
+      } else {
+        return _msg(
+          '${namePrefix}Harika! Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini getiriyorum. 😋\n\n'
+          '${titleMatch.preparation}\n\n'
+          'Senin gibi ne istediğini bilen biriyle sohbet etmek çok keyifli. Şimdiden afiyet olsun!',
+          drinkId: titleMatch.id,
+        );
+      }
+    }
+
+    // 2) Duygu ve Durum Analizi (Giriş cümlesi için)
     final emotionalIntro = _generateEmotionalIntro(lower, preferences);
     
     if (hasImage) {
@@ -96,21 +129,6 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // 2) Saf Sosyal (Sadece selam verme vb.)
     final social = _handleSocial(lower, drinks);
     if (social != null && emotionalIntro == null) return social;
-
-    // 3) Başlık eşleşmesi
-    final title = _findByTitle(drinks, lower, preferences);
-    if (title != null) {
-      String responseText = '';
-      if (emotionalIntro != null) {
-        responseText += '$emotionalIntro\n\n';
-      }
-      
-      return _msg(
-        '$namePrefix${responseText}Kesinlikle katılıyorum, [${title.title}](${title.id}) harika bir seçim. 😋 '
-        'Buna ben de kesinlikle onay veririm. Detayı aşağıdaki butondan hemen açabilirsin.',
-        drinkId: title.id,
-      );
-    }
 
     // 3) Malzeme
     final tokens = _extractIngredientTokens(lower, preferences);
