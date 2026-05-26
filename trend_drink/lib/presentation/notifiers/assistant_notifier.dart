@@ -61,6 +61,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final lower = _normalize(query);
     final preferences = _parsePreferences(lower);
 
+    // 1) Duygu ve Durum Analizi (Giriş cümlesi için)
+    final emotionalIntro = _generateEmotionalIntro(lower, preferences);
+
     // Görsel destekli akış (multimodal placeholder + pratik öneri).
     if (hasImage) {
       final tokens = _extractIngredientTokens(lower, preferences);
@@ -69,8 +72,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         if (byIng.isNotEmpty) {
           final top = byIng.take(3).toList();
           final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+
+          String responseText = '';
+          if (emotionalIntro != null) {
+            responseText += '$emotionalIntro\n\n';
+          }
+
           return _msg(
-            '📷 Vay! Güzel bir fotoğraf paylaştın! Yazdığın malzemelerle birlikte inceledim. '
+            '${responseText}📷 Vay! Güzel bir fotoğraf paylaştın! Yazdığın malzemelerle birlikte inceledim. '
             'Sana en uygun tarifler: $names\n\n'
             'Aşağıdaki butondan detayını görebilirsin. İstersen "şekersiz" veya "sıcak" gibi filtreler de kullanabilirsin.',
             drinkId: top.first.id,
