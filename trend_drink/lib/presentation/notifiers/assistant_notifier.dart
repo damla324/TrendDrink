@@ -11,14 +11,12 @@ final assistantProvider =
         AssistantNotifier.new);
 
 class AssistantNotifier extends Notifier<List<ChatMessage>> {
-  static const String _userFirstName = 'Damla';
-  static const String _userLastName = 'Yalçın';
-  static const String _ownerName = 'Damla Yalçın';
-
   late final DrinkRepository _repository;
+  String? _userName; // Kullanıcının ismini hafızada tutmak için
 
   @override
   List<ChatMessage> build() {
+    _userName = null;
     _repository = ref.read(drinkRepositoryProvider);
     return [
       ChatMessage(
@@ -60,11 +58,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final drinks = await _repository.fetchAllDrinks();
     final lower = _normalize(query);
     final preferences = _parsePreferences(lower);
+    
+    // İsim prefix'i (Eğer isim biliniyorsa cümle başına ekler)
+    final namePrefix = _userName != null ? '$_userName, ' : '';
 
     // 1) Duygu ve Durum Analizi (Giriş cümlesi için)
     final emotionalIntro = _generateEmotionalIntro(lower, preferences);
-
-    // Görsel destekli akış (multimodal placeholder + pratik öneri).
+    
     if (hasImage) {
       final tokens = _extractIngredientTokens(lower, preferences);
       if (tokens.isNotEmpty) {
@@ -79,7 +79,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           }
 
           return _msg(
-            '${responseText}📷 Vay! Güzel bir fotoğraf paylaştın! Yazdığın malzemelerle birlikte inceledim. '
+            '$namePrefix${responseText}📷 Vay! Güzel bir fotoğraf paylaştın! Yazdığın malzemelerle birlikte inceledim. '
             'Sana en uygun tarifler: $names\n\n'
             'Aşağıdaki butondan detayını görebilirsin. İstersen "şekersiz" veya "sıcak" gibi filtreler de kullanabilirsin.',
             drinkId: top.first.id,
@@ -87,7 +87,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         }
       }
       return _msg(
-        '📷 Güzel bir fotoğraf yüklemedin! 😊 Fotoğrafdaki malzemeleri kısaca yazabilir misin? '
+        '${namePrefix}📷 Henüz malzemeleri analiz edemedim! 😊 Fotoğrafdaki malzemeleri kısaca yazabilir misin? '
         'Örneğin: "Muz, süt, yulaf, bal var". Böylece sana en doğru tarifi bulabilirim.\n\n'
         '_Tam olarak AI Vision entegrasyonu için Pro üyeliğinde Gemini görsel analiz yakında aktif olacak!_',
       );
@@ -106,7 +106,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       }
       
       return _msg(
-        '${responseText}Kesinlikle katılıyorum, [${title.title}](${title.id}) harika bir seçim. 😋 '
+        '$namePrefix${responseText}Kesinlikle katılıyorum, [${title.title}](${title.id}) harika bir seçim. 😋 '
         'Buna ben de kesinlikle onay veririm. Detayı aşağıdaki butondan hemen açabilirsin.',
         drinkId: title.id,
       );
@@ -124,7 +124,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         responseText += '$emotionalIntro\n\n';
       }
       return _msg(
-        '${responseText}Elindeki malzemeleri ve modunu düşündüğümde şu seçenekler seni çok memnun edecek: $names\n\n'
+        '$namePrefix${responseText}Elindeki malzemeleri ve modunu düşündüğümde şu seçenekler seni çok memnun edecek: $names\n\n'
         'Bunlardan biri tam olarak aradığın lezzete yakın olabilir. İlkini açmak için aşağıya tıklayabilirsin.',
         drinkId: top.first.id,
       );
@@ -141,7 +141,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           responseText += '$emotionalIntro\n\n';
         }
         return _msg(
-          '${responseText}İstediğin o ${preferences.description()} tadı yakalamak için şu tarifleri seçtim: $names\n\n'
+          '$namePrefix${responseText}İstediğin o ${preferences.description()} tadı yakalamak için şu tarifleri seçtim: $names\n\n'
           'Bu içecekler, talebindeki sınırlamaları göz önünde bulundurarak seçildi.',
           drinkId: top.first.id,
         );
@@ -159,7 +159,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         responseText += '$emotionalIntro\n\n';
       }
       return _msg(
-        '${responseText}Aradığın bu kategoride sana en çok hitap edecek 3 önerim var: $names\n\n'
+        '$namePrefix${responseText}Aradığın bu kategoride sana en çok hitap edecek 3 önerim var: $names\n\n'
         'Her biri kendi tarzında lezzetli. Hangi tarifi öncelikle inceleyelim?',
         drinkId: top.first.id,
       );
@@ -172,7 +172,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         final top = prefOnly.take(3).toList();
         final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
         return _msg(
-          '${preferences.description()} isteğini dikkate aldım. Sana uygun olabilecek seçenekler: $names\n\n'
+          '$namePrefix${preferences.description()} isteğini dikkate aldım. Sana uygun olabilecek seçenekler: $names\n\n'
           'Bu tariflerde talep ettiğin sınırlamaları gözettim.',
           drinkId: top.first.id,
         );
@@ -185,14 +185,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     
     if (emotionalIntro != null) {
       return _msg(
-        '$emotionalIntro\n\nŞu an için aklıma gelen en iyi seçenekler şunlar: $names. '
+        '$namePrefix$emotionalIntro\n\nŞu an için aklıma gelen en iyi seçenekler şunlar: $names. '
         'Belki de bu tariflerden biri ruh halini değiştirmeye yardımcı olur.',
         drinkId: top.first.id,
       );
     }
 
     return _msg(
-      'Tam olarak hangi içeceği istediğini anlamadım ama bu 3 tarif iyi bir başlangıç olabilir: $names\n\n'
+      '${namePrefix}Tam olarak hangi içeceği istediğini anlamadım ama bu 3 tarif iyi bir başlangıç olabilir: $names\n\n'
       'Eğer daha net bir öneri istersen, bana malzemelerini söyle ya da bir kategori belirtebilirsin. 😊',
       drinkId: top.first.id,
     );
@@ -243,10 +243,25 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   }
 
   ChatMessage? _handleSocial(String lower, List<DrinkModel> drinks) {
+    // İsim tanıma ve öğrenme (Gelişmiş regex ile)
+    final nameMatch = RegExp(r'(?:adim|ismim|ismim\s+benim)\s+([a-zA-ZçığöşüÇİĞÖŞÜ]+)').firstMatch(lower);
+    if (nameMatch != null) {
+      final detected = nameMatch.group(1)!;
+      _userName = detected[0].toUpperCase() + detected.substring(1);
+      return _msg(
+        'Tanıştığımıza çok memnun oldum $_userName! 😊 Artık seni isminle tanıyorum. '
+        'Bugün senin için harika bir içecek bulalım. Ne içmek istersin?',
+      );
+    }
+
     // Selamlamalar - samimi ama doğal
     if (lower.contains('merhaba') || lower.contains('selam') || lower.contains('merhba')) {
+      if (_userName != null) {
+        return _msg('Merhaba $_userName! 👋 Seni tekrar görmek ne güzel. Bugün modun nasıl?');
+      }
+      
       return _msg(
-        'Merhaba! 👋 Seni görmek gerçekten güzel. Bugün nasıl hissediyorsun? '
+        'Merhaba! 👋 Seni görmek gerçekten güzel. Adını henüz paylaşmadın ama istersen isminle hitap edebilirim. Bugün nasıl hissediyorsun? '
         'Doğrudan bir içecek önerisi de isteyebilirsin.',
       );
     }
@@ -255,8 +270,11 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (lower.contains('nasils') || lower.contains('iyi misin') || 
         lower.contains('naber') || lower.contains('iyimisin') ||
         lower.contains('nasilsin')) {
+      if (_userName != null) {
+        return _msg('Harikayım $_userName, sorduğun için teşekkürler! 😊 Senin için lezzetli bir şeyler bulmaya hazırım. Sen nasılsın?');
+      }
       return _msg(
-        'İyiyim, teşekkür ederim. 😊 Sen nasılsın? Bugün hangi içecek seni daha iyi hissettirir, beraber bulalım.',
+        'İyiyim, teşekkür ederim! 😊 Sen nasılsın? Bugün hangi içecek seni daha iyi hissettirir, beraber bulalım.',
       );
     }
 
@@ -267,8 +285,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         lower.contains('bugün hiç')) {
       final suggestions = drinks.take(3).toList();
       final names = suggestions.map((d) => '[${d.title}](${d.id})').join(', ');
+      final address = _userName ?? 'dostum';
       return _msg(
-        'Öyle mi... çok üzüldüm bunu duyduğuma. 😔 Sana moral verebilecek birkaç içecek biliyorum: $names\n\n'
+        'Öyle mi... çok üzüldüm bunu duyduğuma $address. 😔 Sana moral verebilecek birkaç içecek biliyorum: $names\n\n'
         'Senin için özel olarak görmek istediğin bir içecek var mı? '
         'Umarım bu seçimler bugünündeki mutsuzluğu biraz olsun hafifletir.',
         drinkId: suggestions.first.id,
@@ -300,9 +319,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     // Kurucu sorusu
     if (lower.contains('kurucum kim') || lower.contains('senin kurucun kim') || lower.contains('kurucu kim')) {
+      final boss = _userName ?? 'Damla Yalçın';
       return _msg(
-        'Kurucum sensin, $_ownerName. TrendDrink\'i sen kurdun ve bu yüzden seni biliyorum. '
-        'Şimdi istersen birlikte ne içeceğine karar verelim, Damla.',
+        'Kurucum sensin, $boss. TrendDrink\'i senin vizyonunla geliştirdik. '
+        'Şimdi istersen birlikte ne içeceğine karar verelim.',
       );
     }
 
