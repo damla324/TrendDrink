@@ -62,34 +62,42 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // İsim prefix'i (Eğer isim biliniyorsa cümle başına ekler)
     final namePrefix = _userName != null ? '$_userName, ' : '';
 
-    // 1) Spesifik İçecek Tespiti (Öncelikli Analiz)
+    // 1. ADIM: Niyet ve İçecek Tespiti
+    // Kullanıcının içmek istediğine dair niyet anahtar kelimeleri
+    final drinkingIntents = [
+      'istiyorum', 'isterim', 'icecegim', 'icmek', 'canim', 'icsem', 'miyim', 
+      'hazirlar', 'yaparmisin', 'icicem', 'yap', 'getir'
+    ];
+
     final titleMatch = _findByTitle(drinks, lower, preferences);
+    
+    // Eğer bir içecek ismi bulunduysa ve kullanıcı niyet belirtiyorsa
     if (titleMatch != null) {
-      final isIndecisive = lower.contains('kararsiz') ||
-          lower.contains('ne dersin') ||
-          lower.contains('nasil olur') ||
-          lower.contains('fikrin ne') ||
-          lower.contains('tavsiye eder misin');
+      bool userWantsToDrink = false;
+      for (final intent in drinkingIntents) {
+        if (_fuzzyQuery(lower, intent)) {
+          userWantsToDrink = true;
+          break;
+        }
+      }
 
+      final isIndecisive = lower.contains('kararsiz') || lower.contains('ne dersin') || lower.contains('nasil olur');
+
+      // Motivasyonel ve spesifik yanıt yapısı
       if (isIndecisive) {
-        final benefits = titleMatch.pros.isNotEmpty
-            ? titleMatch.pros.take(2).join(' ve ')
-            : 'modunu yükseltecek harika özellikleri';
-
         return _msg(
-          '${namePrefix}Bugün için harika bir tercih! ${titleMatch.title} gerçekten çok yerinde bir karar. 🌟\n\n'
-          '${titleMatch.title}, $benefits gibi etkileriyle seni çok iyi hissettirecektir. '
+          '${namePrefix}Bugün için harika bir fikir! ${titleMatch.title} gerçekten çok yerinde bir karar. 🌟 '
           'Bence kesinlikle denemelisin, seçimlerin her zamanki gibi çok klas. 😎\n\n'
           'İşte senin için hazırladığım o nefis tarif:\n\n'
           '${titleMatch.preparation}\n\n'
-          'Zevkli seçimlerinle her zaman fark yaratıyorsun, afiyet olsun!',
+          'Harika zevkinle bugün yine formundasın, afiyet olsun!',
           drinkId: titleMatch.id,
         );
-      } else {
+      } else if (userWantsToDrink) {
         return _msg(
-          '${namePrefix}Harika! Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini getiriyorum. 😋\n\n'
+          '${namePrefix}Süper bir fikir! Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
           '${titleMatch.preparation}\n\n'
-          'Senin gibi ne istediğini bilen biriyle sohbet etmek çok keyifli. Şimdiden afiyet olsun!',
+          'Ne istediğini bilen biriyle sohbet etmek harika. Şimdiden afiyet olsun!',
           drinkId: titleMatch.id,
         );
       }
@@ -407,8 +415,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   DrinkModel? _findByTitle(
       List<DrinkModel> drinks, String lower, _DrinkPreferences preferences) {
     for (final d in drinks) {
-      if (preferences.violates(d)) continue;
-      if (_normalize(d.title).contains(lower) && lower.length > 2) {
+      final normalizedTitle = _normalize(d.title);
+      // KRİTİK DÜZELTME: Kullanıcı cümlesi içecek adını içeriyor mu?
+      // (Örn: "Bugün Türk Kahvesi istiyorum" -> "turk kahvesi" içeriyor mu?)
+      if (lower.contains(normalizedTitle) && normalizedTitle.length > 3) {
         return d;
       }
     }
