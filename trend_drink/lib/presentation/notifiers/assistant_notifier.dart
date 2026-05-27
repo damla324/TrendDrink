@@ -309,23 +309,38 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   ChatMessage? _handleSocial(String lower, List<DrinkModel> drinks) {
     final tokens = lower.split(RegExp(r'\s+'));
 
-    // 1. İsim tanıma (Fuzzy: adim, ismim vb. yakalar)
-    int nameKeywordIndex = -1;
+    // 1. GELİŞMİŞ İSİM TANIMA (Devrik ve Kısa Cümle Analizi)
+    final identityMarkers = ['ben', 'benim', 'adim', 'ismim', 'isminiz'];
+    final stateExclusions = [
+      'iyiyim', 'mutluyum', 'yorgunum', 'berbat', 'kotuyum', 'harika', 
+      'enerjik', 'selam', 'merhaba', 'naber', 'nasilsin', 'istiyorum', 'yap'
+    ];
+
+    int idIdx = -1;
     for (int i = 0; i < tokens.length; i++) {
-      if (_fuzzyMatch(tokens[i], 'adim') || _fuzzyMatch(tokens[i], 'ismim')) {
-        nameKeywordIndex = i;
+      if (identityMarkers.any((m) => _fuzzyMatch(tokens[i], m))) {
+        idIdx = i;
         break;
       }
     }
 
-    if (nameKeywordIndex != -1 && nameKeywordIndex + 1 < tokens.length) {
-      final detected = tokens[nameKeywordIndex + 1];
-      if (detected.length > 2) {
-        _userName = detected[0].toUpperCase() + detected.substring(1);
-        return _msg(
-          'Tanıştığımıza çok memnun oldum $_userName! 😊 Artık seni isminle tanıyorum. '
-          'Bugün senin için harika bir içecek bulalım. Ne içmek istersin?',
-        );
+    if (idIdx != -1) {
+      // Çevresindeki kelimelere bak (Önce sağa, sonra sola - Devrik cümleler için)
+      final neighbors = [idIdx + 1, idIdx - 1];
+      for (final nIdx in neighbors) {
+        if (nIdx >= 0 && nIdx < tokens.length) {
+          final candidate = tokens[nIdx];
+          final isExcluded = stateExclusions.any((w) => _fuzzyMatch(candidate, w));
+          final isMarker = identityMarkers.any((m) => _fuzzyMatch(candidate, m));
+          
+          if (candidate.length > 2 && !isExcluded && !isMarker) {
+            _userName = candidate[0].toUpperCase() + candidate.substring(1);
+            return _msg(
+              'Tanıştığımıza çok memnun oldum $_userName! 😊 Artık seni isminle tanıyorum. '
+              'Bugün senin için harika bir içecek bulalım. Ne içmek istersin?',
+            );
+          }
+        }
       }
     }
 
@@ -492,8 +507,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           final tokenIndex = tokens.indexOf(token);
           bool isNegated = false;
 
-          // Kelimenin hemen sonrasındaki 2 kelimeye bak (örn: "seker olmasun")
-          for (int j = tokenIndex + 1; j <= tokenIndex + 2 && j < tokens.length; j++) {
+          // Çift Yönlü Bağlam Analizi: Kelimenin öncesindeki ve sonrasındaki 3 kelimeye bak.
+          // (Örn: "Seker sakın koyma" veya "Sakın seker istemiyorum")
+          for (int j = tokenIndex - 2; j <= tokenIndex + 3; j++) {
+            if (j < 0 || j >= tokens.length || j == tokenIndex) continue;
             for (final neg in negationMarkers) {
               if (_fuzzyMatch(tokens[j], neg)) {
                 isNegated = true;
