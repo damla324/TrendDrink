@@ -62,6 +62,45 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // İsim prefix'i (Eğer isim biliniyorsa cümle başına ekler)
     final namePrefix = _userName != null ? '$_userName, ' : '';
 
+    // 0. ADIM: Alternatif/Farklı İstek Tespiti
+    // Kullanıcının listeyi değiştirmek veya farklı bir şey istemek için kullandığı anahtar kelimeler
+    final isAlternativeRequest = _fuzzyQuery(lower, 'baska') ||
+        _fuzzyQuery(lower, 'farkli') ||
+        _fuzzyQuery(lower, 'alternatif') ||
+        _fuzzyQuery(lower, 'sevmedim') ||
+        _fuzzyQuery(lower, 'begenmedim') ||
+        _fuzzyQuery(lower, 'degistir') ||
+        _fuzzyQuery(lower, 'diger');
+
+    // Daha önce önerilen içeceklerin ID'lerini chat geçmişinden topla
+    final suggestedIds = state
+        .where((m) => m.author == ChatAuthor.assistant && m.drinkId != null)
+        .map((m) => m.drinkId!)
+        .toSet();
+
+    if (isAlternativeRequest && suggestedIds.isNotEmpty) {
+      // Önerilmemiş içeceklerden oluşan bir havuz oluştur
+      final pool = drinks.where((d) => !suggestedIds.contains(d.id) && !preferences.violates(d)).toList();
+      
+      if (pool.isNotEmpty) {
+        final tokens = _extractIngredientTokens(lower, preferences);
+        var candidates = <DrinkModel>[];
+        
+        // Eğer kullanıcı yeni bir malzeme veya kategori belirttiyse ona öncelik ver
+        candidates = _findByIngredients(pool, tokens, preferences);
+        if (candidates.isEmpty) candidates = _findByCategory(pool, lower, preferences);
+        if (candidates.isEmpty) { candidates = pool; candidates.shuffle(); }
+
+        final top = candidates.take(3).toList();
+        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+        return _msg(
+          '${namePrefix}Tabii ki, hemen rotayı değiştiriyoruz! 🔄 Demek bu öneriler pek sarmadı... Hiç sorun değil, senin için yepyeni alternatifler hazırladım: $names\n\n'
+          'Bunlardan biri damak tadına daha uygun olabilir mi? İstersen aramaya devam edebiliriz. 😊',
+          drinkId: top.first.id,
+        );
+      }
+    }
+
     // 1. ADIM: Niyet ve İçecek Tespiti
     // Kullanıcının içmek istediğine dair niyet anahtar kelimeleri
     final drinkingIntents = [
