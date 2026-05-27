@@ -103,9 +103,11 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     // 1. ADIM: Niyet ve İçecek Tespiti
     // Kullanıcının içmek istediğine dair niyet anahtar kelimeleri
+    final recipeKeywords = ['tarif', 'nasil yapilir', 'hazirlanisi', 'yapilisi', 'yapimi', 'hazirla'];
     final drinkingIntents = [
       'istiyorum', 'isterim', 'icecegim', 'icmek', 'canim', 'icsem', 'miyim', 
-      'hazirlar', 'yaparmisin', 'icicem', 'yap', 'getir'
+      'hazirlar', 'yaparmisin', 'icicem', 'yap', 'getir',
+      ...recipeKeywords,
     ];
 
     final titleMatch = _findByTitle(drinks, lower, preferences);
@@ -118,6 +120,24 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           userWantsToDrink = true;
           break;
         }
+      }
+
+      bool userWantsRecipe = false;
+      for (final kw in recipeKeywords) {
+        if (_fuzzyQuery(lower, kw)) {
+          userWantsRecipe = true;
+          break;
+        }
+      }
+
+      // Eğer kullanıcı doğrudan tarif istiyorsa, diğer önerileri atla ve tarifi ver
+      if (userWantsRecipe) {
+        return _msg(
+          '${namePrefix}Harika seçim! Hemen [${titleMatch.title}](${titleMatch.id}) tarifini paylaşıyorum:\n\n'
+          '${titleMatch.preparation}\n\n'
+          'Şimdiden afiyet olsun! Başka bir içecek tarifi istersen bana sormaktan çekinme. 😊',
+          drinkId: titleMatch.id,
+        );
       }
 
       final isIndecisive = lower.contains('kararsiz') || lower.contains('ne dersin') || lower.contains('nasil olur');
@@ -470,10 +490,21 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       List<DrinkModel> drinks, String lower, _DrinkPreferences preferences) {
     for (final d in drinks) {
       final normalizedTitle = _normalize(d.title);
-      // KRİTİK DÜZELTME: Kullanıcı cümlesi içecek adını içeriyor mu?
-      // (Örn: "Bugün Türk Kahvesi istiyorum" -> "turk kahvesi" içeriyor mu?)
       if (lower.contains(normalizedTitle) && normalizedTitle.length > 3) {
         return d;
+      }
+
+      // Kelime bazlı kontrol: "Türk Kahvesi" -> "türk" ve "kahvesi" kelimelerinin her ikisi de cümlede var mı?
+      final titleParts = normalizedTitle.split(' ').where((p) => p.length > 2).toList();
+      if (titleParts.isNotEmpty) {
+        bool allPartsMatch = true;
+        for (final part in titleParts) {
+          if (!lower.contains(part)) {
+            allPartsMatch = false;
+            break;
+          }
+        }
+        if (allPartsMatch) return d;
       }
     }
     return null;
