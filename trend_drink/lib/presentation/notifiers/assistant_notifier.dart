@@ -86,6 +86,19 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // Karar değişikliği tespiti (Özellikle "vazgeçtim" veya "kararımı değiştirdim" ifadeleri)
     final changedMind = _fuzzyQuery(lower, 'vazgectim') || _fuzzyQuery(lower, 'kararimi');
 
+    // 1. ADIM: İçecek Tespiti (Öncelikli kontrol)
+    final titleMatch = _findByTitle(drinks, lower, preferences);
+
+    // Karar değişikliği ile birlikte spesifik bir içecek istendiyse (Örn: "Vazgeçtim Mojito istiyorum")
+    if (changedMind && titleMatch != null) {
+      return _msg(
+        '${namePrefix}Kararını değiştirdiysen hiç sorun değil! 😊 Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
+        '${titleMatch.preparation}\n\n'
+        'Başka bir seçenek istersen yine buradayım!',
+        drinkId: titleMatch.id,
+      );
+    }
+
     if (isAlternativeRequest) {
       // Önerilmemiş içeceklerden oluşan bir havuz oluştur
       final pool = drinks.where((d) => !suggestedIds.contains(d.id) && !preferences.violates(d)).toList();
@@ -123,8 +136,6 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       ...recipeKeywords,
     ];
 
-    final titleMatch = _findByTitle(drinks, lower, preferences);
-    
     // Eğer bir içecek ismi bulunduysa ve kullanıcı niyet belirtiyorsa
     if (titleMatch != null) {
       bool userWantsToDrink = false;
