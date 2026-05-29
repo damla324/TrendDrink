@@ -70,7 +70,12 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         _fuzzyQuery(lower, 'sevmedim') ||
         _fuzzyQuery(lower, 'begenmedim') ||
         _fuzzyQuery(lower, 'degistir') ||
-        _fuzzyQuery(lower, 'diger');
+        _fuzzyQuery(lower, 'diger') ||
+        _fuzzyQuery(lower, 'vazgectim') ||
+        _fuzzyQuery(lower, 'istemem') ||
+        _fuzzyQuery(lower, 'kararimi') ||
+        lower.contains('istemiyorum') ||
+        lower.contains('kalsin');
 
     // Daha önce önerilen içeceklerin ID'lerini chat geçmişinden topla
     final suggestedIds = state
@@ -78,10 +83,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         .map((m) => m.drinkId!)
         .toSet();
 
-    if (isAlternativeRequest && suggestedIds.isNotEmpty) {
+    // Karar değişikliği tespiti (Özellikle "vazgeçtim" veya "kararımı değiştirdim" ifadeleri)
+    final changedMind = _fuzzyQuery(lower, 'vazgectim') || _fuzzyQuery(lower, 'kararimi');
+
+    if (isAlternativeRequest) {
       // Önerilmemiş içeceklerden oluşan bir havuz oluştur
       final pool = drinks.where((d) => !suggestedIds.contains(d.id) && !preferences.violates(d)).toList();
       
+      // Eğer önerilen bir şeyler varsa ve kullanıcı reddediyorsa
       if (pool.isNotEmpty) {
         final tokens = _extractIngredientTokens(lower, preferences);
         var candidates = <DrinkModel>[];
@@ -91,11 +100,15 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         if (candidates.isEmpty) candidates = _findByCategory(pool, lower, preferences);
         if (candidates.isEmpty) { candidates = pool; candidates.shuffle(); }
 
+        final messageStart = changedMind 
+            ? 'Kararını değiştirdiysen hiç sorun değil! 😊' 
+            : 'Tabii ki, hemen rotayı değiştiriyoruz! 🔄 Demek bu öneriler pek sarmadı...';
+
         final top = candidates.take(3).toList();
         final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
         return _msg(
-          '${namePrefix}Tabii ki, hemen rotayı değiştiriyoruz! 🔄 Demek bu öneriler pek sarmadı... Hiç sorun değil, senin için yepyeni alternatifler hazırladım: $names\n\n'
-          'Bunlardan biri damak tadına daha uygun olabilir mi? İstersen aramaya devam edebiliriz. 😊',
+          '${namePrefix}$messageStart Senin için yepyeni ve daha önce önermediğim şu seçenekleri hazırladım: $names\n\n'
+          'Bunlar kulağa nasıl geliyor? Başka bir şey istersen buradayım.',
           drinkId: top.first.id,
         );
       }
@@ -367,26 +380,46 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       }
     }
 
-    // Selamlamalar - samimi ama doğal
-    if (_fuzzyQuery(lower, 'merhaba') || _fuzzyQuery(lower, 'selam')) {
-      if (_userName != null) {
-        return _msg('Merhaba $_userName! 👋 Seni tekrar görmek ne güzel. Bugün modun nasıl?');
-      }
-      
+    // 2. Sosyal İletişim Analizi
+    bool hasGreeting = _fuzzyQuery(lower, 'merhaba') || _fuzzyQuery(lower, 'selam');
+    bool hasHowAreYou = _fuzzyQuery(lower, 'nasilsin') || _fuzzyQuery(lower, 'naber') || _fuzzyQuery(lower, 'iyisin');
+    bool isPositiveState = _fuzzyQuery(lower, 'iyiyim') || _fuzzyQuery(lower, 'super') || _fuzzyQuery(lower, 'harika') || _fuzzyQuery(lower, 'iyidir');
+
+    // Selamlama + Hal Hatır Sorma (Örn: "Merhaba nasılsın")
+    if (hasGreeting && hasHowAreYou) {
+      final nameStr = _userName != null ? ' $_userName' : '';
       return _msg(
-        'Merhaba! 👋 Seni görmek gerçekten güzel. Adını henüz paylaşmadın ama istersen isminle hitap edebilirim. Bugün nasıl hissediyorsun? '
-        'Doğrudan bir içecek önerisi de isteyebilirsin.',
+        'Merhaba$nameStr! 👋 Çok iyiyim, sorduğun için teşekkür ederim. 😊 Senin için en lezzetli içecekleri keşfetmeye hazırım. '
+        'Senin günün nasıl geçiyor, sana bugün hangi konuda yardımcı olabilirim?',
       );
     }
 
-    // Sağlık / durum sorguları
-    if (_fuzzyQuery(lower, 'nasilsin') || _fuzzyQuery(lower, 'naber') || 
-        _fuzzyQuery(lower, 'iyisin')) {
+    // Sadece Hal Hatır Sorma (Örn: "Nasılsın")
+    if (hasHowAreYou) {
       if (_userName != null) {
         return _msg('Harikayım $_userName, sorduğun için teşekkürler! 😊 Senin için lezzetli bir şeyler bulmaya hazırım. Sen nasılsın?');
       }
       return _msg(
-        'İyiyim, teşekkür ederim! 😊 Sen nasılsın? Bugün hangi içecek seni daha iyi hissettirir, beraber bulalım.',
+        'İyiyim, çok teşekkür ederim! 😊 Seni burada görmek güzel. Sen nasılsın, bugün ruh haline uygun bir içecek bulalım mı?',
+      );
+    }
+
+    // Sadece Selamlama (Örn: "Selam")
+    if (hasGreeting) {
+      if (_userName != null) {
+        return _msg('Merhaba $_userName! 👋 Seni tekrar görmek ne güzel. Bugün modun nasıl, ne içmek istersin?');
+      }
+      return _msg(
+        'Merhaba! 👋 Hoş geldin. Seni daha iyi tanımak için ismini söyleyebilirsin ya da istersen doğrudan içecek önerilerine geçebiliriz. '
+        'Bugün senin için ne yapabilirim?',
+      );
+    }
+
+    // AI sorduktan sonra verilen cevap (Örn: "İyiyim")
+    if (isPositiveState) {
+      return _msg(
+        'Bunu duyduğuma çok sevindim! 😊 Keyfini daha da artıracak bir içecek seçmeye ne dersin? '
+        'Elimdeki malzemeleri yazarsan sana özel bir tarif önerebilirim.',
       );
     }
 
