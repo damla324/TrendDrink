@@ -345,21 +345,24 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     if (idIdx != -1) {
-      // Çevresindeki kelimelere bak (Önce sağa, sonra sola - Devrik cümleler için)
-      final neighbors = [idIdx + 1, idIdx - 1];
-      for (final nIdx in neighbors) {
-        if (nIdx >= 0 && nIdx < tokens.length) {
-          final candidate = tokens[nIdx];
-          final isExcluded = stateExclusions.any((w) => _fuzzyMatch(candidate, w));
-          final isMarker = identityMarkers.any((m) => _fuzzyMatch(candidate, m));
-          
-          if (candidate.length > 2 && !isExcluded && !isMarker) {
-            _userName = candidate[0].toUpperCase() + candidate.substring(1);
-            return _msg(
-              'Tanıştığımıza çok memnun oldum $_userName! 😊 Artık seni isminle tanıyorum. '
-              'Bugün senin için harika bir içecek bulalım. Ne içmek istersin?',
-            );
-          }
+      // Devrik cümleler için marker'ın uzağındaki kelimelere de bak (±3 kelime penceresi)
+      final searchIndices = [
+        idIdx + 1, idIdx + 2, idIdx + 3,
+        idIdx - 1, idIdx - 2, idIdx - 3,
+      ];
+      
+      for (final idx in searchIndices) {
+        if (idx < 0 || idx >= tokens.length) continue;
+        final candidate = tokens[idx];
+        final isExcluded = stateExclusions.any((w) => _fuzzyMatch(candidate, w));
+        final isMarker = identityMarkers.any((m) => _fuzzyMatch(candidate, m));
+
+        if (candidate.length > 2 && !isExcluded && !isMarker) {
+          _userName = candidate[0].toUpperCase() + candidate.substring(1);
+          return _msg(
+            'Tanıştığımıza çok memnun oldum $_userName! 😊 Artık seni isminle tanıyorum. '
+            'Bugün senin için harika bir içecek bulalım. Ne içmek istersin?',
+          );
         }
       }
     }
@@ -520,7 +523,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final negationMarkers = [
       'yok', 'olmasin', 'olmadan', 'istemiyorum', 'icmiyorum', 'icemiyorum',
       'tuketemiyorum', 'alerjim', 'hassasiyet', 'cikar', 'koyma', 'dokunuyor',
-      'yasak', 'kullanma', 'bulunmasin'
+      'yasak', 'kullanma', 'bulunmasin', 'sakin', 'hayir', 'asla'
     ];
 
     final tokens = lower.split(RegExp(r'\s+'));
@@ -538,9 +541,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
           final tokenIndex = tokens.indexOf(token);
           bool isNegated = false;
 
-          // Çift Yönlü Bağlam Analizi: Kelimenin öncesindeki ve sonrasındaki 3 kelimeye bak.
-          // (Örn: "Seker sakın koyma" veya "Sakın seker istemiyorum")
-          for (int j = tokenIndex - 2; j <= tokenIndex + 3; j++) {
+          // Çift Yönlü Bağlam Analizi: Devrik cümleler için pencereyi genişletiyoruz (±4 kelime).
+          // (Örn: "Koyma içine sakın şeker" -> yüklem cümlenin en başında olabilir)
+          for (int j = tokenIndex - 4; j <= tokenIndex + 4; j++) {
             if (j < 0 || j >= tokens.length || j == tokenIndex) continue;
             for (final neg in negationMarkers) {
               if (_fuzzyMatch(tokens[j], neg)) {
