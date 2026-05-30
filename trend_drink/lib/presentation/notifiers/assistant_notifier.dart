@@ -22,10 +22,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       ChatMessage(
         id: 'welcome',
         text:
-            'Merhaba! 👋 Ben senin kişisel içecek yapay zekânım. Seni daha iyi tanıyabilmek için ismini öğrenebilir miyim? '
-            'Ya da istersen doğrudan önerilere geçebiliriz.\n\n'
-            'Mooduna göre sana özel seçenekler sunabilirim, elimdeki malzemelere en uygun içeceği bulabilirim ve istediğin tarifin adım adım tarifini verebilirim.\n\n'
-            'Ne şekilde başlamak istersin? İstersen önce adını söyle, istersen malzemelerini paylaş, istersen de ruh halini anlat.',
+            'Selam! 👋 Ben TrendDrink\'in uzman baristasıyım. Senin için bugün buraları bir lezzet şölenine çevirmeye geldim! ☕️🍹\n\n'
+            'Seni daha iyi tanıyabilmem için ismini söylemek ister misin? Yoksa hemen "Elimde şunlar var, bana ne önerirsin?" diyerek malzemelerini mi paylaşırsın?\n\n'
+            'Ruh haline göre bir kahve, elindeki meyvelerle atom bir smoothie ya da akşam için şık bir kokteyl... Ne istersen buradayım. Hadi, modunu anlat ya da malzemelerini dök, senin için en yaratıcı tarifi bulalım! ✨',
         author: ChatAuthor.assistant,
       ),
     ];
@@ -301,8 +300,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     return _msg(
-      '${namePrefix}Tam olarak hangi içeceği istediğini anlamadım ama bu 3 tarif iyi bir başlangıç olabilir: $names\n\n'
-      'Eğer daha net bir öneri istersen, bana malzemelerini söyle ya da bir kategori belirtebilirsin. 😊',
+      '${namePrefix}Şu an elimdeki tariflerle tam bir eşleşme yapamadım ama senin gibi zevkli biri için şu 3 seçenek harika bir başlangıç olabilir: $names\n\n'
+      'Daha yaratıcı bir şeyler istersen bana elindeki malzemeleri biraz daha detaylı yazabilir misin? Senin için en mantıklı karışımı bulacağıma emin olabilirsin! 😊',
       drinkId: top.first.id,
     );
   }
@@ -315,36 +314,30 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         lower.contains('canim sikkin')) {
       
       if (prefs.isHard) {
-        return 'Bugünün tüm yorgunluğunu ve negatif enerjisini üzerinden atacak sert bir kahvenin yerini hiçbir şey tutamaz, inan bana. 😌 '
-               'Zihnini berraklaştıracak ve sana yeniden güç verecek o sade dokunuşu beraber hazırlayalım.';
+        return 'Anlıyorum, bazen sadece derin bir nefes ve güçlü bir kahve gerekir. 😌 Bugünün tüm yorgunluğunu üzerinden atacak, zihnini pırıl pırıl yapacak o sert dokunuşu senin için hazırladım. İşte enerjini geri kazandıracak o özel seçim:';
       }
       if (prefs.preferredTemp == 'sicak') {
-        return 'İnan bana, sıcak bir içecek sadece damak tadına değil, ruhuna da iyi gelecek. ☕ '
-               'Günün tüm yorgunluğunu o ilk yudumla beraber arkanda bırakabilirsin.';
+        return 'Biliyorum, bazen her şey üst üste gelir... Ama sıcak bir bardağın ellerini ısıtması bile ruhuna iyi gelecek, inan bana. ☕️ Modunu usulca yükseltecek o yumuşacık tarifim geliyor:';
       }
-      return 'Bazen her şey üst üste gelir ama doğru bir içecek modunu bir anda değiştirebilir. ✨ '
-             'Sana biraz nefes aldıracak, içini ferahlatacak seçenekleri hemen hazırladım.';
+      return 'Günün yorgunluğunu atmak için harika bir fikir! ✨ Bazen doğru bir içecek, günün geri kalanını bir anda güzelleştirebilir. Seni ferahlatacak ve yüzünde küçük bir tebessüm oluşturacak şöyle bir önerim var:';
     }
 
     // Mutluluk, enerji, kutlama
     if (_fuzzyQuery(lower, 'mutlu') || _fuzzyQuery(lower, 'enerjik') || 
         _fuzzyQuery(lower, 'harika') || _fuzzyQuery(lower, 'keyifli')) {
-      return 'Bu harika enerjin bana da bulaştı! 🎉 Mutluluğunu ikiye katlayacak, '
-             'damaklarında festival havası yaratacak efsane önerilerim var.';
+      return 'Vay! Bu enerjiye bayıldım! 🎉 Bu harika havayı kutlayacak, damaklarında tam bir festival havası estirecek efsane önerilerim var. Hazır mısın?';
     }
 
     // Düşünceli, sakin, rahatlama
     if (_fuzzyQuery(lower, 'sakin') || _fuzzyQuery(lower, 'rahatlamak') || 
         _fuzzyQuery(lower, 'dinlenmek')) {
-      return 'Şu an ihtiyacın olan şey tam bir huzur anı... 🧘‍♂️ '
-             'Düşüncelerine eşlik edecek, seni dinginleştirecek en zarif tarifleri senin için seçtim.';
+      return 'Tam bir huzur anı arıyorsun, çok haklısın... 🧘‍♂️ Düşüncelerine eşlik edecek, seni dinginliğin zirvesine taşıyacak en zarif tarifleri senin için seçtim. İşte o huzur dolu yudum:';
     }
 
     // Odaklanma, çalışma
     if (_fuzzyQuery(lower, 'calisiyorum') || _fuzzyQuery(lower, 'ders') || 
         _fuzzyQuery(lower, 'odaklanma')) {
-      return 'Verimliliğini zirveye taşıma vakti! 🚀 Zihnini açacak, seni diri tutacak '
-             've konsantrasyonunu artıracak o yakıtı şimdi bulacağız.';
+      return 'Verimliliğini zirveye taşıma vakti! 🚀 Zihnini açacak, seni diri tutacak ve konsantrasyonunu artıracak o "yakıtı" şimdi bulacağız. İşte senin için seçtiğim performans iksiri:';
     }
 
     return null;
@@ -429,8 +422,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // AI sorduktan sonra verilen cevap (Örn: "İyiyim")
     if (isPositiveState) {
       return _msg(
-        'Bunu duyduğuma çok sevindim! 😊 Keyfini daha da artıracak bir içecek seçmeye ne dersin? '
-        'Elimdeki malzemeleri yazarsan sana özel bir tarif önerebilirim.',
+        'Bunu duyduğuma çok sevindim, harikasın! 😊 Keyfini ikiye katlayacak, sana özel bir tarifle bu güzel anı taçlandırmaya ne dersin? '
+        'Elindeki malzemeleri söyle, senin için en yaratıcı seçeneği bulalım!',
       );
     }
 
@@ -451,7 +444,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // Teşekkür
     if (_fuzzyQuery(lower, 'tesekkur') || _fuzzyQuery(lower, 'sagol')) {
       return _msg(
-        'Ne demek, memnun oldum. ☕ Başka bir şey arıyorsan hemen söyle, birlikte deneyebiliriz.',
+        'Ne demek, her zaman! ☕️ Senin mutluluğun benim en büyük motivasyonum. Başka bir tarif denemek istersen ben hep buradayım.',
       );
     }
 
@@ -459,7 +452,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (lower.contains('guzel') || lower.contains('lezzetli') || 
         lower.contains('afiyetolsun') || lower.contains('hosgeldi')) {
       return _msg(
-        'Beğenmene çok sevindim. 🎉 Şimdi istersen farklı bir tarif deneyebiliriz ya da aynı tarza benzer bir içecek bulabilirim.',
+        'Beğenmene inanılmaz sevindim! 🎉 Afiyet bal şeker olsun. Başka bir maceraya atılmak istersen ya da "Barista, bana bundan bir tane daha ama farklı olsun" dersen hemen buradayım!',
       );
     }
 
