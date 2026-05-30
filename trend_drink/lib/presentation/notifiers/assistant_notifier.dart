@@ -114,7 +114,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
         final messageStart = changedMind 
             ? 'Kararını değiştirdiysen hiç sorun değil! 😊' 
-            : 'Tabii ki, hemen rotayı değiştiriyoruz! 🔄 Demek bu öneriler pek sarmadı...';
+            : 'Hiç sorun değil, damak tadına daha uygun başka bir şey bulalım! ✨ Demek bu öneriler pek sarmadı...';
 
         final top = candidates.take(3).toList();
         final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
@@ -188,6 +188,28 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // 2) Duygu ve Durum Analizi (Giriş cümlesi için)
     final emotionalIntro = _generateEmotionalIntro(lower, preferences);
     
+    // ÖZEL DURUM YÖNLENDİRMELERİ (Duygu ve Durum Analizi Kuralları)
+    if (preferences.isDiet) {
+      final fitDrinks = drinks.where((d) => d.category == 'Fit').toList();
+      if (fitDrinks.isNotEmpty) {
+        final top = fitDrinks.take(3).toList();
+        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+        return _msg(
+          '${namePrefix}Beslenmene dikkat ettiğini duymak harika, seninle gurur duyuyorum! 💪 Hemen formunu koruyacak, şeker içermeyen "Fit" kategorisindeki en lezzetli seçeneklerimi hazırladım: $names\n\n'
+          'Bunlar hem seni zinde tutacak hem de damak tadından ödün vermeyecek. Hangisini inceleyelim?',
+          drinkId: top.first.id,
+        );
+      }
+    }
+
+    // Eğer enerji gerekiyorsa ve kategori belirtilmediyse Kahve/Matcha/Smoothie önceliği
+    List<DrinkModel> priorityPool = [];
+    if (preferences.needsEnergy) {
+      priorityPool = drinks.where((d) => ['Kahve', 'Matcha', 'Smoothie'].contains(d.category)).toList();
+    } else if (preferences.isRefreshing) {
+      priorityPool = drinks.where((d) => ['Frozen', 'Soda', 'Kokteyl'].contains(d.category) && d.temperature == 'Soğuk').toList();
+    }
+
     if (hasImage) {
       final tokens = _extractIngredientTokens(lower, preferences);
       if (tokens.isNotEmpty) {
@@ -231,6 +253,21 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       if (emotionalIntro != null) {
         responseText += '$emotionalIntro\n\n';
       }
+
+      // Eğer enerji veya ferahlık modu varsa, eşleşen malzemeli içecekleri havuzdan seç
+      if (priorityPool.isNotEmpty) {
+        final filteredByIng = _findByIngredients(priorityPool, tokens, preferences);
+        if (filteredByIng.isNotEmpty) {
+          final top = filteredByIng.take(3).toList();
+          final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+          return _msg(
+            '$namePrefix${responseText}Harika bir fikir! İstediğin o modu yakalamak için elindeki malzemelerle şu nefis karışımları yapabiliriz: $names\n\n'
+            'Hemen hazırlamaya ne dersin?',
+            drinkId: top.first.id,
+          );
+        }
+      }
+
       return _msg(
         '$namePrefix${responseText}Elindeki malzemeleri ve modunu düşündüğümde şu seçenekler seni çok memnun edecek: $names\n\n'
         'Bunlardan biri tam olarak aradığın lezzete yakın olabilir. İlkini açmak için aşağıya tıklayabilirsin.',
@@ -311,8 +348,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // Kötü gün, yorgunluk, mutsuzluk (Internet feedback tabanlı samimi yaklaşımlar)
     if (_fuzzyQuery(lower, 'mutsuzum') || _fuzzyQuery(lower, 'yorgun') || 
         _fuzzyQuery(lower, 'moralsiz') || _fuzzyQuery(lower, 'kotu') || 
-        lower.contains('canim sikkin')) {
+        lower.contains('canim sikkin') || lower.contains('uykum var') || 
+        lower.contains('ayilamadim') || lower.contains('enerji')) {
       
+      if (lower.contains('uykum') || lower.contains('ayilamadim') || lower.contains('enerji')) {
+        return 'Zihnini canlandırmak ve o enerjiyi geri kazanmak için tam doğru yerdesin! 🚀 Seni anında ayağa kaldıracak, konsantrasyonunu zirveye taşıyacak "atom" önerilerim geliyor:';
+      }
+
       if (prefs.isHard) {
         return 'Anlıyorum, bazen sadece derin bir nefes ve güçlü bir kahve gerekir. 😌 Bugünün tüm yorgunluğunu üzerinden atacak, zihnini pırıl pırıl yapacak o sert dokunuşu senin için hazırladım. İşte enerjini geri kazandıracak o özel seçim:';
       }
@@ -320,6 +362,11 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         return 'Biliyorum, bazen her şey üst üste gelir... Ama sıcak bir bardağın ellerini ısıtması bile ruhuna iyi gelecek, inan bana. ☕️ Modunu usulca yükseltecek o yumuşacık tarifim geliyor:';
       }
       return 'Günün yorgunluğunu atmak için harika bir fikir! ✨ Bazen doğru bir içecek, günün geri kalanını bir anda güzelleştirebilir. Seni ferahlatacak ve yüzünde küçük bir tebessüm oluşturacak şöyle bir önerim var:';
+    }
+
+    // Ferahlık ve Sıcak Hava
+    if (lower.contains('ferahlamak') || lower.contains('sicak') || lower.contains('bunaldim')) {
+      return 'Of, hava gerçekten yanıyor! 🔥 Ama hiç merak etme, seni buz gibi karların içindeymişsin gibi hissettirecek o efsane ferahlatıcı tariflerim hazır. İşte buz dolu bardağını şenlendirecek o seçimler:';
     }
 
     // Mutluluk, enerji, kutlama
@@ -604,6 +651,11 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (_fuzzyQuery(lower, 'diyet') || _fuzzyQuery(lower, 'formda') || _fuzzyQuery(lower, 'kilo')) {
       avoided.add('seker');
     }
+
+    // Durum Belirteçleri
+    final isDiet = lower.contains('diyet') || lower.contains('spor sonrasi') || lower.contains('kalorisiz') || lower.contains('formdayim');
+    final needsEnergy = lower.contains('enerji') || lower.contains('uykum') || lower.contains('ayilamadim') || lower.contains('yorgun');
+    final isRefreshing = lower.contains('ferah') || lower.contains('sicak') || lower.contains('bunaldim') || lower.contains('hararet');
     
     // Sert/Sade/Yoğun
     final isHard = lower.contains('sert') || 
@@ -646,6 +698,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       isFun: isFun,
       isEasy: isEasy,
       isCoffeeRequested: isCoffeeRequested,
+      isDiet: isDiet,
+      needsEnergy: needsEnergy,
+      isRefreshing: isRefreshing,
     );
   }
 
@@ -739,6 +794,9 @@ class _DrinkPreferences {
   final bool isFun;
   final bool isEasy;
   final bool isCoffeeRequested;
+  final bool isDiet;
+  final bool needsEnergy;
+  final bool isRefreshing;
 
   const _DrinkPreferences({
     this.avoidedIngredients = const {},
@@ -747,6 +805,9 @@ class _DrinkPreferences {
     this.isFun = false,
     this.isEasy = false,
     this.isCoffeeRequested = false,
+    this.isDiet = false,
+    this.needsEnergy = false,
+    this.isRefreshing = false,
   });
 
   bool get avoidCoffee => avoidedIngredients.contains('kahve');
