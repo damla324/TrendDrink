@@ -58,6 +58,54 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final lower = _normalize(query);
     final preferences = _parsePreferences(lower);
 
+    // 1. ADIM: İçecek Tespiti (Öncelikli kontrol)
+    final titleMatch = _findByTitle(drinks, lower, preferences);
+
+    // KURAL: Günün Modu ve Kişiselleştirilmiş Karşılama Protokolü
+    final isMoodInquiry = _fuzzyQuery(lower, 'modum') || 
+                          _fuzzyQuery(lower, 'gunun') || 
+                          _fuzzyQuery(lower, 'ne icsem') || 
+                          lower.contains('ne onerirsin') ||
+                          lower.contains('emin degilim');
+
+    if (isMoodInquiry) {
+      List<DrinkModel> moodPool = drinks;
+      if (preferences.needsEnergy) {
+        moodPool = drinks.where((d) => ['Kahve', 'Matcha'].contains(d.category)).toList();
+      } else if (preferences.isDiet) {
+        moodPool = drinks.where((d) => ['Fit', 'Smoothie'].contains(d.category)).toList();
+      } else if (preferences.isRefreshing) {
+        moodPool = drinks.where((d) => ['Frozen', 'Soda', 'Kokteyl', 'Çay'].contains(d.category) && d.temperature == 'Soğuk').toList();
+      } else if (preferences.isStressed) {
+        moodPool = drinks.where((d) => d.category == 'Çay' || (d.category == 'Kahve' && d.temperature == 'Sıcak')).toList();
+      } else if (preferences.isCelebration) {
+        moodPool = drinks.where((d) => ['Kokteyl', 'Frozen'].contains(d.category)).toList();
+      }
+
+      // 2. ADIM: Zaman ve Gurme Seviyesi Kontrolü
+      if (preferences.isEasy) {
+        moodPool = moodPool.where((d) => d.ingredients.length <= 4).toList();
+      } else if (preferences.isGourmet) {
+        moodPool = moodPool.where((d) => d.tip != null || d.ingredients.length > 4).toList();
+      }
+
+      if (moodPool.isNotEmpty) {
+        moodPool.shuffle();
+        final drink = moodPool.first;
+        final address = _userName != null ? '$_userName, ' : '';
+        final intro = _generateMoodIntro(preferences);
+        final comment = _generateBaristaComment(drink, preferences);
+
+        return _msg(
+          '$address$intro\n\n'
+          '* **Moduna Özel İçecek:** ${drink.title}\n'
+          '* **Neden Bu İçecek?:** $comment\n\n'
+          'Tarifini senin için hemen getireyim mi? ✨',
+          drinkId: drink.id,
+        );
+      }
+    }
+
     // İsim prefix'i (Eğer isim biliniyorsa cümle başına ekler)
     final namePrefix = _userName != null ? '$_userName, ' : '';
 
@@ -105,9 +153,6 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     // Karar değişikliği tespiti (Özellikle "vazgeçtim" veya "kararımı değiştirdim" ifadeleri)
     final changedMind = _fuzzyQuery(lower, 'vazgectim') || _fuzzyQuery(lower, 'kararimi');
-
-    // 1. ADIM: İçecek Tespiti (Öncelikli kontrol)
-    final titleMatch = _findByTitle(drinks, lower, preferences);
 
     // Karar değişikliği ile birlikte spesifik bir içecek istendiyse (Örn: "Vazgeçtim Mojito istiyorum")
     if (changedMind && titleMatch != null) {
@@ -744,19 +789,23 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (_fuzzyQuery(lower, 'laktoz') && (_fuzzyQuery(lower, 'yok') || _fuzzyQuery(lower, 'alerjim') || _fuzzyQuery(lower, 'hassas'))) {
       avoided.add('sut');
     }
-    if (_fuzzyQuery(lower, 'diyet') || _fuzzyQuery(lower, 'formda') || _fuzzyQuery(lower, 'kilo')) {
-      avoided.add('seker');
-    }
-
     // Durum Belirteçleri
-    final isDiet = lower.contains('diyet') || lower.contains('spor sonrasi') || lower.contains('kalorisiz') || lower.contains('formdayim');
-    final needsEnergy = lower.contains('enerji') || lower.contains('uykum') || lower.contains('ayilamadim') || lower.contains('yorgun');
-    final isRefreshing = lower.contains('ferah') || lower.contains('sicak') || lower.contains('bunaldim') || lower.contains('hararet');
+    final isDiet = lower.contains('diyet') || lower.contains('spor sonrasi') || lower.contains('kalorisiz') || lower.contains('formdayim') || lower.contains('hafif');
+    final needsEnergy = lower.contains('enerji') || lower.contains('uykum') || lower.contains('ayilamadim') || lower.contains('yorgun') || lower.contains('odaklanma');
+    final isRefreshing = lower.contains('ferah') || lower.contains('sicak') || lower.contains('bunaldim') || lower.contains('hararet') || lower.contains('sicakladim');
+    final isStressed = lower.contains('stres') || lower.contains('gergin') || lower.contains('dinlenme') || lower.contains('sakin');
+    final isCelebration = lower.contains('keyifli') || lower.contains('kutlama') || lower.contains('hafta sonu') || lower.contains('eglence');
+
+    if (isDiet) avoided.add('seker');
 
     // Alerjen ve Diyet Duyarlılığı
     final isVegan = lower.contains('vegan') || lower.contains('hayvansal istemiyorum');
     final isLactoseFree = lower.contains('laktoz') || lower.contains('sut dokunuyor');
     final isGlutenFree = lower.contains('gluten');
+
+    // Zaman ve Gurme Seviyesi
+    final isEasy = lower.contains('zamanim az') || lower.contains('pratik') || lower.contains('kolay') || lower.contains('hizli') || lower.contains('basit');
+    final isGourmet = lower.contains('ugrasirim') || lower.contains('havali') || lower.contains('gurme') || lower.contains('sik') || lower.contains('trend');
 
     // PORSİYON PROTOKOLÜ: Kişi sayısı veya kat çarpanı tespiti
     int servings = 1;
@@ -770,26 +819,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
 
     // Sert/Sade/Yoğun
-    final isHard = lower.contains('sert') || 
-        lower.contains('sade') || 
-        lower.contains('sek') || 
-        lower.contains('yogun') || 
-        lower.contains('americano') || 
-        lower.contains('espresso');
+    final isHard = lower.contains('sert') || lower.contains('sade') || lower.contains('sek') || lower.contains('yogun') || lower.contains('americano') || lower.contains('espresso');
 
     // Eğlenceli/Tatlı/Süslü
-    final isFun = lower.contains('eglenceli') || 
-        lower.contains('tatli') || 
-        lower.contains('suslu') || 
-        lower.contains('karisik') || 
-        lower.contains('renkli');
+    final isFun = lower.contains('eglenceli') || lower.contains('tatli') || lower.contains('suslu') || lower.contains('karisik') || lower.contains('renkli');
 
     // Yapımı kolay
-    final isEasy = lower.contains('kolay') || 
-        lower.contains('pratik') || 
-        lower.contains('hizli') || 
-        lower.contains('ugrastirmasin') ||
-        lower.contains('basit');
+    // isEasy yukarıdaki pratiklik anahtar kelimeleriyle güncellendi.
 
     final isCoffeeRequested = lower.contains('kahve') || lower.contains('coffee');
 
@@ -814,6 +850,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       isDiet: isDiet,
       needsEnergy: needsEnergy,
       isRefreshing: isRefreshing,
+      isStressed: isStressed,
+      isCelebration: isCelebration,
+      isGourmet: isGourmet,
     );
   }
 
@@ -987,6 +1026,24 @@ $baristaTip''';
     }
     return drink.tip ?? 'Bu lezzeti kendi dokunuşunla taçlandırmayı unutma! ✨';
   }
+
+  String _generateMoodIntro(_DrinkPreferences prefs) {
+    if (prefs.needsEnergy) return 'Anlaşılan bugün zihnini canlandırmaya ve o bitmek bilmeyen enerjiyi geri kazanmaya ihtiyacın var! 🚀';
+    if (prefs.isDiet) return 'Bugün hafiflemek ve bedenine bir iyilik yapmak istediğini hissediyorum. Çok doğru bir karar! 💪';
+    if (prefs.isRefreshing) return 'Of, gerçekten bunaltıcı bir hava ya da hararetli bir gün olmuş! Seni kutuplara götürecek bir fikrim var... ❄️';
+    if (prefs.isStressed) return 'Bazen her şey üst üste gelir ve insan sadece huzurlu bir mola vermek ister. Senin için tam o dinginliği hazırladım... 🧘‍♂️';
+    if (prefs.isCelebration) return 'Vay! Bugün havada kutlama kokusu var! Bu güzel enerjiyi taçlandırmak için harika bir fikrim var... 🎉';
+    return 'Anlaşılan bugün şımartılmaya ihtiyacın var! Modunu inceledim ve senin için harika bir fikrim var... ✨';
+  }
+
+  String _generateBaristaComment(DrinkModel drink, _DrinkPreferences prefs) {
+    if (prefs.needsEnergy) return 'İçindeki yoğun kafein ve enerji veren bileşenler seni anında ayağa kaldıracak.';
+    if (prefs.isDiet) return 'Hem çok hafif hem de besleyici; diyetini bozmadan seni şımartacak en fit seçenek bu.';
+    if (prefs.isRefreshing) return 'Buz gibi dokusu ve ferahlatıcı notalarıyla hararetini saniyeler içinde alacak.';
+    if (prefs.isStressed) return 'Yumuşak içimi ve sakinleştirici aromasıyla günün stresini bir kenara bırakmanı sağlayacak.';
+    if (prefs.isCelebration) return 'Zengin tatları ve şık sunumuyla bu keyifli anı tam anlamıyla bir festivale dönüştürecek.';
+    return '${drink.category} kategorisindeki bu özel lezzet, bugün damaklarında unutulmaz bir iz bırakacak.';
+  }
 }
 
 class _IngredientMatch {
@@ -1009,6 +1066,9 @@ class _DrinkPreferences {
   final bool isDiet;
   final bool needsEnergy;
   final bool isRefreshing;
+  final bool isStressed;
+  final bool isCelebration;
+  final bool isGourmet;
   final bool isVegan;
   final bool isGlutenFree;
   final bool isLactoseFree;
@@ -1024,6 +1084,9 @@ class _DrinkPreferences {
     this.isDiet = false,
     this.needsEnergy = false,
     this.isRefreshing = false,
+    this.isStressed = false,
+    this.isCelebration = false,
+    this.isGourmet = false,
     this.isVegan = false,
     this.isGlutenFree = false,
     this.isLactoseFree = false,
