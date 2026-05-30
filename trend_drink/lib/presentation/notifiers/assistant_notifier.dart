@@ -758,6 +758,17 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final isLactoseFree = lower.contains('laktoz') || lower.contains('sut dokunuyor');
     final isGlutenFree = lower.contains('gluten');
 
+    // PORSİYON PROTOKOLÜ: Kişi sayısı veya kat çarpanı tespiti
+    int servings = 1;
+    final portionMatch = RegExp(r'(\d+)\s*(kisi|porsiyon|kat)').firstMatch(lower);
+    if (portionMatch != null) {
+      servings = int.tryParse(portionMatch.group(1)!) ?? 1;
+    } else if (lower.contains('iki')) servings = 2;
+    else if (lower.contains('uc')) servings = 3;
+    else if (lower.contains('dort')) servings = 4;
+    else if (lower.contains('bes')) servings = 5;
+
+
     // Sert/Sade/Yoğun
     final isHard = lower.contains('sert') || 
         lower.contains('sade') || 
@@ -793,6 +804,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         lower.contains('serin');
 
     return _DrinkPreferences(
+      servings: servings,
       avoidedIngredients: avoided,
       preferredTemp: (isHot && !isCold) ? 'sicak' : (isCold && !isHot ? 'soguk' : null),
       isHard: isHard,
@@ -987,6 +999,7 @@ class _IngredientMatch {
 }
 
 class _DrinkPreferences {
+  final int servings;
   final Set<String> avoidedIngredients;
   final String? preferredTemp; // 'sicak' veya 'soguk'
   final bool isHard;
@@ -1001,6 +1014,7 @@ class _DrinkPreferences {
   final bool isLactoseFree;
 
   const _DrinkPreferences({
+    this.servings = 1,
     this.avoidedIngredients = const {},
     this.preferredTemp,
     this.isHard = false,
