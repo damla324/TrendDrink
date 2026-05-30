@@ -64,6 +64,18 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // Malzeme Hazırlığı
     final tokens = _extractIngredientTokens(lower, preferences);
 
+    // KURAL 4: Malzeme İkame ve Yerine Koyma Analizi
+    final substitutionResponse = _handleSubstitutions(lower, tokens, titleMatch);
+    if (substitutionResponse != null) {
+      return _msg('$namePrefix$substitutionResponse');
+    }
+
+    // KURAL 3: İnisiyatif ve "Farketmez" Durumu
+    final isIndifferent = _fuzzyQuery(lower, 'farketmez') || 
+                          _fuzzyQuery(lower, 'fark etmez') || 
+                          _fuzzyQuery(lower, 'standart') || 
+                          _fuzzyQuery(lower, 'hepsi var');
+
     // KURAL: Zararlı veya Kötü Tat Kombinasyonu Uyarısı
     final conflictWarning = _checkIngredientConflicts(tokens);
     if (conflictWarning != null) {
@@ -101,7 +113,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (changedMind && titleMatch != null) {
       return _msg(
         '${namePrefix}Kararını değiştirdiysen hiç sorun değil! 😊 Senin için rotayı hemen harika bir lezzete çevirdim. İşte yeni favorin olmaya aday o tarif: 😋\n\n'
-        '${_formatRecipe(titleMatch)}',
+        '${_formatRecipe(titleMatch, preferences)}',
         drinkId: titleMatch.id,
       );
     }
@@ -164,7 +176,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       if (userWantsRecipe) {
         return _msg(
           '${namePrefix}Harika seçim! Zevkine hayran kalmamak elde değil. ✨ Hemen [${titleMatch.title}](${titleMatch.id}) tarifini senin için hazırladım:\n\n'
-          '${_formatRecipe(titleMatch)}\n\n'
+          '${_formatRecipe(titleMatch, preferences)}\n\n'
           'Şimdiden afiyet olsun! Başka bir içecek tarifi istersen bana sormaktan çekinme. 😊',
           drinkId: titleMatch.id,
         );
@@ -177,14 +189,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         return _msg(
           '${namePrefix}Kararsız kalman çok normal, çünkü hepsi birbirinden lezzetli! 🌟 Ama bana sorarsan, bugün kesinlikle ${titleMatch.title} denemelisin. Seçimlerin her zamanki gibi çok klas. 😎\n\n'
           'İşte senin için hazırladığım o nefis reçete:\n\n'
-          '${_formatRecipe(titleMatch)}\n\n'
+          '${_formatRecipe(titleMatch, preferences)}\n\n'
           'Harika zevkinle bugün yine formundasın, afiyet olsun!',
           drinkId: titleMatch.id,
         );
       } else if (userWantsToDrink) {
         return _msg(
           '${namePrefix}Süper bir fikir! Günün yorgunluğunu atmak için harika bir tercih. ✨ Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
-          '${_formatRecipe(titleMatch)}\n\n'
+          '${_formatRecipe(titleMatch, preferences)}\n\n'
           'Ne istediğini bilen biriyle sohbet etmek harika. Şimdiden afiyet olsun!',
           drinkId: titleMatch.id,
         );
@@ -253,6 +265,12 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final social = _handleSocial(lower, drinks);
     if (social != null && emotionalIntro == null) return social;
 
+    // KURAL 1 & 2: Akıllı Sınıflandırma ve Diyalog (Vazgeçilmez detayları sor)
+    final clarification = _checkClarifications(lower, tokens, isIndifferent);
+    if (clarification != null && !isIndifferent) {
+      return _msg('$namePrefix$clarification');
+    }
+
     // 3) Malzeme
     final matches = _findDetailedMatches(drinks, tokens, preferences);
     if (matches.isNotEmpty) {
@@ -279,10 +297,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         }
       }
 
+      // KURAL 3: İnisiyatif Mesajı Ekleme
       String matchDetail = '';
       if (bestMatch.matchRate >= 0.7 && bestMatch.missingIngredients.isNotEmpty) {
         final missing = bestMatch.missingIngredients.join(', ');
         matchDetail = '\n\nSüper! Elindekilerle neredeyse ${bestMatch.drink.title} yapabiliriz. Sadece $missing eksik gibi görünüyor; eğer evde varsa ekleyebilirsin, yoksa da sorun değil, biz elindekilerle harika bir denge kurabiliriz!';
+      } else if (isIndifferent) {
+        final milkChoice = bestMatch.drink.category == 'Matcha' ? 'yulaf sütünü' : 'badem sütünü';
+        matchDetail = '\n\nMadem fark etmez dedin, inisiyatif bende! 😎 Bu tarife $milkChoice çok yakıştırıyorum, o yüzden onunla devam edelim derim!';
       }
 
       return _msg(
@@ -540,6 +562,63 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     return null;
   }
 
+  /// KURAL 1 & 2: Kullanıcı genel isimler verdiğinde detay sorar.
+  String? _checkClarifications(String lower, List<String> tokens, bool isIndifferent) {
+    if (isIndifferent) return null;
+
+    final hasKahve = tokens.contains('kahve');
+    final hasSut = tokens.contains('sut');
+    final hasTatlandirici = tokens.contains('seker') || _fuzzyQuery(lower, 'tatlandirici');
+
+    final specificKahve = ['filtre', 'granul', 'espresso', 'turk', 'hazir'].any((e) => lower.contains(e));
+    final specificSut = ['yulaf', 'badem', 'hindistancevizi', 'soya', 'klasik', 'hayvansal'].any((e) => lower.contains(e));
+    final specificSugar = ['bal', 'recel', 'surup', 'esmer'].any((e) => lower.contains(e));
+
+    if (hasKahve && !specificKahve) {
+      return 'Harika bir kahve hazırlayabiliriz! ✨ Peki elindeki kahve filtre kahve mi yoksa hazır granül kahve mi? Bir de süt olarak klasik süt mü kullanıyoruz yoksa yulaf/badem sütü mü?';
+    }
+    if (hasSut && !specificSut) {
+      return 'Sütlü bir tarif için kolları sıvıyorum! 🥛 Ama bir sorum var: Klasik hayvansal süt mü kullanıyoruz yoksa bitkisel (badem, yulaf vb.) bir tercihin mi var?';
+    }
+    if (hasTatlandirici && !specificSugar) {
+      return 'İçeceğini biraz tatlandıralım! ✨ Elinde tatlandırıcı olarak şeker mi var yoksa bal, şurup veya reçel gibi alternatiflerden birini mi kullanmak istersin?';
+    }
+    return null;
+  }
+
+  /// KURAL 4: Malzeme ikame mantığı.
+  String? _handleSubstitutions(String lower, List<String> tokens, DrinkModel? titleMatch) {
+    final isSubstitutionQuery = lower.contains('yerine') || lower.contains('yok ama') || lower.contains('olur mu');
+    if (!isSubstitutionQuery) return null;
+
+    // Türk Kahvesi & Krema Kontrolü
+    if ((lower.contains('turk kahvesi') || titleMatch?.id == 'turkish-coffee') && lower.contains('krema')) {
+      return 'Ah, Türk kahvesi konusunda biraz gelenekselciyim! ☕️ Türk kahvesine krema ekleyip köpürtmek pek mümkün değil ve tadını bozabilir. Gel biz onu her zamanki gibi suyla veya istersen sütlü yapalım, ne dersin?';
+    }
+
+    // KURAL 2: Eksik Malzeme İnisiyatifi
+    if (lower.contains('lime') && (lower.contains('yok') || lower.contains('yerine'))) {
+      return 'Lime bulamadıysan hiç dert etme! 🍋 Onun yerine normal limon suyu ve içine rendeleyeceğin hafif portakal kabuğu rendesiyle o aromatik derinliği yakalayabiliriz. Bu tarifi senin için daha pratik hale getirelim!';
+    }
+    if (lower.contains('nane') && (lower.contains('yok') || lower.contains('yerine'))) {
+      return 'Nane yerine taze fesleğen harika bir fikir! 🌱 Kokteyllerde ve sodalarda çok daha sofistike bir tat bırakır. Hadi, fesleğenli versiyonunu deneyelim!';
+    }
+
+    // Limon & Portakal (Soda/Kokteyl/Frozen)
+    if (lower.contains('limon') && lower.contains('portakal')) {
+      return 'Kesinlikle olur! ✨ Limonun o keskin asitliği yerine portakalın tatlı-ekşi aroması bu ferah tarifte harika bir bükülme yaratır. Portakal kullanarak devam edelim!';
+    }
+
+    // Süt & Krema (Smoothie/Latte)
+    if (lower.contains('sut') && lower.contains('krema')) {
+      if (lower.contains('smoothie') || lower.contains('shake')) {
+        return 'Harika bir fikir! Süt yerine krema kullanmak smoothie\'ni çok daha yoğun ve tatlımsı yapacaktır. Şahane bir "cheat meal" içeceği olur, hemen hazırlayalım! 🥤';
+      }
+    }
+
+    return null;
+  }
+
   /// İki kelime arasındaki benzerliği hesaplar (Levenshtein Mesafesi)
   int _levenshtein(String s, String t) {
     if (s == t) return 0;
@@ -673,7 +752,12 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final isDiet = lower.contains('diyet') || lower.contains('spor sonrasi') || lower.contains('kalorisiz') || lower.contains('formdayim');
     final needsEnergy = lower.contains('enerji') || lower.contains('uykum') || lower.contains('ayilamadim') || lower.contains('yorgun');
     final isRefreshing = lower.contains('ferah') || lower.contains('sicak') || lower.contains('bunaldim') || lower.contains('hararet');
-    
+
+    // Alerjen ve Diyet Duyarlılığı
+    final isVegan = lower.contains('vegan') || lower.contains('hayvansal istemiyorum');
+    final isLactoseFree = lower.contains('laktoz') || lower.contains('sut dokunuyor');
+    final isGlutenFree = lower.contains('gluten');
+
     // Sert/Sade/Yoğun
     final isHard = lower.contains('sert') || 
         lower.contains('sade') || 
@@ -834,22 +918,62 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   }
 
   /// İçecek modelini istenen şık ve düzenli formata dönüştürür.
-  String _formatRecipe(DrinkModel drink) {
-    final ingredients = drink.ingredients
+  String _formatRecipe(DrinkModel drink, _DrinkPreferences prefs) {
+    // KURAL 1: Diyet ve Alerjen İkamelerini Uygula
+    List<String> ingredients = drink.ingredients.map((i) => _normalize(i)).toList();
+    List<String> substitutedNotes = [];
+
+    if (prefs.isVegan || prefs.isLactoseFree) {
+      for (int i = 0; i < ingredients.length; i++) {
+        if (ingredients[i].contains('sut')) {
+          ingredients[i] = 'Yulaf veya Badem Sütü (Senin için bitkisel bir seçenek seçtim 🌱)';
+          substitutedNotes.add('🥛 Süt yerine bitkisel süt kullanarak tarifi sana uygun hale getirdim.');
+        }
+      }
+    }
+
+    if (prefs.isDiet || prefs.avoidSugar) {
+      for (int i = 0; i < ingredients.length; i++) {
+        if (ingredients[i].contains('seker')) {
+          ingredients[i] = 'Bal veya Stevia (Şeker yerine sağlıklı tatlandırıcı 🍯)';
+          substitutedNotes.add('✨ Şekersiz tercihin için harika bir ikame yaptık!');
+        }
+      }
+    }
+
+    final formattedIngredients = ingredients
         .map((e) => '- ${e[0].toUpperCase()}${e.substring(1)}')
         .join('\n');
+
+    final baristaTip = substitutedNotes.isNotEmpty 
+        ? '${substitutedNotes.join("\n")}\n${_getSubstitutionTip(drink, prefs)}'
+        : _getSubstitutionTip(drink, prefs);
 
     return '''
 - **İçecek Adı:** ${drink.title}
 - **Kategori:** ${drink.category}
 - **Hazırlanma Süresi:** 5-10 dakika
 - **Gerekli Malzemeler:**
-$ingredients
+$formattedIngredients
 
 - **Hazırlanışı:**
 ${drink.preparation}
 
-- **Barista Notu / Küçük Bir Dokunuş:** ${drink.tip ?? 'Bu lezzeti kendi dokunuşunla taçlandırmayı unutma!'}''';
+- **💡 Baristanın Sağlıklı Dokunuşu:** 
+$baristaTip''';
+  }
+
+  String _getSubstitutionTip(DrinkModel drink, _DrinkPreferences prefs) {
+    if (drink.category == 'Smoothie') {
+      return 'Bu smoothie\'yi spor sonrası içeceksen içine 1 ölçek protein tozu ekleyerek daha besleyici hale getirebilirsin! 💪';
+    }
+    if (drink.category == 'Kahve' && !prefs.isDiet) {
+      return 'Karamel şurubun yoksa, evdeki balı çok az tarçınla ısıtıp kendi sosunu yapabilirsin. 🍯';
+    }
+    if (drink.category == 'Kokteyl' || drink.category == 'Soda') {
+      return 'Evde nane yoksa taze fesleğen ekleyerek aromayı daha egzotik ve şık bir seviyeye taşıyabilirsin! 🌱';
+    }
+    return drink.tip ?? 'Bu lezzeti kendi dokunuşunla taçlandırmayı unutma! ✨';
   }
 }
 
@@ -872,6 +996,9 @@ class _DrinkPreferences {
   final bool isDiet;
   final bool needsEnergy;
   final bool isRefreshing;
+  final bool isVegan;
+  final bool isGlutenFree;
+  final bool isLactoseFree;
 
   const _DrinkPreferences({
     this.avoidedIngredients = const {},
@@ -883,6 +1010,9 @@ class _DrinkPreferences {
     this.isDiet = false,
     this.needsEnergy = false,
     this.isRefreshing = false,
+    this.isVegan = false,
+    this.isGlutenFree = false,
+    this.isLactoseFree = false,
   });
 
   bool get avoidCoffee => avoidedIngredients.contains('kahve');
