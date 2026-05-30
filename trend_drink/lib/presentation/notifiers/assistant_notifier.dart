@@ -61,6 +61,15 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // İsim prefix'i (Eğer isim biliniyorsa cümle başına ekler)
     final namePrefix = _userName != null ? '$_userName, ' : '';
 
+    // Malzeme Hazırlığı
+    final tokens = _extractIngredientTokens(lower, preferences);
+
+    // KURAL: Zararlı veya Kötü Tat Kombinasyonu Uyarısı
+    final conflictWarning = _checkIngredientConflicts(tokens);
+    if (conflictWarning != null) {
+      return _msg('$namePrefix$conflictWarning');
+    }
+
     // 0. ADIM: Alternatif/Farklı İstek Tespiti
     // Kullanıcının listeyi değiştirmek veya farklı bir şey istemek için kullandığı anahtar kelimeler
     final isAlternativeRequest = _fuzzyQuery(lower, 'baska') ||
@@ -104,11 +113,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       
       // Eğer önerilen bir şeyler varsa ve kullanıcı reddediyorsa
       if (pool.isNotEmpty) {
-        final tokens = _extractIngredientTokens(lower, preferences);
         var candidates = <DrinkModel>[];
         
         // Eğer kullanıcı yeni bir malzeme veya kategori belirttiyse ona öncelik ver
-        candidates = _findByIngredients(pool, tokens, preferences);
+        candidates = _findDetailedMatches(pool, tokens, preferences).map((m) => m.drink).toList();
         if (candidates.isEmpty) candidates = _findByCategory(pool, lower, preferences);
         if (candidates.isEmpty) { candidates = pool; candidates.shuffle(); }
 
@@ -210,27 +218,32 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       priorityPool = drinks.where((d) => ['Frozen', 'Soda', 'Kokteyl'].contains(d.category) && d.temperature == 'Soğuk').toList();
     }
 
-    if (hasImage) {
-      final tokens = _extractIngredientTokens(lower, preferences);
-      if (tokens.isNotEmpty) {
-        final byIng = _findByIngredients(drinks, tokens, preferences);
-        if (byIng.isNotEmpty) {
-          final top = byIng.take(3).toList();
-          final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+    if (hasImage && tokens.isNotEmpty) {
+      final matches = _findDetailedMatches(drinks, tokens, preferences);
+      if (matches.isNotEmpty) {
+        final bestMatch = matches.first;
+        final top = matches.take(3).map((m) => m.drink).toList();
+        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
 
           String responseText = '';
           if (emotionalIntro != null) {
             responseText += '$emotionalIntro\n\n';
           }
 
+          String matchDetail = '';
+          if (bestMatch.matchRate >= 0.7 && bestMatch.missingIngredients.isNotEmpty) {
+            final missing = bestMatch.missingIngredients.join(', ');
+            matchDetail = '\n\nEğer evde varsa $missing ekleyebilirsin, yoksa da hiç sorun değil, biz elindekilerle o tadı yakalayacak harika bir çözüm üretiriz! 😉';
+          }
+
           return _msg(
             '$namePrefix${responseText}📷 Vay! Güzel bir fotoğraf paylaştın! Yazdığın malzemelerle birlikte inceledim. '
-            'Sana en uygun tarifler: $names\n\n'
+            'Sana en uygun tarifler: $names$matchDetail\n\n'
             'Aşağıdaki butondan detayını görebilirsin. İstersen "şekersiz" veya "sıcak" gibi filtreler de kullanabilirsin.',
-            drinkId: top.first.id,
+            drinkId: bestMatch.drink.id,
           );
         }
-      }
+    } else if (hasImage) {
       return _msg(
         '${namePrefix}📷 Henüz malzemeleri analiz edemedim! 😊 Fotoğrafdaki malzemeleri kısaca yazabilir misin? '
         'Örneğin: "Muz, süt, yulaf, bal var". Böylece sana en doğru tarifi bulabilirim.\n\n'
@@ -243,10 +256,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (social != null && emotionalIntro == null) return social;
 
     // 3) Malzeme
-    final tokens = _extractIngredientTokens(lower, preferences);
-    final byIng = _findByIngredients(drinks, tokens, preferences);
-    if (byIng.isNotEmpty) {
-      final top = byIng.take(3).toList();
+    final matches = _findDetailedMatches(drinks, tokens, preferences);
+    if (matches.isNotEmpty) {
+      final bestMatch = matches.first;
+      final top = matches.take(3).map((m) => m.drink).toList();
       final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
       
       String responseText = '';
@@ -254,24 +267,30 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         responseText += '$emotionalIntro\n\n';
       }
 
-      // Eğer enerji veya ferahlık modu varsa, eşleşen malzemeli içecekleri havuzdan seç
+      // KATEGORİ BAĞIMSIZ SEÇİM: Eğer enerji veya ferahlık modu varsa havuzu daralt
       if (priorityPool.isNotEmpty) {
-        final filteredByIng = _findByIngredients(priorityPool, tokens, preferences);
-        if (filteredByIng.isNotEmpty) {
-          final top = filteredByIng.take(3).toList();
-          final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
+        final filteredMatches = _findDetailedMatches(priorityPool, tokens, preferences);
+        if (filteredMatches.isNotEmpty) {
+          final topPriority = filteredMatches.take(3).map((m) => m.drink).toList();
+          final namesPriority = topPriority.map((d) => '[${d.title}](${d.id})').join(', ');
           return _msg(
-            '$namePrefix${responseText}Harika bir fikir! İstediğin o modu yakalamak için elindeki malzemelerle şu nefis karışımları yapabiliriz: $names\n\n'
+            '$namePrefix${responseText}Harika bir fikir! İstediğin o modu yakalamak için elindeki malzemelerle şu nefis karışımları yapabiliriz: $namesPriority\n\n'
             'Hemen hazırlamaya ne dersin?',
-            drinkId: top.first.id,
+            drinkId: topPriority.first.id,
           );
         }
       }
 
+      String matchDetail = '';
+      if (bestMatch.matchRate >= 0.7 && bestMatch.missingIngredients.isNotEmpty) {
+        final missing = bestMatch.missingIngredients.join(', ');
+        matchDetail = '\n\nSüper! Elindekilerle neredeyse ${bestMatch.drink.title} yapabiliriz. Sadece $missing eksik gibi görünüyor; eğer evde varsa ekleyebilirsin, yoksa da sorun değil, biz elindekilerle harika bir denge kurabiliriz!';
+      }
+
       return _msg(
-        '$namePrefix${responseText}Elindeki malzemeleri ve modunu düşündüğümde şu seçenekler seni çok memnun edecek: $names\n\n'
+        '$namePrefix${responseText}Elindeki malzemeleri ve modunu düşündüğümde şu seçenekler seni çok memnun edecek: $names$matchDetail\n\n'
         'Bunlardan biri tam olarak aradığın lezzete yakın olabilir. İlkini açmak için aşağıya tıklayabilirsin.',
-        drinkId: top.first.id,
+        drinkId: bestMatch.drink.id,
       );
     }
 
@@ -741,21 +760,51 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         .toList();
   }
 
-  List<DrinkModel> _findByIngredients(List<DrinkModel> drinks,
+  String? _checkIngredientConflicts(List<String> tokens) {
+    final tSet = tokens.toSet();
+    if (tSet.contains('sut') && (tSet.contains('soda') || tSet.contains('maden suyu'))) {
+      return 'Süt ve maden suyunu karıştırmak pek iyi bir tat vermeyebilir, hatta mideni yorabilir... 😅 Gel onun yerine sadece maden suyu ve meyve kullanarak ferah bir Soda yapalım ya da sütle nefis bir Kahve hazırlayalım!';
+    }
+    if (tSet.contains('kahve') && tSet.contains('hibiskus')) {
+      return 'Kahve ve hibiskus... Bu ikili damak tadın için biraz fazla iddialı olabilir! 😬 İstersen sadece hibiskusla güzel bir Çay yapalım ya da kahvene biraz süt ekleyip yumuşacık bir Latte hazırlayalım.';
+    }
+    if (tSet.contains('sut') && (tSet.contains('limon') || tSet.contains('portakal'))) {
+      return 'Süt ve yoğun asitli meyveleri (limon, portakal) direkt karıştırmak sütün kesilmesine neden olabilir. 🥛 Citrus bir tarif denemek yerine, gel seninle güvenli ve lezzetli bir Smoothie hazırlayalım!';
+    }
+    return null;
+  }
+
+  List<_IngredientMatch> _findDetailedMatches(List<DrinkModel> drinks,
       List<String> tokens, _DrinkPreferences preferences) {
     if (tokens.isEmpty) return [];
-    final scored = <(DrinkModel, int)>[];
+    final matches = <_IngredientMatch>[];
+
     for (final d in drinks) {
       if (preferences.violates(d)) continue;
-      var score = 0;
-      final ingNormalized = d.ingredients.map((i) => _normalize(i)).join(' ');
-      for (final t in tokens) {
-        if (ingNormalized.contains(t)) score++;
+      
+      final recipeIngredients = d.ingredients.map((i) => _normalize(i)).toList();
+      final matchedList = <String>[];
+      final missing = <String>[];
+
+      for (final recipeIng in recipeIngredients) {
+        bool found = false;
+        for (final userToken in tokens) {
+          if (recipeIng.contains(userToken) || userToken.contains(recipeIng)) {
+            matchedList.add(recipeIng);
+            found = true;
+            break;
+          }
+        }
+        if (!found) missing.add(recipeIng);
       }
-      if (score > 0) scored.add((d, score));
+
+      final rate = recipeIngredients.isEmpty ? 0.0 : matchedList.length / recipeIngredients.length;
+      if (rate > 0) {
+        matches.add(_IngredientMatch(d, rate, missing, matchedList));
+      }
     }
-    scored.sort((a, b) => b.$2.compareTo(a.$2));
-    return scored.map((e) => e.$1).toList();
+    matches.sort((a, b) => b.matchRate.compareTo(a.matchRate));
+    return matches;
   }
 
   List<DrinkModel> _findByPreferences(
@@ -785,6 +834,15 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
     return [];
   }
+}
+
+class _IngredientMatch {
+  final DrinkModel drink;
+  final double matchRate;
+  final List<String> missingIngredients;
+  final List<String> userIngredients;
+
+  _IngredientMatch(this.drink, this.matchRate, this.missingIngredients, this.userIngredients);
 }
 
 class _DrinkPreferences {
