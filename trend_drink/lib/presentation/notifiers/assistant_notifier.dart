@@ -100,9 +100,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // Karar değişikliği ile birlikte spesifik bir içecek istendiyse (Örn: "Vazgeçtim Mojito istiyorum")
     if (changedMind && titleMatch != null) {
       return _msg(
-        '${namePrefix}Kararını değiştirdiysen hiç sorun değil! 😊 Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
-        '${titleMatch.preparation}\n\n'
-        'Başka bir seçenek istersen yine buradayım!',
+        '${namePrefix}Kararını değiştirdiysen hiç sorun değil! 😊 Senin için rotayı hemen harika bir lezzete çevirdim. İşte yeni favorin olmaya aday o tarif: 😋\n\n'
+        '${_formatRecipe(titleMatch)}',
         drinkId: titleMatch.id,
       );
     }
@@ -164,8 +163,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       // Eğer kullanıcı doğrudan tarif istiyorsa, diğer önerileri atla ve tarifi ver
       if (userWantsRecipe) {
         return _msg(
-          '${namePrefix}Harika seçim! Hemen [${titleMatch.title}](${titleMatch.id}) tarifini paylaşıyorum:\n\n'
-          '${titleMatch.preparation}\n\n'
+          '${namePrefix}Harika seçim! Zevkine hayran kalmamak elde değil. ✨ Hemen [${titleMatch.title}](${titleMatch.id}) tarifini senin için hazırladım:\n\n'
+          '${_formatRecipe(titleMatch)}\n\n'
           'Şimdiden afiyet olsun! Başka bir içecek tarifi istersen bana sormaktan çekinme. 😊',
           drinkId: titleMatch.id,
         );
@@ -176,17 +175,16 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       // Motivasyonel ve spesifik yanıt yapısı
       if (isIndecisive) {
         return _msg(
-          '${namePrefix}Bugün için harika bir fikir! ${titleMatch.title} gerçekten çok yerinde bir karar. 🌟 '
-          'Bence kesinlikle denemelisin, seçimlerin her zamanki gibi çok klas. 😎\n\n'
-          'İşte senin için hazırladığım o nefis tarif:\n\n'
-          '${titleMatch.preparation}\n\n'
+          '${namePrefix}Kararsız kalman çok normal, çünkü hepsi birbirinden lezzetli! 🌟 Ama bana sorarsan, bugün kesinlikle ${titleMatch.title} denemelisin. Seçimlerin her zamanki gibi çok klas. 😎\n\n'
+          'İşte senin için hazırladığım o nefis reçete:\n\n'
+          '${_formatRecipe(titleMatch)}\n\n'
           'Harika zevkinle bugün yine formundasın, afiyet olsun!',
           drinkId: titleMatch.id,
         );
       } else if (userWantsToDrink) {
         return _msg(
-          '${namePrefix}Süper bir fikir! Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
-          '${titleMatch.preparation}\n\n'
+          '${namePrefix}Süper bir fikir! Günün yorgunluğunu atmak için harika bir tercih. ✨ Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
+          '${_formatRecipe(titleMatch)}\n\n'
           'Ne istediğini bilen biriyle sohbet etmek harika. Şimdiden afiyet olsun!',
           drinkId: titleMatch.id,
         );
@@ -833,6 +831,25 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       }
     }
     return [];
+  }
+
+  /// İçecek modelini istenen şık ve düzenli formata dönüştürür.
+  String _formatRecipe(DrinkModel drink) {
+    final ingredients = drink.ingredients
+        .map((e) => '- ${e[0].toUpperCase()}${e.substring(1)}')
+        .join('\n');
+
+    return '''
+- **İçecek Adı:** ${drink.title}
+- **Kategori:** ${drink.category}
+- **Hazırlanma Süresi:** 5-10 dakika
+- **Gerekli Malzemeler:**
+$ingredients
+
+- **Hazırlanışı:**
+${drink.preparation}
+
+- **Barista Notu / Küçük Bir Dokunuş:** ${drink.tip ?? 'Bu lezzeti kendi dokunuşunla taçlandırmayı unutma!'}''';
   }
 }
 
