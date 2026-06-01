@@ -103,11 +103,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       }
 
       // 2. ADIM: Zaman ve Gurme Seviyesi Kontrolü
-      if (preferences.isEasy) {
-        moodPool = moodPool.where((d) => d.ingredients.length <= 4).toList();
-      } else if (preferences.isGourmet) {
-        moodPool = moodPool.where((d) => d.tip != null || d.ingredients.length > 4).toList();
-      }
+      moodPool = moodPool.where((d) => !preferences.violates(d)).toList();
 
       if (moodPool.isNotEmpty) {
         moodPool.shuffle();
@@ -821,7 +817,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     final isGlutenFree = lower.contains('gluten');
 
     // Zaman ve Gurme Seviyesi
-    final isEasy = lower.contains('zamanim az') || lower.contains('pratik') || lower.contains('kolay') || lower.contains('hizli') || lower.contains('basit');
+    final isEasy = lower.contains('zamanim az') || 
+                   lower.contains('zamanim yok') ||
+                   lower.contains('vaktim yok') ||
+                   lower.contains('acelem') ||
+                   lower.contains('hemen') ||
+                   lower.contains('ugrastirma') ||
+                   lower.contains('seri') ||
+                   lower.contains('pratik') || lower.contains('kolay') || lower.contains('hizli') || lower.contains('basit');
     final isGourmet = lower.contains('ugrasirim') || lower.contains('havali') || lower.contains('gurme') || lower.contains('sik') || lower.contains('trend');
 
     // PORSİYON PROTOKOLÜ: Kişi sayısı veya kat çarpanı tespiti
@@ -1127,6 +1130,14 @@ class _DrinkPreferences {
     if (preferredTemp != null) {
       final drinkTemp = _normalize(drink.temperature);
       if (drinkTemp != preferredTemp) return true;
+    }
+
+    // Kolaylık Filtresi: Kullanıcı pratik bir şey istiyorsa malzeme sayısı 4'ten fazla olanları ele.
+    if (isEasy && drink.ingredients.length > 4) return true;
+
+    // Gurme Filtresi: Kullanıcı özel/gurme bir şey istiyorsa çok basit tarifleri ele.
+    if (isGourmet && drink.ingredients.length <= 4 && (drink.tip == null || drink.tip!.isEmpty)) {
+      return true;
     }
 
     return false;
