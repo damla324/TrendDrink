@@ -56,17 +56,37 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       {bool hasImage = false}) async {
     final drinks = await _repository.fetchAllDrinks();
     final lower = _normalize(query);
-    final preferences = _parsePreferences(lower);
 
-    // 1. ADIM: İçecek Tespiti (Öncelikli kontrol)
+    // 1. ADIM: Sohbet Geçmişini Topla ve Birleştir
+    final userHistory = state
+        .where((m) => m.author == ChatAuthor.user)
+        .map((m) => _normalize(m.text))
+        .toList();
+    // Mevcut mesaj boş değilse geçmişe ekle
+    final allUserQueries = [...userHistory, lower];
+    final combinedQuery = allUserQueries.join(' ');
+
+    // 2. ADIM: Tercihleri ve Malzemeleri Tüm Geçmişten Analiz Et
+    final preferences = _parsePreferences(combinedQuery);
+    final tokens = _extractIngredientTokens(combinedQuery, preferences);
+
+    // İçecek tespiti sadece son mesajdan yapılmalı (Kullanıcı doğrudan bir içecek ismi söylediyse)
     final titleMatch = _findByTitle(drinks, lower, preferences);
 
     // KURAL: Günün Modu ve Kişiselleştirilmiş Karşılama Protokolü
-    final isMoodInquiry = _fuzzyQuery(lower, 'modum') || 
+    bool isMoodInquiry = _fuzzyQuery(lower, 'modum') || 
                           _fuzzyQuery(lower, 'gunun') || 
                           _fuzzyQuery(lower, 'ne icsem') || 
                           lower.contains('ne onerirsin') ||
                           lower.contains('emin degilim');
+
+    // BAĞLAM KONTROLÜ: Eğer kullanıcı mod sorgusu içindeyse ve sadece detay veriyorsa (örn: "kahve olsun")
+    if (!isMoodInquiry && state.isNotEmpty) {
+      final lastAssistantMsg = state.lastWhere((m) => m.author == ChatAuthor.assistant, orElse: () => ChatMessage(id: '', text: '', author: ChatAuthor.assistant));
+      if (lastAssistantMsg.text.contains('Moduna Özel') && titleMatch == null && (tokens.isNotEmpty || preferences.hasAny)) {
+        isMoodInquiry = true;
+      }
+    }
 
     if (isMoodInquiry) {
       List<DrinkModel> moodPool = drinks;
@@ -109,10 +129,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // İsim prefix'i (Eğer isim biliniyorsa cümle başına ekler)
     final namePrefix = _userName != null ? '$_userName, ' : '';
 
-    // Malzeme Hazırlığı
-    final tokens = _extractIngredientTokens(lower, preferences);
-
-    // KURAL 4: Malzeme İkame ve Yerine Koyma Analizi
+    // Malzeme İkame ve Yerine Koyma Analizi (Son mesaja odaklanmalı)
     final substitutionResponse = _handleSubstitutions(lower, tokens, titleMatch);
     if (substitutionResponse != null) {
       return _msg('$namePrefix$substitutionResponse');
@@ -311,7 +328,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     if (social != null && emotionalIntro == null) return social;
 
     // KURAL 1 & 2: Akıllı Sınıflandırma ve Diyalog (Vazgeçilmez detayları sor)
-    final clarification = _checkClarifications(lower, tokens, isIndifferent);
+    final clarification = _checkClarifications(combinedQuery, tokens, isIndifferent);
     if (clarification != null && !isIndifferent) {
       return _msg('$namePrefix$clarification');
     }
@@ -360,7 +377,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     if (preferences.hasAny) {
-      final prefOnly = _findByPreferences(drinks, preferences);
+      final prefOnly = _findByPreferences(drinks, preferences).where((d) => !suggestedIds.contains(d.id)).toList();
       if (prefOnly.isNotEmpty) {
         final top = prefOnly.take(3).toList();
         final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
@@ -378,7 +395,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // 4) Kategori
-    final byCat = _findByCategory(drinks, lower, preferences);
+    final byCat = _findByCategory(drinks, combinedQuery, preferences);
     if (byCat.isNotEmpty) {
       final top = byCat.take(3).toList();
       final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
@@ -857,7 +874,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   }
 
   List<String> _extractIngredientTokens(
-      String lower, _DrinkPreferences preferences) {
+      String combinedText, _DrinkPreferences preferences) {
     const keywords = [
       'muz',
       'sut',
@@ -888,7 +905,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     // Kullanıcının özellikle kaçındığı malzemeleri öneri havuzundan çıkar
     return keywords
-        .where((k) => lower.contains(k))
+        .where((k) => combinedText.contains(k))
         .where((k) => !preferences.avoidedIngredients.contains(k))
         .toList();
   }
