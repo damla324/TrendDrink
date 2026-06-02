@@ -132,8 +132,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     }
 
     // KURAL 3: İnisiyatif ve "Farketmez" Durumu
-    final isIndifferent = _fuzzyQuery(lower, 'farketmez') || 
-                          _fuzzyQuery(lower, 'fark etmez') || 
+    final isIndifferent = _fuzzyQuery(lower, 'fark etmez') || 
                           _fuzzyQuery(lower, 'standart') || 
                           _fuzzyQuery(lower, 'hepsi var');
 
@@ -704,6 +703,16 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
   }
 
   bool _fuzzyQuery(String query, String target, {double threshold = 0.75}) {
+    // 1. Doğrudan içerme kontrolü (Cümle içerisinde hedef öbek olduğu gibi var mı?)
+    if (query.contains(target)) return true;
+
+    // 2. Boşluk ve yazım hataları için "Sıkıştırılmış" kontrol 
+    // (Örn: "fark etmez" yazılsa da "farketmez" yazılsa da eşleşir)
+    final compactQuery = query.replaceAll(RegExp(r'\s+'), '');
+    final compactTarget = target.replaceAll(RegExp(r'\s+'), '');
+    if (compactQuery.contains(compactTarget)) return true;
+
+    // 3. Kelime bazlı fuzzy (benzerlik) kontrolü (Mevcut mantık - Typos için)
     final tokens = query.split(RegExp(r'\s+'));
     for (final token in tokens) {
       if (_fuzzyMatch(token, target, threshold: threshold)) return true;
@@ -720,12 +729,14 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
   String _normalize(String s) => s
       .toLowerCase()
+      .trim()
       .replaceAll('ı', 'i')
       .replaceAll('ö', 'o')
       .replaceAll('ç', 'c')
       .replaceAll('ş', 's')
       .replaceAll('ğ', 'g')
-      .replaceAll('ü', 'u');
+      .replaceAll('ü', 'u')
+      .replaceAll(RegExp(r'[^\w\s]'), ''); // Noktalama işaretlerini temizler
 
   DrinkModel? _findByTitle(
       List<DrinkModel> drinks, String lower, _DrinkPreferences preferences) {
