@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
@@ -168,8 +169,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
     // Karar değişikliği ile birlikte spesifik bir içecek istendiyse (Örn: "Vazgeçtim Mojito istiyorum")
     if (changedMind && titleMatch != null) {
+      final intro = _randomPhrase([
+        'Kararını değiştirdiysen hiç sorun değil! 😊 Senin için rotayı hemen harika bir lezzete çevirdim.',
+        'Fikrini değiştirmek en doğal hakkın! Hemen yeni bir plan yapalım. 🔄',
+        'Yön değiştirmeyi severiz! İşte yeni favorin olmaya aday o tarif: 😋',
+      ]);
       return _msg(
-        '${namePrefix}Kararını değiştirdiysen hiç sorun değil! 😊 Senin için rotayı hemen harika bir lezzete çevirdim. İşte yeni favorin olmaya aday o tarif: 😋\n\n'
+        '${namePrefix}$intro\n\n'
         '${_formatRecipe(titleMatch, preferences)}',
         drinkId: titleMatch.id,
       );
@@ -188,9 +194,17 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         if (candidates.isEmpty) candidates = _findByCategory(pool, lower, preferences);
         if (candidates.isEmpty) { candidates = pool; candidates.shuffle(); }
 
-        final messageStart = changedMind 
-            ? 'Kararını değiştirdiysen hiç sorun değil! 😊' 
-            : 'Hiç sorun değil, damak tadına daha uygun başka bir şey bulalım! ✨ Demek bu öneriler pek sarmadı...';
+        final messageStart = changedMind
+            ? _randomPhrase([
+                'Kararını değiştirdiysen hiç sorun değil! 😊',
+                'Fikrini değiştirmek en doğal hakkın! 🔄',
+                'Hemen rotayı değiştiriyoruz! 📍',
+              ])
+            : _randomPhrase([
+                'Hiç sorun değil, damak tadına daha uygun başka bir şey bulalım! ✨',
+                'Anladım, bunlar tam istediğin gibi değilse yeni seçeneklere bakalım! 🔍',
+                'Zevkler tartışılmaz! Madem bunlar olmadı, şunlara ne dersin? ✨',
+              ]);
 
         final top = candidates.take(3).toList();
         final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
@@ -231,8 +245,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
       // Eğer kullanıcı doğrudan tarif istiyorsa, diğer önerileri atla ve tarifi ver
       if (userWantsRecipe) {
+        final intro = _randomPhrase([
+          'Harika seçim! Zevkine hayran kalmamak elde değil. ✨',
+          'Ağzının tadını biliyorsun! Hemen hazırlıklara başlayalım. 😋',
+          'Tam isabet! Bu tarif senin favorin olacak. ✨',
+        ]);
         return _msg(
-          '${namePrefix}Harika seçim! Zevkine hayran kalmamak elde değil. ✨ Hemen [${titleMatch.title}](${titleMatch.id}) tarifini senin için hazırladım:\n\n'
+          '${namePrefix}$intro Hemen [${titleMatch.title}](${titleMatch.id}) tarifini senin için hazırladım:\n\n'
           '${_formatRecipe(titleMatch, preferences)}\n\n'
           'Şimdiden afiyet olsun! Başka bir içecek tarifi istersen bana sormaktan çekinme. 😊',
           drinkId: titleMatch.id,
@@ -243,16 +262,26 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
       // Motivasyonel ve spesifik yanıt yapısı
       if (isIndecisive) {
+        final intro = _randomPhrase([
+          'Kararsız kalman çok normal, çünkü hepsi birbirinden lezzetli! 🌟',
+          'Seçim yapmak zor, çünkü seçeneklerin hepsi çok şık! ✨',
+          'Bazen en iyisini seçmek zaman alır, ama merak etme ben buradayım! 🙌',
+        ]);
         return _msg(
-          '${namePrefix}Kararsız kalman çok normal, çünkü hepsi birbirinden lezzetli! 🌟 Ama bana sorarsan, bugün kesinlikle ${titleMatch.title} denemelisin. Seçimlerin her zamanki gibi çok klas. 😎\n\n'
+          '${namePrefix}$intro Ama bana sorarsan, bugün kesinlikle ${titleMatch.title} denemelisin. Seçimlerin her zamanki gibi çok klas. 😎\n\n'
           'İşte senin için hazırladığım o nefis reçete:\n\n'
           '${_formatRecipe(titleMatch, preferences)}\n\n'
           'Harika zevkinle bugün yine formundasın, afiyet olsun!',
           drinkId: titleMatch.id,
         );
       } else if (userWantsToDrink) {
+        final intro = _randomPhrase([
+          'Süper bir fikir! Günün yorgunluğunu atmak için harika bir tercih. ✨',
+          'Kesinlikle katılıyorum, bu seçimle günün yıldızı sen olacaksın! ✨',
+          'Mükemmel bir zamanlama! Tadına doyamayacağın bir lezzet geliyor. 😋',
+        ]);
         return _msg(
-          '${namePrefix}Süper bir fikir! Günün yorgunluğunu atmak için harika bir tercih. ✨ Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
+          '${namePrefix}$intro Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
           '${_formatRecipe(titleMatch, preferences)}\n\n'
           'Ne istediğini bilen biriyle sohbet etmek harika. Şimdiden afiyet olsun!',
           drinkId: titleMatch.id,
@@ -718,6 +747,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       if (_fuzzyMatch(token, target, threshold: threshold)) return true;
     }
     return false;
+  }
+
+  String _randomPhrase(List<String> phrases) {
+    return phrases[math.Random().nextInt(phrases.length)];
   }
 
   ChatMessage _msg(String text, {String? drinkId}) => ChatMessage(
