@@ -74,33 +74,34 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
     // İçecek tespiti sadece son mesajdan yapılmalı (Kullanıcı doğrudan bir içecek ismi söylediyse)
     final titleMatch = _findByTitle(drinks, lower, preferences);
 
-    // KURAL: Günün Modu ve Kişiselleştirilmiş Karşılama Protokolü
-    bool isMoodInquiry = _fuzzyQuery(lower, 'modum') || 
+    // KURAL: Tavsiye Talebi (Ruh hali veya Tarz odaklı öneri isteği)
+    bool isRecommendationRequest = _fuzzyQuery(lower, 'modum') || 
                           _fuzzyQuery(lower, 'gunun') || 
                           _fuzzyQuery(lower, 'ne icsem') || 
                           lower.contains('ne onerirsin') ||
-                          lower.contains('emin degilim');
+                          lower.contains('emin degilim') ||
+                          (preferences.hasAny && tokens.isEmpty && titleMatch == null);
 
     // BAĞLAM KONTROLÜ: Eğer kullanıcı mod sorgusu içindeyse ve sadece detay veriyorsa (örn: "kahve olsun")
-    if (!isMoodInquiry && state.isNotEmpty) {
+    if (!isRecommendationRequest && state.isNotEmpty) {
       final lastAssistantMsg = state.lastWhere((m) => m.author == ChatAuthor.assistant, orElse: () => ChatMessage(id: '', text: '', author: ChatAuthor.assistant));
-      if (lastAssistantMsg.text.contains('Moduna Özel') && titleMatch == null && (tokens.isNotEmpty || preferences.hasAny)) {
-        isMoodInquiry = true;
+      if ((lastAssistantMsg.text.contains('Özel') || lastAssistantMsg.text.contains('öner')) && titleMatch == null && (tokens.isNotEmpty || preferences.hasAny)) {
+        isRecommendationRequest = true;
       }
     }
 
-    if (isMoodInquiry) {
+    if (isRecommendationRequest) {
       List<DrinkModel> moodPool = drinks;
       if (preferences.needsEnergy) {
         moodPool = drinks.where((d) => ['Kahve', 'Matcha'].contains(d.category)).toList();
-      } else if (preferences.isDiet) {
-        moodPool = drinks.where((d) => ['Fit', 'Smoothie'].contains(d.category)).toList();
       } else if (preferences.isRefreshing) {
         moodPool = drinks.where((d) => ['Frozen', 'Soda', 'Kokteyl', 'Çay'].contains(d.category) && d.temperature == 'Soğuk').toList();
       } else if (preferences.isStressed) {
         moodPool = drinks.where((d) => d.category == 'Çay' || (d.category == 'Kahve' && d.temperature == 'Sıcak')).toList();
       } else if (preferences.isCelebration) {
         moodPool = drinks.where((d) => ['Kokteyl', 'Frozen'].contains(d.category)).toList();
+      } else if (preferences.isDiet) {
+        moodPool = drinks.where((d) => ['Fit', 'Smoothie'].contains(d.category)).toList();
       }
 
       // 2. ADIM: Zaman ve Gurme Seviyesi Kontrolü
@@ -110,13 +111,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         moodPool.shuffle();
         final drink = moodPool.first;
         final address = _userName != null ? '$_userName, ' : '';
-        final intro = _generateMoodIntro(preferences);
+        final intro = _generateRecommendationIntro(preferences);
         final comment = _generateBaristaComment(drink, preferences);
 
         return _msg(
           '$address$intro\n\n'
-          '* **Moduna Özel İçecek:** ${drink.title}\n'
-          '* **Neden Bu İçecek?:** $comment\n\n'
+          '* **Senin İçin Seçtiğim:** ${drink.title}\n'
+          '* **Barista Notu:** $comment\n\n'
           'Tarifini senin için hemen getireyim mi? ✨',
           drinkId: drink.id,
         );
@@ -246,7 +247,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       // Eğer kullanıcı doğrudan tarif istiyorsa, diğer önerileri atla ve tarifi ver
       if (userWantsRecipe) {
         final intro = _randomPhrase([
-          'Harika seçim! Zevkine hayran kalmamak elde değil. ✨',
+          'Harika seçim! Tam istediğin gibi bir lezzet. ✨',
           'Ağzının tadını biliyorsun! Hemen hazırlıklara başlayalım. 😋',
           'Tam isabet! Bu tarif senin favorin olacak. ✨',
         ]);
