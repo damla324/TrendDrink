@@ -111,14 +111,16 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         moodPool.shuffle();
         final drink = moodPool.first;
         final address = _userName != null ? '$_userName, ' : '';
-        final intro = _generateRecommendationIntro(preferences);
-        final comment = _generateBaristaComment(drink, preferences);
+        
+        // Metodun isminin burada _generateRecommendationIntro olduğundan emin oluyoruz
+        final String intro = _generateRecommendationIntro(preferences);
+        final String comment = _generateBaristaComment(drink, preferences);
 
         return _msg(
           '$address$intro\n\n'
-          '* **Senin İçin Seçtiğim:** ${drink.title}\n'
-          '* **Barista Notu:** $comment\n\n'
-          'Tarifini senin için hemen getireyim mi? ✨',
+          '🌟 **${drink.title}**\n'
+          '*Barista Notu: $comment*\n\n'
+          'Bu lezzetin tarifini senin için hemen hazırlayayım mı? ✨',
           drinkId: drink.id,
         );
       }
@@ -247,12 +249,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       // Eğer kullanıcı doğrudan tarif istiyorsa, diğer önerileri atla ve tarifi ver
       if (userWantsRecipe) {
         final intro = _randomPhrase([
-          'Harika seçim! Tam istediğin gibi bir lezzet. ✨',
+          'Zevkine hayran kalmamak elde değil! ✨',
           'Ağzının tadını biliyorsun! Hemen hazırlıklara başlayalım. 😋',
-          'Tam isabet! Bu tarif senin favorin olacak. ✨',
+          'Tam isabet! Bugünün yıldızı kesinlikle bu olacak. ✨',
+          'Harika bir seçim! Barista tezgahını senin için hazırladım bile. ☕️',
         ]);
         return _msg(
-          '${namePrefix}$intro Hemen [${titleMatch.title}](${titleMatch.id}) tarifini senin için hazırladım:\n\n'
+          '${namePrefix}$intro\n\n'
           '${_formatRecipe(titleMatch, preferences)}\n\n'
           'Şimdiden afiyet olsun! Başka bir içecek tarifi istersen bana sormaktan çekinme. 😊',
           drinkId: titleMatch.id,
@@ -1057,6 +1060,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       }
     }
 
+    String prepTime = '5-10 dakika';
+    String prepSteps = drink.preparation;
+    if (prefs.isEasy) {
+      prepTime = '2-3 dakika (Pratik Versiyon)';
+      prepSteps += '\n\n⏱ **Hızlı Hazırlama Tüyosu:** Vaktimiz kısıtlı olduğu için süsleme adımlarını atlayıp tüm malzemeleri hızlıca karıştırarak o efsane tadı yakalayabilirsin! 😉';
+    }
+
     final formattedIngredients = ingredients
         .map((e) => '- ${e[0].toUpperCase()}${e.substring(1)}')
         .join('\n');
@@ -1065,18 +1075,21 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         ? '${substitutedNotes.join("\n")}\n${_getSubstitutionTip(drink, prefs)}'
         : _getSubstitutionTip(drink, prefs);
 
+    // YENİ ŞABLON: Persona kurallarına göre Markdown formatı
     return '''
-- **İçecek Adı:** ${drink.title}
-- **Kategori:** ${drink.category}
-- **Hazırlanma Süresi:** 5-10 dakika
-- **Gerekli Malzemeler:**
+🌟 **${drink.title}**
+*Moduna ve malzemelerine özel olarak tasarlandı!*
+
+📝 **Neden Bu İçecek?**
+${_generateBaristaComment(drink, prefs)}
+
+🛒 **Malzemeler:**
 $formattedIngredients
 
-- **Hazırlanışı:**
-${drink.preparation}
+🚀 **Hazırlanışı:**
+${prepSteps.replaceAll('Yapılış:', '').replaceAll('Yapili\u015f:', '').trim()}
 
-- **💡 Baristanın Sağlıklı Dokunuşu:** 
-$baristaTip''';
+💡 **Barista İpucu:** $baristaTip''';
   }
 
   String _getSubstitutionTip(DrinkModel drink, _DrinkPreferences prefs) {
@@ -1092,16 +1105,34 @@ $baristaTip''';
     return drink.tip ?? 'Bu lezzeti kendi dokunuşunla taçlandırmayı unutma! ✨';
   }
 
-  String _generateMoodIntro(_DrinkPreferences prefs) {
+  // BU METODUN İSMİNİN _generateRecommendationIntro OLDUĞUNDAN EMİN OLUYORUZ
+  String _generateRecommendationIntro(_DrinkPreferences prefs) {
+    // 1. ÖNCELİK: Teknik İstekler (Pratiklik, Gurme, Sertlik)
+    if (prefs.isEasy) {
+      return _randomPhrase([
+        'Vaktin kısıtlı ama lezzetten ödün vermek istemiyorsun, seni çok iyi anlıyorum! ⏱️ İşte şipşak hazırlayabileceğin o pratik tarifim:',
+        'Acelemiz var demek! Hiç sorun değil, seni yormayacak ama tadıyla şaşırtacak o "hızlı" çözümü buldum:',
+        'Mutfakta uzun süre vakit geçirmek istemeyenler için en sevdiğim pratik reçetelerimden birini senin için seçtim:',
+      ]);
+    }
+    if (prefs.isGourmet) return 'Madem bugün biraz uğraşmaya ve havalı bir şeyler denemeye niyetlisin, işte gerçek bir barista dokunuşu isteyen o gurme tarif: 🎩';
+    if (prefs.isHard) return 'Güneş gibi parlayacak, zihnini anında açacak o sert ve karakterli dokunuşu hazırladım. ☕️ İşte senin için seçtiğim o yoğun lezzet:';
+
+    // 2. ÖNCELİK: Ruh Halleri
     if (prefs.needsEnergy) return 'Anlaşılan bugün zihnini canlandırmaya ve o bitmek bilmeyen enerjiyi geri kazanmaya ihtiyacın var! 🚀';
     if (prefs.isDiet) return 'Bugün hafiflemek ve bedenine bir iyilik yapmak istediğini hissediyorum. Çok doğru bir karar! 💪';
     if (prefs.isRefreshing) return 'Of, gerçekten bunaltıcı bir hava ya da hararetli bir gün olmuş! Seni kutuplara götürecek bir fikrim var... ❄️';
     if (prefs.isStressed) return 'Bazen her şey üst üste gelir ve insan sadece huzurlu bir mola vermek ister. Senin için tam o dinginliği hazırladım... 🧘‍♂️';
     if (prefs.isCelebration) return 'Vay! Bugün havada kutlama kokusu var! Bu güzel enerjiyi taçlandırmak için harika bir fikrim var... 🎉';
-    return 'Anlaşılan bugün şımartılmaya ihtiyacın var! Modunu inceledim ve senin için harika bir fikrim var... ✨';
+
+    return 'İstediğin tarzda harika bir tarif seçtim! Senin için en uygun seçenek şu görünüyor: ✨';
   }
 
   String _generateBaristaComment(DrinkModel drink, _DrinkPreferences prefs) {
+    if (prefs.isEasy) return 'Az malzemeyle en kısa sürede maksimum lezzeti bu tarifle alabilirsin.';
+    if (prefs.isGourmet) return 'Sunumu ve aromatik derinliğiyle tam bir profesyonel içeceği olacak.';
+    if (prefs.isHard) return 'Kahve karakterinin ön planda olduğu, tavizsiz bir lezzet profili.';
+
     if (prefs.needsEnergy) return 'İçindeki yoğun kafein ve enerji veren bileşenler seni anında ayağa kaldıracak.';
     if (prefs.isDiet) return 'Hem çok hafif hem de besleyici; diyetini bozmadan seni şımartacak en fit seçenek bu.';
     if (prefs.isRefreshing) return 'Buz gibi dokusu ve ferahlatıcı notalarıyla hararetini saniyeler içinde alacak.';
