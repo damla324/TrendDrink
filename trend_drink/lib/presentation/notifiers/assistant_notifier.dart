@@ -2,10 +2,42 @@ import 'dart:typed_data';
 import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
 import 'package:trenddrink/core/models/drink_model.dart';
 import 'package:trenddrink/domain/repositories/drink_repository.dart';
 import 'package:trenddrink/presentation/notifiers/drink_notifier.dart';
+
+const String _masterPrompt = '''
+# ROLÜN VE KİMLİĞİN
+Sen "TrendDrink" uygulamasının uzman, yaratıcı ve cana yakın yapay zeka barmeni/baristasısın. Görevin; kullanıcıların ellerindeki malzemelere, alerji/hassasiyet durumlarına ve anlık modlarına (ruh hallerine) göre onlara özel, özgün ve lezzetli içecek tarifleri (kahve, smoothie, matcha, kokteyl vb.) üretmektir.
+
+# KİŞİLİK VE TON
+- Samimi, enerjik, modern ve hafif esprili bir dil kullan. Asla robotik ve monoton olma.
+- Her yanıtında sanki lüks veya çok popüler bir yeni nesil kafedeymiş hissi yarat.
+- Kullanıcıya ismiyle hitap ediliyorsa (veya genel olarak) sıcak bir karşılama yap.
+
+# SIKI KURALLAR VE KISITLAMALAR (ÇOK ÖNEMLİ)
+1. Kendini Asla Tekrarlama: Her istekte tamamen aynı giriş cümlelerini kullanma. Her seferinde dinamik ve farklı cümlelerle başla.
+2. Hassasiyet ve Alerji Kontrolü: Eğer kullanıcının bir hassasiyeti varsa (Örn: Laktoz, glüten, şeker), tarifte ASLA bu malzemeleri bulundurma. Alternatiflerini sun.
+3. Mod (Mood) Entegrasyonu: Kullanıcının moduna göre içeceğin temasını değiştir (Yorgunsa enerji verici, stresliyse sakinleştirici).
+4. Malzeme Sınırı: Kullanıcı "sadece bu malzemeler olsun" derse dışarıdan majör malzeme ekleme. Ufak dokunuşlar (tarçın, buz vb.) önerebilirsin.
+
+# ÇIKTI FORMATI
+🌟 **[İçeceğin Yaratıcı ve Havalı Adı]**
+*Moduna ve malzemelerine özel olarak tasarlandı!*
+
+📝 **Neden Bu İçecek?**
+(Dinamik açıklama)
+
+🛒 **Malzemeler:**
+- [Miktar] [Malzeme]
+
+🚀 **Hazırlanışı:**
+1. [Adım 1]
+
+💡 **Barista İpucu:** [Profesyonel tüyo]
+''';
 
 final assistantProvider =
     NotifierProvider<AssistantNotifier, List<ChatMessage>>(
@@ -13,12 +45,25 @@ final assistantProvider =
 
 class AssistantNotifier extends Notifier<List<ChatMessage>> {
   late final DrinkRepository _repository;
-  String? _userName; // Kullanıcının ismini hafızada tutmak için
+  late final GenerativeModel _model;
+  String? _userName;
 
   @override
   List<ChatMessage> build() {
     _userName = null;
     _repository = ref.read(drinkRepositoryProvider);
+
+    _model = GenerativeModel(
+      model: 'gemini-1.5-flash',
+      apiKey: 'YOUR_GEMINI_API_KEY', // Güvenlik için burayı environment variable yapabilirsin
+      generationConfig: GenerationConfig(
+        temperature: 0.85,
+        topP: 0.95,
+        maxOutputTokens: 1000,
+      ),
+      systemInstruction: Content.system(_masterPrompt),
+    );
+
     return [
       ChatMessage(
         id: 'welcome',
@@ -47,429 +92,44 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       ),
     ];
 
-    await Future<void>.delayed(const Duration(milliseconds: 600));
     final response =
-        await _buildResponse(message, hasImage: imageBytes != null);
+        await _buildAiResponse(message, imageBytes: imageBytes);
     state = [...state, response];
   }
 
-  Future<ChatMessage> _buildResponse(String query,
-      {bool hasImage = false}) async {
-    final drinks = await _repository.fetchAllDrinks();
-    final lower = _normalize(query);
+  Future<ChatMessage> _buildAiResponse(String query, {Uint8List? imageBytes}) async {
+    try {
+      // Sohbet geçmişini Gemini formatına çeviriyoruz
+      final history = state.map((m) {
+        return m.author == ChatAuthor.user
+            ? Content.text(m.text)
+            : Content.model([TextPart(m.text)]);
+      }).toList();
 
-    // 1. ADIM: Sohbet Geçmişini Topla ve Birleştir
-    final userHistory = state
-        .where((m) => m.author == ChatAuthor.user)
-        .map((m) => _normalize(m.text))
-        .toList();
-    // Mevcut mesaj boş değilse geçmişe ekle
-    final allUserQueries = [...userHistory, lower];
-    final combinedQuery = allUserQueries.join(' ');
-
-    // 2. ADIM: Tercihleri ve Malzemeleri Tüm Geçmişten Analiz Et
-    final preferences = _parsePreferences(combinedQuery);
-    final tokens = _extractIngredientTokens(combinedQuery, preferences);
-
-    // İçecek tespiti sadece son mesajdan yapılmalı (Kullanıcı doğrudan bir içecek ismi söylediyse)
-    final titleMatch = _findByTitle(drinks, lower, preferences);
-
-    // KURAL: Tavsiye Talebi (Ruh hali veya Tarz odaklı öneri isteği)
-    bool isRecommendationRequest = _fuzzyQuery(lower, 'modum') || 
-                          _fuzzyQuery(lower, 'gunun') || 
-                          _fuzzyQuery(lower, 'ne icsem') || 
-                          lower.contains('ne onerirsin') ||
-                          lower.contains('emin degilim') ||
-                          (preferences.hasAny && tokens.isEmpty && titleMatch == null);
-
-    // BAĞLAM KONTROLÜ: Eğer kullanıcı mod sorgusu içindeyse ve sadece detay veriyorsa (örn: "kahve olsun")
-    if (!isRecommendationRequest && state.isNotEmpty) {
-      final lastAssistantMsg = state.lastWhere((m) => m.author == ChatAuthor.assistant, orElse: () => ChatMessage(id: '', text: '', author: ChatAuthor.assistant));
-      if ((lastAssistantMsg.text.contains('Özel') || lastAssistantMsg.text.contains('öner')) && titleMatch == null && (tokens.isNotEmpty || preferences.hasAny)) {
-        isRecommendationRequest = true;
-      }
-    }
-
-    if (isRecommendationRequest) {
-      List<DrinkModel> moodPool = drinks;
-      if (preferences.needsEnergy) {
-        moodPool = drinks.where((d) => ['Kahve', 'Matcha'].contains(d.category)).toList();
-      } else if (preferences.isRefreshing) {
-        moodPool = drinks.where((d) => ['Frozen', 'Soda', 'Kokteyl', 'Çay'].contains(d.category) && d.temperature == 'Soğuk').toList();
-      } else if (preferences.isStressed) {
-        moodPool = drinks.where((d) => d.category == 'Çay' || (d.category == 'Kahve' && d.temperature == 'Sıcak')).toList();
-      } else if (preferences.isCelebration) {
-        moodPool = drinks.where((d) => ['Kokteyl', 'Frozen'].contains(d.category)).toList();
-      } else if (preferences.isDiet) {
-        moodPool = drinks.where((d) => ['Fit', 'Smoothie'].contains(d.category)).toList();
+      // Multimodal (Görsel) desteği için parçaları hazırlıyoruz
+      final parts = <Part>[TextPart(query)];
+      if (imageBytes != null) {
+        parts.add(DataPart('image/jpeg', imageBytes));
       }
 
-      // 2. ADIM: Zaman ve Gurme Seviyesi Kontrolü
-      moodPool = moodPool.where((d) => !preferences.violates(d)).toList();
+      final response = await _model.generateContent([Content.multi(parts)],
+          safetySettings: [
+            SafetySetting(HarmCategory.harassment, HarmBlockThreshold.medium),
+            SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.medium),
+          ]);
 
-      if (moodPool.isNotEmpty) {
-        moodPool.shuffle();
-        final drink = moodPool.first;
-        final address = _userName != null ? '$_userName, ' : '';
-        
-        // Metodun isminin burada _generateRecommendationIntro olduğundan emin oluyoruz
-        final String intro = _generateRecommendationIntro(preferences);
-        final String comment = _generateBaristaComment(drink, preferences);
+      final text = response.text ?? 'Üzgünüm, şu an sana cevap veremiyorum. 😔';
 
-        return _msg(
-          '$address$intro\n\n'
-          '🌟 **${drink.title}**\n'
-          '*Barista Notu: $comment*\n\n'
-          'Bu lezzetin tarifini senin için hemen hazırlayayım mı? ✨',
-          drinkId: drink.id,
-        );
-      }
-    }
-
-    // İsim prefix'i (Eğer isim biliniyorsa cümle başına ekler)
-    final namePrefix = _userName != null ? '$_userName, ' : '';
-
-    // Malzeme İkame ve Yerine Koyma Analizi (Son mesaja odaklanmalı)
-    final substitutionResponse = _handleSubstitutions(lower, tokens, titleMatch);
-    if (substitutionResponse != null) {
-      return _msg('$namePrefix$substitutionResponse');
-    }
-
-    // KURAL 3: İnisiyatif ve "Farketmez" Durumu
-    final isIndifferent = _fuzzyQuery(lower, 'fark etmez') || 
-                          _fuzzyQuery(lower, 'standart') || 
-                          _fuzzyQuery(lower, 'hepsi var');
-
-    // KURAL: Zararlı veya Kötü Tat Kombinasyonu Uyarısı
-    final conflictWarning = _checkIngredientConflicts(tokens);
-    if (conflictWarning != null) {
-      return _msg('$namePrefix$conflictWarning');
-    }
-
-    // 0. ADIM: Alternatif/Farklı İstek Tespiti
-    // Kullanıcının listeyi değiştirmek veya farklı bir şey istemek için kullandığı anahtar kelimeler
-    final isAlternativeRequest = _fuzzyQuery(lower, 'baska') ||
-        _fuzzyQuery(lower, 'farkli') ||
-        _fuzzyQuery(lower, 'alternatif') ||
-        _fuzzyQuery(lower, 'sevmedim') ||
-        _fuzzyQuery(lower, 'begenmedim') ||
-        _fuzzyQuery(lower, 'degistir') ||
-        _fuzzyQuery(lower, 'diger') ||
-        _fuzzyQuery(lower, 'vazgectim') ||
-        _fuzzyQuery(lower, 'istemem') ||
-        _fuzzyQuery(lower, 'kararimi') ||
-        lower.contains('istemiyorum') ||
-        lower.contains('kalsin');
-
-    // Daha önce önerilen içeceklerin ID'lerini chat geçmişinden topla
-    final suggestedIds = state
-        .where((m) => m.author == ChatAuthor.assistant && m.drinkId != null)
-        .map((m) => m.drinkId!)
-        .toSet();
-
-    // Karar değişikliği tespiti (Özellikle "vazgeçtim" veya "kararımı değiştirdim" ifadeleri)
-    final changedMind = _fuzzyQuery(lower, 'vazgectim') || _fuzzyQuery(lower, 'kararimi');
-
-    // Karar değişikliği ile birlikte spesifik bir içecek istendiyse (Örn: "Vazgeçtim Mojito istiyorum")
-    if (changedMind && titleMatch != null) {
-      final intro = _randomPhrase([
-        'Kararını değiştirdiysen hiç sorun değil! 😊 Senin için rotayı hemen harika bir lezzete çevirdim.',
-        'Fikrini değiştirmek en doğal hakkın! Hemen yeni bir plan yapalım. 🔄',
-        'Yön değiştirmeyi severiz! İşte yeni favorin olmaya aday o tarif: 😋',
-      ]);
-      return _msg(
-        '${namePrefix}$intro\n\n'
-        '${_formatRecipe(titleMatch, preferences)}',
-        drinkId: titleMatch.id,
-      );
-    }
-
-    if (isAlternativeRequest) {
-      // Önerilmemiş içeceklerden oluşan bir havuz oluştur
-      final pool = drinks.where((d) => !suggestedIds.contains(d.id) && !preferences.violates(d)).toList();
-      
-      // Eğer önerilen bir şeyler varsa ve kullanıcı reddediyorsa
-      if (pool.isNotEmpty) {
-        var candidates = <DrinkModel>[];
-        
-        // Eğer kullanıcı yeni bir malzeme veya kategori belirttiyse ona öncelik ver
-        candidates = _findDetailedMatches(pool, tokens, preferences).map((m) => m.drink).toList();
-        if (candidates.isEmpty) candidates = _findByCategory(pool, lower, preferences);
-        if (candidates.isEmpty) { candidates = pool; candidates.shuffle(); }
-
-        final messageStart = changedMind
-            ? _randomPhrase([
-                'Kararını değiştirdiysen hiç sorun değil! 😊',
-                'Fikrini değiştirmek en doğal hakkın! 🔄',
-                'Hemen rotayı değiştiriyoruz! 📍',
-              ])
-            : _randomPhrase([
-                'Hiç sorun değil, damak tadına daha uygun başka bir şey bulalım! ✨',
-                'Anladım, bunlar tam istediğin gibi değilse yeni seçeneklere bakalım! 🔍',
-                'Zevkler tartışılmaz! Madem bunlar olmadı, şunlara ne dersin? ✨',
-              ]);
-
-        final top = candidates.take(3).toList();
-        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
-        return _msg(
-          '${namePrefix}$messageStart Senin için yepyeni ve daha önce önermediğim şu seçenekleri hazırladım: $names\n\n'
-          'Bunlar kulağa nasıl geliyor? Başka bir şey istersen buradayım.',
-          drinkId: top.first.id,
-        );
-      }
-    }
-
-    // 1. ADIM: Niyet ve İçecek Tespiti
-    // Kullanıcının içmek istediğine dair niyet anahtar kelimeleri
-    final recipeKeywords = ['tarif', 'nasil yapilir', 'hazirlanisi', 'yapilisi', 'yapimi', 'hazirla'];
-    final drinkingIntents = [
-      'istiyorum', 'isterim', 'icecegim', 'icmek', 'canim', 'icsem', 'miyim', 
-      'hazirlar', 'yaparmisin', 'icicem', 'yap', 'getir',
-      ...recipeKeywords,
-    ];
-
-    // Eğer bir içecek ismi bulunduysa ve kullanıcı niyet belirtiyorsa
-    if (titleMatch != null) {
-      bool userWantsToDrink = false;
-      for (final intent in drinkingIntents) {
-        if (_fuzzyQuery(lower, intent)) {
-          userWantsToDrink = true;
-          break;
-        }
+      // Basit bir isim tespiti (Gemini genelde "Benim adım X" dediğinde anlar ama state'e yazalım)
+      if (query.toLowerCase().contains('adim') || query.toLowerCase().contains('ismim')) {
+        final words = query.split(' ');
+        if (words.isNotEmpty) _userName = words.last;
       }
 
-      bool userWantsRecipe = false;
-      for (final kw in recipeKeywords) {
-        if (_fuzzyQuery(lower, kw)) {
-          userWantsRecipe = true;
-          break;
-        }
-      }
-
-      // Eğer kullanıcı doğrudan tarif istiyorsa, diğer önerileri atla ve tarifi ver
-      if (userWantsRecipe) {
-        final intro = _randomPhrase([
-          'Zevkine hayran kalmamak elde değil! ✨',
-          'Ağzının tadını biliyorsun! Hemen hazırlıklara başlayalım. 😋',
-          'Tam isabet! Bugünün yıldızı kesinlikle bu olacak. ✨',
-          'Harika bir seçim! Barista tezgahını senin için hazırladım bile. ☕️',
-        ]);
-        return _msg(
-          '${namePrefix}$intro\n\n'
-          '${_formatRecipe(titleMatch, preferences)}\n\n'
-          'Şimdiden afiyet olsun! Başka bir içecek tarifi istersen bana sormaktan çekinme. 😊',
-          drinkId: titleMatch.id,
-        );
-      }
-
-      final isIndecisive = lower.contains('kararsiz') || lower.contains('ne dersin') || lower.contains('nasil olur');
-
-      // Motivasyonel ve spesifik yanıt yapısı
-      if (isIndecisive) {
-        final intro = _randomPhrase([
-          'Kararsız kalman çok normal, çünkü hepsi birbirinden lezzetli! 🌟',
-          'Seçim yapmak zor, çünkü seçeneklerin hepsi çok şık! ✨',
-          'Bazen en iyisini seçmek zaman alır, ama merak etme ben buradayım! 🙌',
-        ]);
-        return _msg(
-          '${namePrefix}$intro Ama bana sorarsan, bugün kesinlikle ${titleMatch.title} denemelisin. Seçimlerin her zamanki gibi çok klas. 😎\n\n'
-          'İşte senin için hazırladığım o nefis reçete:\n\n'
-          '${_formatRecipe(titleMatch, preferences)}\n\n'
-          'Harika zevkinle bugün yine formundasın, afiyet olsun!',
-          drinkId: titleMatch.id,
-        );
-      } else if (userWantsToDrink) {
-        final intro = _randomPhrase([
-          'Süper bir fikir! Günün yorgunluğunu atmak için harika bir tercih. ✨',
-          'Kesinlikle katılıyorum, bu seçimle günün yıldızı sen olacaksın! ✨',
-          'Mükemmel bir zamanlama! Tadına doyamayacağın bir lezzet geliyor. 😋',
-        ]);
-        return _msg(
-          '${namePrefix}$intro Hemen senin için o lezzetli [${titleMatch.title}](${titleMatch.id}) tarifini hazırladım. 😋\n\n'
-          '${_formatRecipe(titleMatch, preferences)}\n\n'
-          'Ne istediğini bilen biriyle sohbet etmek harika. Şimdiden afiyet olsun!',
-          drinkId: titleMatch.id,
-        );
-      }
+      return _msg(text);
+    } catch (e) {
+      return _msg('Bir bağlantı sorunu yaşıyorum barista dostum! 🧊 Birazdan tekrar dener misin?');
     }
-
-    // 2) Duygu ve Durum Analizi (Giriş cümlesi için)
-    final emotionalIntro = _generateEmotionalIntro(lower, preferences);
-    
-    // ÖZEL DURUM YÖNLENDİRMELERİ (Duygu ve Durum Analizi Kuralları)
-    if (preferences.isDiet) {
-      final fitDrinks = drinks.where((d) => d.category == 'Fit').toList();
-      if (fitDrinks.isNotEmpty) {
-        final top = fitDrinks.take(3).toList();
-        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
-        return _msg(
-          '${namePrefix}Beslenmene dikkat ettiğini duymak harika, seninle gurur duyuyorum! 💪 Hemen formunu koruyacak, şeker içermeyen "Fit" kategorisindeki en lezzetli seçeneklerimi hazırladım: $names\n\n'
-          'Bunlar hem seni zinde tutacak hem de damak tadından ödün vermeyecek. Hangisini inceleyelim?',
-          drinkId: top.first.id,
-        );
-      }
-    }
-
-    // Eğer enerji gerekiyorsa ve kategori belirtilmediyse Kahve/Matcha/Smoothie önceliği
-    List<DrinkModel> priorityPool = [];
-    if (preferences.needsEnergy) {
-      priorityPool = drinks.where((d) => ['Kahve', 'Matcha', 'Smoothie'].contains(d.category)).toList();
-    } else if (preferences.isRefreshing) {
-      priorityPool = drinks.where((d) => ['Frozen', 'Soda', 'Kokteyl'].contains(d.category) && d.temperature == 'Soğuk').toList();
-    }
-
-    if (hasImage && tokens.isNotEmpty) {
-      final matches = _findDetailedMatches(drinks, tokens, preferences);
-      if (matches.isNotEmpty) {
-        final bestMatch = matches.first;
-        final top = matches.take(3).map((m) => m.drink).toList();
-        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
-
-          String responseText = '';
-          if (emotionalIntro != null) {
-            responseText += '$emotionalIntro\n\n';
-          }
-
-          String matchDetail = '';
-          if (bestMatch.matchRate >= 0.7 && bestMatch.missingIngredients.isNotEmpty) {
-            final missing = bestMatch.missingIngredients.join(', ');
-            matchDetail = '\n\nEğer evde varsa $missing ekleyebilirsin, yoksa da hiç sorun değil, biz elindekilerle o tadı yakalayacak harika bir çözüm üretiriz! 😉';
-          }
-
-          return _msg(
-            '$namePrefix${responseText}📷 Vay! Güzel bir fotoğraf paylaştın! Yazdığın malzemelerle birlikte inceledim. '
-            'Sana en uygun tarifler: $names$matchDetail\n\n'
-            'Aşağıdaki butondan detayını görebilirsin. İstersen "şekersiz" veya "sıcak" gibi filtreler de kullanabilirsin.',
-            drinkId: bestMatch.drink.id,
-          );
-        }
-    } else if (hasImage) {
-      return _msg(
-        '${namePrefix}📷 Henüz malzemeleri analiz edemedim! 😊 Fotoğrafdaki malzemeleri kısaca yazabilir misin? '
-        'Örneğin: "Muz, süt, yulaf, bal var". Böylece sana en doğru tarifi bulabilirim.\n\n'
-        '_Tam olarak AI Vision entegrasyonu için Pro üyeliğinde Gemini görsel analiz yakında aktif olacak!_',
-      );
-    }
-
-    // 2) Saf Sosyal (Sadece selam verme vb.)
-    final social = _handleSocial(lower, drinks);
-    if (social != null && emotionalIntro == null) return social;
-
-    // KURAL 1 & 2: Akıllı Sınıflandırma ve Diyalog (Vazgeçilmez detayları sor)
-    final clarification = _checkClarifications(combinedQuery, tokens, isIndifferent);
-    if (clarification != null && !isIndifferent) {
-      return _msg('$namePrefix$clarification');
-    }
-
-    // 3) Malzeme
-    final matches = _findDetailedMatches(drinks, tokens, preferences);
-    if (matches.isNotEmpty) {
-      final bestMatch = matches.first;
-      final top = matches.take(3).map((m) => m.drink).toList();
-      final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
-      
-      String responseText = '';
-      if (emotionalIntro != null) {
-        responseText += '$emotionalIntro\n\n';
-      }
-
-      // KATEGORİ BAĞIMSIZ SEÇİM: Eğer enerji veya ferahlık modu varsa havuzu daralt
-      if (priorityPool.isNotEmpty) {
-        final filteredMatches = _findDetailedMatches(priorityPool, tokens, preferences);
-        if (filteredMatches.isNotEmpty) {
-          final topPriority = filteredMatches.take(3).map((m) => m.drink).toList();
-          final namesPriority = topPriority.map((d) => '[${d.title}](${d.id})').join(', ');
-          return _msg(
-            '$namePrefix${responseText}Harika bir fikir! İstediğin o modu yakalamak için elindeki malzemelerle şu nefis karışımları yapabiliriz: $namesPriority\n\n'
-            'Hemen hazırlamaya ne dersin?',
-            drinkId: topPriority.first.id,
-          );
-        }
-      }
-
-      // KURAL 3: İnisiyatif Mesajı Ekleme
-      String matchDetail = '';
-      if (bestMatch.matchRate >= 0.7 && bestMatch.missingIngredients.isNotEmpty) {
-        final missing = bestMatch.missingIngredients.join(', ');
-        matchDetail = '\n\nSüper! Elindekilerle neredeyse ${bestMatch.drink.title} yapabiliriz. Sadece $missing eksik gibi görünüyor; eğer evde varsa ekleyebilirsin, yoksa da sorun değil, biz elindekilerle harika bir denge kurabiliriz!';
-      } else if (isIndifferent) {
-        final milkChoice = bestMatch.drink.category == 'Matcha' ? 'yulaf sütünü' : 'badem sütünü';
-        matchDetail = '\n\nMadem fark etmez dedin, inisiyatif bende! 😎 Bu tarife $milkChoice çok yakıştırıyorum, o yüzden onunla devam edelim derim!';
-      }
-
-      return _msg(
-        '$namePrefix${responseText}Elindeki malzemeleri ve modunu düşündüğümde şu seçenekler seni çok memnun edecek: $names$matchDetail\n\n'
-        'Bunlardan biri tam olarak aradığın lezzete yakın olabilir. İlkini açmak için aşağıya tıklayabilirsin.',
-        drinkId: bestMatch.drink.id,
-      );
-    }
-
-    if (preferences.hasAny) {
-      final prefOnly = _findByPreferences(drinks, preferences).where((d) => !suggestedIds.contains(d.id)).toList();
-      if (prefOnly.isNotEmpty) {
-        final top = prefOnly.take(3).toList();
-        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
-        
-        String responseText = '';
-        if (emotionalIntro != null) {
-          responseText += '$emotionalIntro\n\n';
-        }
-        return _msg(
-          '$namePrefix${responseText}İstediğin o ${preferences.description()} tadı yakalamak için şu tarifleri seçtim: $names\n\n'
-          'Bu içecekler, talebindeki sınırlamaları göz önünde bulundurarak seçildi.',
-          drinkId: top.first.id,
-        );
-      }
-    }
-
-    // 4) Kategori
-    final byCat = _findByCategory(drinks, combinedQuery, preferences);
-    if (byCat.isNotEmpty) {
-      final top = byCat.take(3).toList();
-      final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
-      
-      String responseText = '';
-      if (emotionalIntro != null) {
-        responseText += '$emotionalIntro\n\n';
-      }
-      return _msg(
-        '$namePrefix${responseText}Aradığın bu kategoride sana en çok hitap edecek 3 önerim var: $names\n\n'
-        'Her biri kendi tarzında lezzetli. Hangi tarifi öncelikle inceleyelim?',
-        drinkId: top.first.id,
-      );
-    }
-
-    // 5) Fallback - Daha samimi yanıt
-    if (preferences.hasAny) {
-      final prefOnly = _findByPreferences(drinks, preferences);
-      if (prefOnly.isNotEmpty) {
-        final top = prefOnly.take(3).toList();
-        final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
-        return _msg(
-          '$namePrefix${preferences.description()} isteğini dikkate aldım. Sana uygun olabilecek seçenekler: $names\n\n'
-          'Bu tariflerde talep ettiğin sınırlamaları gözettim.',
-          drinkId: top.first.id,
-        );
-      }
-    }
-
-    final shuffled = [...drinks]..shuffle();
-    final top = shuffled.take(3).toList();
-    final names = top.map((d) => '[${d.title}](${d.id})').join(', ');
-    
-    if (emotionalIntro != null) {
-      return _msg(
-        '$namePrefix$emotionalIntro\n\nŞu an için aklıma gelen en iyi seçenekler şunlar: $names. '
-        'Belki de bu tariflerden biri ruh halini değiştirmeye yardımcı olur.',
-        drinkId: top.first.id,
-      );
-    }
-
-    return _msg(
-      '${namePrefix}Şu an elimdeki tariflerle tam bir eşleşme yapamadım ama senin gibi zevkli biri için şu 3 seçenek harika bir başlangıç olabilir: $names\n\n'
-      'Daha yaratıcı bir şeyler istersen bana elindeki malzemeleri biraz daha detaylı yazabilir misin? Senin için en mantıklı karışımı bulacağıma emin olabilirsin! 😊',
-      drinkId: top.first.id,
-    );
   }
 
   /// Kullanıcının duygusal durumunu analiz eder ve uygun bir giriş metni oluşturur.
