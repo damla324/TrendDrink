@@ -116,7 +116,7 @@ class AppStrings {
       : 'The future is hidden in the cup... If you drank your coffee, I shall tell.';
   String get fortuneGreeting => _tr
       ? 'Hoş geldin ruhu güzel dostum... ✨ Kahveni içtin, fincanını kapattın mı? Fotoğrafını gönder ya da bana içinden geçenleri anlat, senin için yıldızları yorumlayayım.'
-      : 'Welcome, beautiful soul... ✨ Have you finished your coffee and turned the cup? Send a photo or tell me what's on your mind, and I shall interpret the stars for you.';
+      : "Welcome, beautiful soul... ✨ Have you finished your coffee and turned the cup? Send a photo or tell me what's on your mind, and I shall interpret the stars for you.";
 
   // ── Membership ───────────────────────────────────────────────────────────
   String get proMember => _tr ? 'PRO ÜYE' : 'PRO MEMBER';

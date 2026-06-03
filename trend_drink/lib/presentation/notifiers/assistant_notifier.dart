@@ -70,6 +70,10 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         topP: 0.95,
         maxOutputTokens: 1000,
       ),
+      safetySettings: [
+        SafetySetting(HarmCategory.harassment, HarmBlockThreshold.medium),
+        SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.medium),
+      ],
       systemInstruction: Content.system(_masterPrompt),
     );
 
@@ -116,12 +120,8 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         parts.add(DataPart('image/jpeg', imageBytes));
       }
 
-      // startChat sayesinde history'yi manuel göndermemize gerek kalmadı
-      final response = await _chat.sendMessage(Content.multi(parts),
-          safetySettings: [
-            SafetySetting(HarmCategory.harassment, HarmBlockThreshold.medium),
-            SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.medium),
-          ]);
+      // sendMessage does not accept safetySettings; they are defined in the GenerativeModel
+      final response = await _chat.sendMessage(Content.multi(parts));
 
       final text = response.text ?? 'Üzgünüm, şu an sana cevap veremiyorum. 😔';
 

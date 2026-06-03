@@ -85,7 +85,6 @@ class _ShellPageState extends State<ShellPage> {
                       const SizedBox(height: 12),
                       FloatingChatbot(
                         // Yeni Fal AI Butonu
-                        isFortune: true, // UI'da ikon veya renk farkı için
                         onDrag: (d) {
                           _updatePosition(d, size);
                         },
