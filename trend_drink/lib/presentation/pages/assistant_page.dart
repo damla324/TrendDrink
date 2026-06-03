@@ -11,7 +11,7 @@ import 'package:trenddrink/core/theme/app_palette.dart';
 import 'package:trenddrink/core/theme/app_typography.dart';
 import 'package:trenddrink/core/widgets/frosted_panel.dart';
 import 'package:trenddrink/features/paywall/paywall_sheet.dart';
-import 'package:trenddrink/presentation/notifiers/assistant_notifier.dart';
+import 'package:trenddrink/features/drink_ai/assistant_notifier.dart';
 import 'package:trenddrink/presentation/notifiers/membership_notifier.dart';
 
 class AssistantPage extends ConsumerStatefulWidget {
