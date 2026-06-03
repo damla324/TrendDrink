@@ -49,6 +49,7 @@ class AppStrings {
   String get navHome => _tr ? 'Ana Sayfa' : 'Home';
   String get navDrinks => _tr ? 'İçecekler' : 'Drinks';
   String get navAI => _tr ? 'İçecek AI' : 'Drink AI';
+  String get navFortuneAI => _tr ? 'Fal AI' : 'Fortune AI';
   String get navSettings => _tr ? 'Ayarlar' : 'Settings';
   String get navAbout => _tr ? 'Hakkında' : 'About';
 
@@ -109,6 +110,13 @@ class AppStrings {
   String get chatbotGreeting => _tr
       ? 'Merhaba! Ben TrendBot 🤖 İçecekler hakkında her şeyi sorabileceğin kişisel asistanın. Nasıl yardımcı olabilirim?'
       : 'Hello! I\'m TrendBot 🤖 Your personal assistant for everything about beverages. How can I help you?';
+  String get fortuneTitle => _tr ? 'Mistik Falcı' : 'Mystic Seer';
+  String get fortuneSubtitle => _tr
+      ? 'Gelecek fincanın dibinde gizli... Kahveni içtiysen anlatayım.'
+      : 'The future is hidden in the cup... If you drank your coffee, I shall tell.';
+  String get fortuneGreeting => _tr
+      ? 'Hoş geldin ruhu güzel dostum... ✨ Kahveni içtin, fincanını kapattın mı? Fotoğrafını gönder ya da bana içinden geçenleri anlat, senin için yıldızları yorumlayayım.'
+      : 'Welcome, beautiful soul... ✨ Have you finished your coffee and turned the cup? Send a photo or tell me what's on your mind, and I shall interpret the stars for you.';
 
   // ── Membership ───────────────────────────────────────────────────────────
   String get proMember => _tr ? 'PRO ÜYE' : 'PRO MEMBER';

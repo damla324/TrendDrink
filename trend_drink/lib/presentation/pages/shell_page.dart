@@ -73,15 +73,24 @@ class _ShellPageState extends State<ShellPage> {
                 Positioned(
                   right: _chatRight,
                   bottom: _chatBottom,
-                  child: FloatingChatbot(
-                    onDrag: (d) {
-                      setState(() {
-                        _chatRight = (_chatRight - d.delta.dx)
-                            .clamp(8.0, size.width - 90);
-                        _chatBottom = (_chatBottom - d.delta.dy)
-                            .clamp(8.0, size.height - 90);
-                      });
-                    },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FloatingChatbot(
+                        // Mevcut İçecek AI Butonu
+                        onDrag: (d) {
+                          _updatePosition(d, size);
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      FloatingChatbot(
+                        // Yeni Fal AI Butonu
+                        isFortune: true, // UI'da ikon veya renk farkı için
+                        onDrag: (d) {
+                          _updatePosition(d, size);
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -90,6 +99,15 @@ class _ShellPageState extends State<ShellPage> {
         ],
       ),
     );
+  }
+
+  void _updatePosition(DragUpdateDetails d, Size size) {
+    setState(() {
+      _chatRight = (_chatRight - d.delta.dx)
+          .clamp(8.0, size.width - 90);
+      _chatBottom = (_chatBottom - d.delta.dy)
+          .clamp(8.0, size.height - 180); // İki buton olduğu için alanı daralttık
+    });
   }
 }
 
