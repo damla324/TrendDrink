@@ -58,13 +58,13 @@ final assistantProvider =
 
 class AssistantNotifier extends Notifier<List<ChatMessage>> {
   late final GenerativeModel _model;
+  late ChatSession _chat;
 
   @override
   List<ChatMessage> build() {
-
     _model = GenerativeModel(
       model: 'gemini-1.5-flash',
-      apiKey: 'YOUR_GEMINI_API_KEY', // Güvenlik için burayı environment variable yapabilirsin
+      apiKey: const String.fromEnvironment('GEMINI_API_KEY'),
       generationConfig: GenerationConfig(
         temperature: 0.85,
         topP: 0.95,
@@ -72,6 +72,9 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       ),
       systemInstruction: Content.system(_masterPrompt),
     );
+
+    // Oturumu başlatıyoruz
+    _chat = _model.startChat();
 
     return [
       ChatMessage(
@@ -108,20 +111,13 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
 
   Future<ChatMessage> _buildAiResponse(String query, {Uint8List? imageBytes}) async {
     try {
-      // Sohbet geçmişini Gemini formatına çeviriyoruz
-      final history = state.map((m) {
-        return m.author == ChatAuthor.user
-            ? Content.text(m.text)
-            : Content.model([TextPart(m.text)]);
-      }).toList();
-
-      // Multimodal (Görsel) desteği için parçaları hazırlıyoruz
       final parts = <Part>[TextPart(query)];
       if (imageBytes != null) {
         parts.add(DataPart('image/jpeg', imageBytes));
       }
 
-      final response = await _model.generateContent([Content.multi(parts)],
+      // startChat sayesinde history'yi manuel göndermemize gerek kalmadı
+      final response = await _chat.sendMessage(Content.multi(parts),
           safetySettings: [
             SafetySetting(HarmCategory.harassment, HarmBlockThreshold.medium),
             SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.medium),
@@ -141,4 +137,4 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         author: ChatAuthor.assistant,
         drinkId: drinkId,
       );
-    final isHot = lower.contains('sicak') || 
+}
