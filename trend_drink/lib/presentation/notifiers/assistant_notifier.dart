@@ -70,6 +70,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
         topP: 0.95,
         maxOutputTokens: 1000,
       ),
+      // Barista için özel güvenlik ayarları
       safetySettings: [
         SafetySetting(HarmCategory.harassment, HarmBlockThreshold.medium),
         SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.medium),
@@ -77,7 +78,7 @@ class AssistantNotifier extends Notifier<List<ChatMessage>> {
       systemInstruction: Content.system(_masterPrompt),
     );
 
-    // Oturumu başlatıyoruz
+    // Barista oturumu bağımsız olarak başlatılır
     _chat = _model.startChat();
 
     return [
