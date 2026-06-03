@@ -182,6 +182,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                                 letterSpacing: 1.2,
                               )),
                         ],
+                      ),
                     ),
                   ),
                 ),
