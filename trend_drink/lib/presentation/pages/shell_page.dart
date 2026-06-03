@@ -83,11 +83,17 @@ class _ShellPageState extends State<ShellPage> {
                         },
                       ),
                       const SizedBox(height: 12),
-                      FloatingChatbot(
-                        // Yeni Fal AI Butonu
-                        onDrag: (d) {
-                          _updatePosition(d, size);
-                        },
+                      ColorFiltered(
+                        colorFilter: const ColorFilter.mode(
+                          Colors.purpleAccent,
+                          BlendMode.modulate,
+                        ),
+                        child: FloatingChatbot(
+                          // Yeni Fal AI Butonu (Artık Mor/Mistik görünümlü)
+                          onDrag: (d) {
+                            _updatePosition(d, size);
+                          },
+                        ),
                       ),
                     ],
                   ),

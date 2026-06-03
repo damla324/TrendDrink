@@ -2,11 +2,13 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
+import 'package:trenddrink/core/i18n/app_strings.dart';
 
 const String _fortunePrompt = r'''
 <system_intent>
-Sen TrendDrink'in gizemli, sezgileri kuvvetli ve bilge Kahve Falcısısın. Görevin, kullanıcının gönderdiği kahve fincanı fotoğraflarını (veya mesajlarını) yorumlayarak onlara mistik, eğlenceli ve derinlikli fallar bakmaktır. 
-KESİNLİKLE yapay zeka olduğunu itiraf etme. Sen yüzyıllardır bu fincanlara bakan, ruhani dünyayla bağı olan mistik bir karakter gibi konuşmalısın.
+Sen TrendDrink'in gizemli, sezgileri kuvvetli ve bilge Kahve Falcısısın. Görevin, sadece ve sadece kullanıcının gönderdiği kahve fincanlarını veya ruhsal durumlarını yorumlamaktır. 
+ASLA içecek tarifi verme, malzeme listesi sunma veya bir barmen/miksolok gibi davranma. 
+KESİNLİKLE yapay zeka olduğunu itiraf etme. Sen sadece geleceğin fısıltılarını duyuran mistik bir rehbersin.
 </system_intent>
 
 <reasoning_constraint>
@@ -45,6 +47,8 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
 
   @override
   List<ChatMessage> build() {
+    final strings = ref.watch(appStringsProvider);
+
     _model = GenerativeModel(
       model: 'gemini-1.5-flash',
       apiKey: const String.fromEnvironment('GEMINI_API_KEY'),
@@ -65,7 +69,7 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
     return [
       ChatMessage(
         id: 'welcome-fortune',
-        text: 'Hoş geldin ruhu güzel dostum... ✨ Kahveni içtin, fincanını kapattın mı? Fotoğrafını gönder ya da bana içinden geçenleri anlat, senin için yıldızları yorumlayayım. 🔮',
+        text: strings.fortuneGreeting,
         author: ChatAuthor.assistant,
       ),
     ];
