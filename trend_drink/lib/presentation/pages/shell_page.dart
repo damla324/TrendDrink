@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trenddrink/core/theme/app_palette.dart';
-import 'package:trenddrink/features/drink_ai/assistant_notifier.dart'; // Import for assistantProvider
+import 'package:trenddrink/presentation/pages/assistant_notifier.dart'; // Import for assistantProvider
 import 'package:trenddrink/presentation/pages/fortune_notifier.dart'; // Import for fortuneProvider
 import 'package:trenddrink/core/widgets/custom_title_bar.dart';
 import 'package:trenddrink/presentation/widgets/floating_chatbot.dart';
