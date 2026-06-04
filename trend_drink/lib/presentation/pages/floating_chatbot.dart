@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trenddrink/core/theme/app_palette.dart';
+import 'package:trenddrink/presentation/pages/assistant_notifier.dart';
+import 'package:trenddrink/presentation/pages/fortune_notifier.dart';
 
 enum AIType { assistant, fortune }
 
