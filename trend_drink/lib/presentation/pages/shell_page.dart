@@ -22,6 +22,8 @@ class ShellPage extends StatefulWidget {
 class _ShellPageState extends State<ShellPage> {
   double _chatRight = 24;
   double _chatBottom = 24;
+  double _fortuneRight = 24;
+  double _fortuneBottom = 110; // Fal butonu artık biraz daha yukarıda başlıyor
 
   @override
   Widget build(BuildContext context) {
@@ -73,29 +75,28 @@ class _ShellPageState extends State<ShellPage> {
                 Positioned(
                   right: _chatRight,
                   bottom: _chatBottom,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FloatingChatbot(
-                        // Mevcut İçecek AI Butonu
-                        onDrag: (d) {
-                          _updatePosition(d, size);
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      ColorFiltered(
-                        colorFilter: const ColorFilter.mode(
-                          Colors.purpleAccent,
-                          BlendMode.modulate,
-                        ),
-                        child: FloatingChatbot(
-                          // Yeni Fal AI Butonu (Artık Mor/Mistik görünümlü)
-                          onDrag: (d) {
-                            _updatePosition(d, size);
-                          },
-                        ),
-                      ),
-                    ],
+                  child: FloatingChatbot(
+                    // İçecek AI Butonu
+                    onDrag: (d) {
+                      _updatePosition(d, size, isFortune: false);
+                    },
+                  ),
+                ),
+                // Floating Fortune AI — Artık ayrı bir Positioned ve bağımsız sürükleme
+                Positioned(
+                  right: _fortuneRight,
+                  bottom: _fortuneBottom,
+                  child: ColorFiltered(
+                    colorFilter: const ColorFilter.mode(
+                      Colors.purpleAccent,
+                      BlendMode.modulate,
+                    ),
+                    child: FloatingChatbot(
+                      // Yeni Fal AI Butonu
+                      onDrag: (d) {
+                        _updatePosition(d, size, isFortune: true);
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -106,12 +107,15 @@ class _ShellPageState extends State<ShellPage> {
     );
   }
 
-  void _updatePosition(DragUpdateDetails d, Size size) {
+  void _updatePosition(DragUpdateDetails d, Size size, {required bool isFortune}) {
     setState(() {
-      _chatRight = (_chatRight - d.delta.dx)
-          .clamp(8.0, size.width - 90);
-      _chatBottom = (_chatBottom - d.delta.dy)
-          .clamp(8.0, size.height - 180); // İki buton olduğu için alanı daralttık
+      if (isFortune) {
+        _fortuneRight = (_fortuneRight - d.delta.dx).clamp(8.0, size.width - 90);
+        _fortuneBottom = (_fortuneBottom - d.delta.dy).clamp(8.0, size.height - 90);
+      } else {
+        _chatRight = (_chatRight - d.delta.dx).clamp(8.0, size.width - 90);
+        _chatBottom = (_chatBottom - d.delta.dy).clamp(8.0, size.height - 90);
+      }
     });
   }
 }
