@@ -25,7 +25,7 @@ class _ShellPageState extends State<ShellPage> {
   double _chatRight = 24;
   double _chatBottom = 24;
   double _fortuneLeft = 24;
-  double _fortuneBottom = 110; // Başlangıçta üst üste binmemeleri için yukarı aldım
+  double _fortuneBottom = 24; // Sol alt köşeye indirildi
 
   @override
   Widget build(BuildContext context) {
@@ -83,10 +83,7 @@ class _ShellPageState extends State<ShellPage> {
                       _updatePosition(d, size, isFortune: false);
                     },
                     aiType: AIType.assistant,
-                    onTap: () {
-                      // Assuming '/assistant' is the route for the full Assistant AI page
-                      context.go('/assistant');
-                    },
+                    onTap: () => context.go('/assistant'),
                   ),
                 ),
                 // Floating Fortune AI — Artık ayrı bir Positioned ve bağımsız sürükleme
@@ -104,9 +101,7 @@ class _ShellPageState extends State<ShellPage> {
                         _updatePosition(d, size, isFortune: true);
                       },
                       aiType: AIType.fortune,
-                      onTap: () {
-                        context.go('/fortune');
-                      },
+                      onTap: () => context.go('/fortune'),
                     ),
                   ),
                 ),
