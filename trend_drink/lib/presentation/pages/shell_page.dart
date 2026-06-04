@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trenddrink/core/theme/app_palette.dart';
+import 'package:trenddrink/features/drink_ai/assistant_notifier.dart'; // Import for assistantProvider
+import 'package:trenddrink/presentation/pages/fortune_notifier.dart'; // Import for fortuneProvider
 import 'package:trenddrink/core/widgets/custom_title_bar.dart';
 import 'package:trenddrink/presentation/widgets/floating_chatbot.dart';
 import 'package:trenddrink/presentation/widgets/left_sidebar.dart';
@@ -10,7 +12,7 @@ import 'package:trenddrink/presentation/widgets/left_sidebar.dart';
 ///   ├─ Row
 ///   │   ├─ LeftSidebar (rail, hover-expand)
 ///   │   └─ Expanded(child) — sayfa içeriği transparan zemin üzerinde
-///   └─ backgroundH.png arka planda hafif transparan
+///   └─ backgroundH.png arka planda hafif transparan 
 class ShellPage extends StatefulWidget {
   const ShellPage({super.key, required this.child});
   final Widget child;
@@ -22,8 +24,8 @@ class ShellPage extends StatefulWidget {
 class _ShellPageState extends State<ShellPage> {
   double _chatRight = 24;
   double _chatBottom = 24;
-  double _fortuneRight = 24;
-  double _fortuneBottom = 110; // Fal butonu artık biraz daha yukarıda başlıyor
+  double _fortuneLeft = 24;
+  double _fortuneBottom = 110; // Başlangıçta üst üste binmemeleri için yukarı aldım
 
   @override
   Widget build(BuildContext context) {
@@ -80,11 +82,16 @@ class _ShellPageState extends State<ShellPage> {
                     onDrag: (d) {
                       _updatePosition(d, size, isFortune: false);
                     },
+                    aiType: AIType.assistant,
+                    onTap: () {
+                      // Assuming '/assistant' is the route for the full Assistant AI page
+                      context.go('/assistant');
+                    },
                   ),
                 ),
                 // Floating Fortune AI — Artık ayrı bir Positioned ve bağımsız sürükleme
                 Positioned(
-                  right: _fortuneRight,
+                  left: _fortuneLeft,
                   bottom: _fortuneBottom,
                   child: ColorFiltered(
                     colorFilter: const ColorFilter.mode(
@@ -95,6 +102,10 @@ class _ShellPageState extends State<ShellPage> {
                       // Yeni Fal AI Butonu
                       onDrag: (d) {
                         _updatePosition(d, size, isFortune: true);
+                      },
+                      aiType: AIType.fortune,
+                      onTap: () {
+                        context.go('/fortune');
                       },
                     ),
                   ),
@@ -110,7 +121,7 @@ class _ShellPageState extends State<ShellPage> {
   void _updatePosition(DragUpdateDetails d, Size size, {required bool isFortune}) {
     setState(() {
       if (isFortune) {
-        _fortuneRight = (_fortuneRight - d.delta.dx).clamp(8.0, size.width - 90);
+        _fortuneLeft = (_fortuneLeft + d.delta.dx).clamp(8.0, size.width - 150);
         _fortuneBottom = (_fortuneBottom - d.delta.dy).clamp(8.0, size.height - 90);
       } else {
         _chatRight = (_chatRight - d.delta.dx).clamp(8.0, size.width - 90);
