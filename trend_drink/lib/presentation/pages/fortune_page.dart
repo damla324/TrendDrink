@@ -234,7 +234,7 @@ class _FortunePageState extends ConsumerState<FortunePage> {
       itemBuilder: (ctx, i) {
         if (i == messages.length) return const _MysticTypingIndicator();
         final m = messages[i];
-        return _MessageBubble(message: m, onDrinkTap: null);
+        return _MessageBubble(message: m);
       },
     );
   }
@@ -334,21 +334,12 @@ class _FortunePageState extends ConsumerState<FortunePage> {
             icon: _sending 
               ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: AppPalette.espresso))
               : const Icon(Icons.auto_awesome_rounded, color: AppPalette.espresso),
-            backgroundColor: AppPalette.ledViolet,
+            style: IconButton.styleFrom(backgroundColor: AppPalette.ledViolet),
             constraints: const BoxConstraints.tightFor(width: 48, height: 48),
           ).animate(onComplete: (c) => c.repeat()).shimmer(delay: 3.seconds),
         ],
       ),
     );
-  }
-
-  void _send() async {
-    if (_ctrl.text.isEmpty) return;
-    setState(() => _sending = true);
-    await ref.read(fortuneProvider.notifier).sendMessage(_ctrl.text);
-    _ctrl.clear();
-    setState(() => _sending = false);
-    _scroll.animateTo(_scroll.position.maxScrollExtent, duration: 300.ms, curve: Curves.easeOut);
   }
 }
 
@@ -438,8 +429,7 @@ class _MysticTypingIndicator extends StatelessWidget {
               size: 13,
               color: AppPalette.ledViolet.withOpacity(0.7),
               weight: FontWeight.w300,
-              fontStyle: FontStyle.italic,
-            ),
+            ).copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(width: 8),
           ...List.generate(3, (i) => 
