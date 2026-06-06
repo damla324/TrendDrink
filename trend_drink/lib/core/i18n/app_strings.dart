@@ -106,10 +106,10 @@ class AppStrings {
       ? 'Kişisel içecek danışmanın — her sorun için buradayım.'
       : 'Your personal beverage advisor — here for every question.';
   String get chatHint => _tr ? 'Bir içecek sor...' : 'Ask about a drink...';
-  String get chatbotName => _tr ? 'TrendBot' : 'TrendBot';
+  String get chatbotName => _tr ? 'TrendMystic' : 'TrendMystic';
   String get chatbotGreeting => _tr
-      ? 'Merhaba! Ben TrendBot 🤖 İçecekler hakkında her şeyi sorabileceğin kişisel asistanın. Nasıl yardımcı olabilirim?'
-      : 'Hello! I\'m TrendBot 🤖 Your personal assistant for everything about beverages. How can I help you?';
+      ? 'Selam olsun sana yolcu! Ben TrendMystic. Miksoloji sanatının derinliklerinden geldim. Hangi lezzetin gizemini merak edersin?'
+      : 'Greetings, traveler! I am TrendMystic. I come from the depths of the art of mixology. Which flavor\'s mystery do you wonder about?';
   String get fortuneTitle => _tr ? 'Mistik Falcı' : 'Mystic Seer';
   String get fortuneSubtitle => _tr
       ? 'Gelecek fincanın dibinde gizli... Kahveni içtiysen anlatayım.'
