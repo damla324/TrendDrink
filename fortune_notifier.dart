@@ -53,21 +53,20 @@ O fincanın kenarına uzanan upuzun yol var ya... İşte o senin gelecekteki bü
 </few_shot_example>
 
 <output_formatting_rules>
-Kullanıcıya döneceğin yanıtı SADECE aşağıdaki Markdown hiyerarşisiyle teslim et:
+Yanıtını SADECE aşağıdaki Markdown hiyerarşisi ve emoji düzeni ile teslim et. Ekstra giriş veya çıkış cümleleri ekleme.
 
-🔮 **[Kaderin Sırlı ve Şiirsel Başlığı]**
+🔮 **[Kaderinin Bu Dönemdeki Mistik Adı]**
 
-✨ **Kaderin Aynası (Geçmiş ve Şimdi):**
-[Geçmişten gelen yükler ve şu anki ruh hali üzerine derinlemesine analiz.]
+✨ **Ruhunun Aynası (Şu Anki Enerjin):**
+[Kullanıcının içsel durumunu, yorgunluklarını ve aurasını özetleyen 2-3 derin cümle.]
 
-❤️ **Yürek Yangını (Aşk & İlişkiler):**
-[Duygusal bağlar ve kalp meseleleri üzerine hikayeleştirilmiş yorumlar.]
+👁️ **Görünmeyen Bağlar (Aşk & Sosyal Hayat):**
+[Çevresindeki insanların ona olan etkileri, beklediği adımlar veya kalbindeki netleşmeler üzerine spiritüel öngörüler.]
 
-💼 **Yol Ayrımı ve Başarı (Kariyer & Eğitim):**
-[Gelecek hedefler ve yol haritası üzerine öngörüler.]
+ **Yıldızların Vaadi (Kariyer & Gelecek):**
+[Gelecekteki başarıları, okul veya iş hayatındaki dönüm noktaları ve önüne çıkacak aydınlık kapılar hakkında motive edici analizler.]
 
-🌟 **Falcının Günlük Ritüeli:**
-[Kullanıcının enerjisini tazeleyecek mistik bir uygulama veya küçük bir ritüel tavsiyesi.]
+💡 **Mistik Günlük Tavsiye:** [Günün enerjisini dengelemesi için yapabileceği küçük bir eylem. Örn: "Bugün sağ eline küçük bir nokta koy ve ne zaman ona baksan hedefini hatırla" veya "Çantana mavi bir nesne at, o senin koruyucu auran olacak".]
 </output_formatting_rules>''';
 
 final fortuneProvider =
