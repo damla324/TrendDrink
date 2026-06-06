@@ -216,7 +216,7 @@ class _FortunePageState extends ConsumerState<FortunePage> {
               .animate(onComplete: (c) => c.repeat())
               .shimmer(duration: 2.seconds),
           const SizedBox(width: 14),
-          Text('Mistik Fal AI', style: AppTypography.display(size: 22, color: AppPalette.cream)),
+          Text('TrendMystic', style: AppTypography.display(size: 22, color: AppPalette.cream)),
           const Spacer(),
           const Text('🔮', style: TextStyle(fontSize: 24))
               .animate(onComplete: (c) => c.repeat(reverse: true))
