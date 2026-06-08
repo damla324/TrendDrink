@@ -101,11 +101,18 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
     ];
   }
 
+  /// Kullanıcı her yeni mesaj gönderdiğinde bu fonksiyon tetiklenir:
   Future<void> sendMessage(String text, {Uint8List? imageBytes, String? imageName}) async {
     final message = text.trim();
     if (message.isEmpty && imageBytes == null) return;
+
+    // 1. Kullanıcının mesajını (ve varsa görselini) ekrandaki listeye ekle
     state = [...state, ChatMessage(id: 'u-${DateTime.now()}', text: message, author: ChatAuthor.user, imageBytes: imageBytes)];
+
+    // 2. Gemini'a mesajı geçmişiyle birlikte gönder ve mistik cevabı oluştur
     final response = await _buildAiResponse(message, imageBytes: imageBytes);
+
+    // 3. Botun verdiği mistik cevabı ekrana yansıt
     state = [...state, response];
   }
 
