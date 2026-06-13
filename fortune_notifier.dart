@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
@@ -92,9 +93,16 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
 
   @override
   List<ChatMessage> build() {
+    // API Anahtarını al
+    const apiKey = String.fromEnvironment('GEMINI_API_KEY');
+    
+    if (apiKey.isEmpty) {
+      debugPrint('⚠️ KRİTİK UYARI: GEMINI_API_KEY bulunamadı! Uygulamayı --dart-define=GEMINI_API_KEY=... ile çalıştırdığından emin ol.');
+    }
+
     _model = GenerativeModel(
       model: 'gemini-1.5-flash',
-      apiKey: const String.fromEnvironment('GEMINI_API_KEY'),
+      apiKey: apiKey,
       generationConfig: GenerationConfig(
         temperature: 0.9,
         topP: 0.95,
@@ -131,20 +139,23 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
 
   Future<ChatMessage> _buildAiResponse(String query, {Uint8List? imageBytes}) async {
     try {
-      final apiKey = const String.fromEnvironment('GEMINI_API_KEY');
-      if (apiKey.isEmpty) {
-        return _msg('Mistik güçlerime ulaşamıyorum. Lütfen API anahtarını (GEMINI_API_KEY) kontrol et! 🗝️');
-      }
-
       final parts = <Part>[TextPart(query)];
       if (imageBytes != null) parts.add(DataPart('image/jpeg', imageBytes));
       
       final response = await _chat.sendMessage(Content.multi(parts));
-      return _msg(response.text ?? 'Gözlerim bugün puslu, tam göremiyorum...');
+      
+      if (response.text == null || response.text!.isEmpty) {
+        return _msg('Gözlerim bugün puslu, tam göremiyorum... ✨');
+      }
+      
+      return _msg(response.text!);
     } catch (e) {
-      // Hatanın detayını debug konsolunda görebilmek için:
-      print('Fortune AI Hatası: $e');
-      return _msg('Kader çizgilerinde bir kopukluk var, biraz sonra tekrar dene!');
+      debugPrint('--- GEMINI ERROR ---');
+      debugPrint(e.toString());
+      debugPrint('--------------------');
+      
+      // Hatayı anlamak için kullanıcıya (sadece hata anında) teknik detayı fısılda
+      return _msg('Kader çizgilerinde bir kopukluk var. Sorun muhtemelen şudur: ${e.toString().split(':').last}');
     }
   }
 
