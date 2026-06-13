@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:trenddrink/core/models/chat_message.dart';
@@ -107,9 +108,16 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
 
   @override
   List<ChatMessage> build() {
+    // API anahtarını al ve kontrol et
+    const apiKey = String.fromEnvironment('GEMINI_API_KEY');
+    
+    if (apiKey.isEmpty) {
+      debugPrint('⚠️ UYARI: GEMINI_API_KEY tanımlanmamış! Uygulama çalışmayacaktır.');
+    }
+
     _model = GenerativeModel(
       model: 'gemini-1.5-flash',
-      apiKey: const String.fromEnvironment('GEMINI_API_KEY'),
+      apiKey: apiKey,
       generationConfig: GenerationConfig(
         temperature: 0.9,
         topP: 0.95,
@@ -144,7 +152,9 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
       final response = await _chat.sendMessage(Content.multi(parts));
       return _msg(response.text ?? 'Gözlerim bugün puslu, tam göremiyorum...');
     } catch (e) {
-      return _msg('Kader çizgilerinde bir kopukluk var, biraz sonra tekrar dene!');
+      // Gerçek hatayı konsola yazdır
+      debugPrint('Mistik Hata: $e');
+      return _msg('Kader çizgilerinde bir kopukluk var. Hata detayı: $e');
     }
   }
 
