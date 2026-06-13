@@ -116,7 +116,7 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
     }
 
     _model = GenerativeModel(
-      model: 'gemini-1.5-flash',
+      model: 'gemini-1.5-flash-latest',
       apiKey: apiKey,
       generationConfig: GenerationConfig(
         temperature: 0.9,
