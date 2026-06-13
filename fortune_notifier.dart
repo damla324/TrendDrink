@@ -76,7 +76,7 @@ Yanıtını SADECE aşağıdaki Markdown hiyerarşisi ve emoji düzeni ile tesli
 👁️ **Görünmeyen Bağlar (Aşk & Sosyal Hayat):**
 [Çevresindeki insanların ona olan etkileri, beklediği adımlar veya kalbindeki netleşmeler üzerine spiritüel öngörüler.]
 
- **Yıldızların Vaadi (Kariyer & Gelecek):**
+🚀 **Yıldızların Vaadi (Kariyer & Gelecek):**
 [Gelecekteki başarıları, okul veya iş hayatındaki dönüm noktaları ve önüne çıkacak aydınlık kapılar hakkında motive edici analizler.]
 
 💡 **Mistik Günlük Tavsiye:** [Günün enerjisini dengelemesi için yapabileceği küçük bir eylem. Örn: "Bugün sağ eline küçük bir nokta koy ve ne zaman ona baksan hedefini hatırla" veya "Çantana mavi bir nesne at, o senin koruyucu auran olacak".]
@@ -131,11 +131,19 @@ class FortuneNotifier extends Notifier<List<ChatMessage>> {
 
   Future<ChatMessage> _buildAiResponse(String query, {Uint8List? imageBytes}) async {
     try {
+      final apiKey = const String.fromEnvironment('GEMINI_API_KEY');
+      if (apiKey.isEmpty) {
+        return _msg('Mistik güçlerime ulaşamıyorum. Lütfen API anahtarını (GEMINI_API_KEY) kontrol et! 🗝️');
+      }
+
       final parts = <Part>[TextPart(query)];
       if (imageBytes != null) parts.add(DataPart('image/jpeg', imageBytes));
+      
       final response = await _chat.sendMessage(Content.multi(parts));
       return _msg(response.text ?? 'Gözlerim bugün puslu, tam göremiyorum...');
     } catch (e) {
+      // Hatanın detayını debug konsolunda görebilmek için:
+      print('Fortune AI Hatası: $e');
       return _msg('Kader çizgilerinde bir kopukluk var, biraz sonra tekrar dene!');
     }
   }
